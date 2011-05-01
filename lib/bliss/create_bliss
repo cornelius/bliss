@@ -1,0 +1,4 @@
+#!/bin/bash
+
+kxml_compiler ../../schema/bliss.xml --namespace=Bliss --license=gpl \
+  --export=bliss/bliss --create-crud-functions

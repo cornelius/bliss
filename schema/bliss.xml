@@ -1,0 +1,65 @@
+<bliss schemaVersion="1">
+  <root>
+    <id>fuhefuhf</id>
+  </root>
+  <todo type="individual">
+    <id>7zrgrehth75</id>
+    <group_ref>
+      <id>fkjfrf6rhfrf6f5ewzf</id>
+    </group_ref>
+    <group_ref>
+      <id>633hedehe</id>
+    </group_ref>
+    <summary created_at="20090901T120034Z" updated_at="20090901T120034Z">
+      Feed penguins
+    </summary>
+    <postpone created_at="20090901T120034Z" updated_at="20090901T120034Z">
+      20110705T000000Z
+    </postpone>
+    <status created_at="20090901T120034Z" updated_at="20090901T120034Z">
+      <sequence>3</sequence>
+    </status>
+  </todo>
+  <todo>
+    <id>77fzuwehf6t</id>
+    <summary created_at="20090901T120034Z" updated_at="20090901T120034Z">
+      Go fishing
+    </summary>
+  </todo>
+  <group>
+    <id>8838xx9348</id>
+    <title>Home</title>
+  </group>
+  <group>
+    <id>8838xx9348</id>
+    <title>Work</title>
+  </group>
+  <group_view>
+    <id>shsh</id>
+    <todo_position>
+      <id>dud</id>
+      <x>123</x>
+      <y>654</y>
+    </todo_position>
+    <todo_position>
+      <id>dud</id>
+      <x>123</x>
+      <y>654</y>
+    </todo_position>
+    <view_label>
+      <id>dhdhd</id>
+      <text>Label Text</text>
+      <x>123</x>
+      <y>64764</y>
+    </view_label>
+    <view_label>
+      <id>dhdhdd</id>
+      <text>Label Text</text>
+      <x>123</x>
+      <y>64764</y>
+    </view_label>
+  </group_view>
+  <group_view>
+    <id>shshx</id>
+  </group_view>
+</bliss>
