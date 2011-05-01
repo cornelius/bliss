@@ -367,70 +367,6 @@ void GroupView::writeElement( QXmlStreamWriter &xml )
 }
 
 
-bool Group::isValid() const
-{
-  return !mId.isEmpty();
-}
-
-void Group::setId( const QString &v )
-{
-  mId = v;
-}
-
-QString Group::id() const
-{
-  return mId;
-}
-
-void Group::setTitle( const QString &v )
-{
-  mTitle = v;
-}
-
-QString Group::title() const
-{
-  return mTitle;
-}
-
-Group Group::parseElement( const QDomElement &element, bool *ok )
-{
-  if ( element.tagName() != "group" ) {
-    qCritical() << "Expected 'group', got '" << element.tagName() << "'.";
-    if ( ok ) *ok = false;
-    return Group();
-  }
-
-  Group result = Group();
-
-  QDomNode n;
-  for( n = element.firstChild(); !n.isNull(); n = n.nextSibling() ) {
-    QDomElement e = n.toElement();
-    if ( e.tagName() == "id" ) {
-      result.setId( e.text() );
-    }
-    else if ( e.tagName() == "title" ) {
-      result.setTitle( e.text() );
-    }
-  }
-
-
-  if ( ok ) *ok = true;
-  return result;
-}
-
-void Group::writeElement( QXmlStreamWriter &xml )
-{
-  xml.writeStartElement( "group" );
-  if ( !id().isEmpty() ) {
-    xml.writeTextElement(  "id", id() );
-  }
-  if ( !title().isEmpty() ) {
-    xml.writeTextElement(  "title", title() );
-  }
-  xml.writeEndElement();
-}
-
-
 Status::Status()
 {
   QDateTime now = QDateTime::currentDateTime();
@@ -508,30 +444,30 @@ void Status::writeElement( QXmlStreamWriter &xml )
 }
 
 
-bool GroupRef::isValid() const
+bool Group::isValid() const
 {
   return !mId.isEmpty();
 }
 
-void GroupRef::setId( const QString &v )
+void Group::setId( const QString &v )
 {
   mId = v;
 }
 
-QString GroupRef::id() const
+QString Group::id() const
 {
   return mId;
 }
 
-GroupRef GroupRef::parseElement( const QDomElement &element, bool *ok )
+Group Group::parseElement( const QDomElement &element, bool *ok )
 {
-  if ( element.tagName() != "group_ref" ) {
-    qCritical() << "Expected 'group_ref', got '" << element.tagName() << "'.";
+  if ( element.tagName() != "group" ) {
+    qCritical() << "Expected 'group', got '" << element.tagName() << "'.";
     if ( ok ) *ok = false;
-    return GroupRef();
+    return Group();
   }
 
-  GroupRef result = GroupRef();
+  Group result = Group();
 
   QDomNode n;
   for( n = element.firstChild(); !n.isNull(); n = n.nextSibling() ) {
@@ -546,13 +482,176 @@ GroupRef GroupRef::parseElement( const QDomElement &element, bool *ok )
   return result;
 }
 
-void GroupRef::writeElement( QXmlStreamWriter &xml )
+void Group::writeElement( QXmlStreamWriter &xml )
 {
-  xml.writeStartElement( "group_ref" );
+  xml.writeStartElement( "group" );
   if ( !id().isEmpty() ) {
     xml.writeTextElement(  "id", id() );
   }
   xml.writeEndElement();
+}
+
+
+void Groups::addGroup( const Group &v )
+{
+  mGroupList.append( v );
+}
+
+void Groups::setGroupList( const Group::List &v )
+{
+  mGroupList = v;
+}
+
+Group::List Groups::groupList() const
+{
+  return mGroupList;
+}
+
+Group Groups::findGroup( const QString &id, Flags flags )
+{
+  foreach( Group v, mGroupList ) {
+    if ( v.id() == id ) return v;
+  }
+  Group v;
+  if ( flags == AutoCreate ) {
+    v.setId( id );
+  }
+  return v;
+}
+
+bool Groups::insert( const Group &v )
+{
+  int i = 0;
+  for( ; i < mGroupList.size(); ++i ) {
+    if ( mGroupList[i].id() == v.id() ) {
+      mGroupList[i] = v;
+      return true;
+    }
+  }
+  if ( i == mGroupList.size() ) {
+    addGroup( v );
+  }
+  return true;
+}
+
+bool Groups::remove( const Group &v )
+{
+  Group::List::Iterator it;
+  for( it = mGroupList.begin(); it != mGroupList.end(); ++it ) {
+    if ( (*it).id() == v.id() ) break;
+  }
+  if ( it != mGroupList.end() ) {
+    mGroupList.erase( it );
+  }
+  return true;
+}
+
+Groups Groups::parseElement( const QDomElement &element, bool *ok )
+{
+  if ( element.tagName() != "groups" ) {
+    qCritical() << "Expected 'groups', got '" << element.tagName() << "'.";
+    if ( ok ) *ok = false;
+    return Groups();
+  }
+
+  Groups result = Groups();
+
+  QDomNode n;
+  for( n = element.firstChild(); !n.isNull(); n = n.nextSibling() ) {
+    QDomElement e = n.toElement();
+    if ( e.tagName() == "group" ) {
+      bool ok;
+      Group o = Group::parseElement( e, &ok );
+      if ( ok ) result.addGroup( o );
+    }
+  }
+
+
+  if ( ok ) *ok = true;
+  return result;
+}
+
+void Groups::writeElement( QXmlStreamWriter &xml )
+{
+  if ( !groupList().isEmpty() ) {
+    xml.writeStartElement( "groups" );
+    foreach( Group e, groupList() ) {
+      e.writeElement( xml );
+    }
+    xml.writeEndElement();
+  }
+}
+
+
+Title::Title()
+{
+  QDateTime now = QDateTime::currentDateTime();
+  setCreatedAt( now );
+  setUpdatedAt( now );
+}
+
+void Title::setCreatedAt( const QDateTime &v )
+{
+  mCreatedAt = v;
+}
+
+QDateTime Title::createdAt() const
+{
+  return mCreatedAt;
+}
+
+void Title::setUpdatedAt( const QDateTime &v )
+{
+  mUpdatedAt = v;
+}
+
+QDateTime Title::updatedAt() const
+{
+  return mUpdatedAt;
+}
+
+void Title::setValue( const QString &v )
+{
+  mValue = v;
+  setUpdatedAt( QDateTime::currentDateTime() );
+}
+
+QString Title::value() const
+{
+  return mValue;
+}
+
+Title Title::parseElement( const QDomElement &element, bool *ok )
+{
+  if ( element.tagName() != "title" ) {
+    qCritical() << "Expected 'title', got '" << element.tagName() << "'.";
+    if ( ok ) *ok = false;
+    return Title();
+  }
+
+  Title result = Title();
+
+  result.setValue( element.text() );
+  result.setCreatedAt( QDateTime::fromString( element.attribute( "created_at" ), "yyyyMMddThhmmssZ" ) );
+  result.setUpdatedAt( QDateTime::fromString( element.attribute( "updated_at" ), "yyyyMMddThhmmssZ" ) );
+
+  if ( ok ) *ok = true;
+  return result;
+}
+
+void Title::writeElement( QXmlStreamWriter &xml )
+{
+  if ( !value().isEmpty() ) {
+    xml.writeStartElement( "title" );
+    if ( !createdAt().toString( "yyyyMMddThhmmssZ" ).isEmpty() ) {
+      xml.writeAttribute( "created_at", createdAt().toString( "yyyyMMddThhmmssZ" ) );
+    }
+    if ( !updatedAt().toString( "yyyyMMddThhmmssZ" ).isEmpty() ) {
+      xml.writeAttribute( "updated_at", updatedAt().toString( "yyyyMMddThhmmssZ" ) );
+    }
+    xml.writeCharacters( value() );
+    xml.writeEndElement();
+  }
 }
 
 
@@ -725,58 +824,24 @@ QString Todo::id() const
   return mId;
 }
 
-void Todo::addGroupRef( const GroupRef &v )
+void Todo::setGroups( const Groups &v )
 {
-  mGroupRefList.append( v );
+  mGroups = v;
 }
 
-void Todo::setGroupRefList( const GroupRef::List &v )
+Groups Todo::groups() const
 {
-  mGroupRefList = v;
+  return mGroups;
 }
 
-GroupRef::List Todo::groupRefList() const
+void Todo::setTitle( const Title &v )
 {
-  return mGroupRefList;
+  mTitle = v;
 }
 
-GroupRef Todo::findGroupRef( const QString &id, Flags flags )
+Title Todo::title() const
 {
-  foreach( GroupRef v, mGroupRefList ) {
-    if ( v.id() == id ) return v;
-  }
-  GroupRef v;
-  if ( flags == AutoCreate ) {
-    v.setId( id );
-  }
-  return v;
-}
-
-bool Todo::insert( const GroupRef &v )
-{
-  int i = 0;
-  for( ; i < mGroupRefList.size(); ++i ) {
-    if ( mGroupRefList[i].id() == v.id() ) {
-      mGroupRefList[i] = v;
-      return true;
-    }
-  }
-  if ( i == mGroupRefList.size() ) {
-    addGroupRef( v );
-  }
-  return true;
-}
-
-bool Todo::remove( const GroupRef &v )
-{
-  GroupRef::List::Iterator it;
-  for( it = mGroupRefList.begin(); it != mGroupRefList.end(); ++it ) {
-    if ( (*it).id() == v.id() ) break;
-  }
-  if ( it != mGroupRefList.end() ) {
-    mGroupRefList.erase( it );
-  }
-  return true;
+  return mTitle;
 }
 
 void Todo::setSummary( const Summary &v )
@@ -825,10 +890,15 @@ Todo Todo::parseElement( const QDomElement &element, bool *ok )
     if ( e.tagName() == "id" ) {
       result.setId( e.text() );
     }
-    else if ( e.tagName() == "group_ref" ) {
+    else if ( e.tagName() == "groups" ) {
       bool ok;
-      GroupRef o = GroupRef::parseElement( e, &ok );
-      if ( ok ) result.addGroupRef( o );
+      Groups o = Groups::parseElement( e, &ok );
+      if ( ok ) result.setGroups( o );
+    }
+    else if ( e.tagName() == "title" ) {
+      bool ok;
+      Title o = Title::parseElement( e, &ok );
+      if ( ok ) result.setTitle( o );
     }
     else if ( e.tagName() == "summary" ) {
       bool ok;
@@ -862,9 +932,8 @@ void Todo::writeElement( QXmlStreamWriter &xml )
   if ( !id().isEmpty() ) {
     xml.writeTextElement(  "id", id() );
   }
-  foreach( GroupRef e, groupRefList() ) {
-    e.writeElement( xml );
-  }
+  groups().writeElement( xml );
+  title().writeElement( xml );
   summary().writeElement( xml );
   postpone().writeElement( xml );
   status().writeElement( xml );
@@ -872,19 +941,14 @@ void Todo::writeElement( QXmlStreamWriter &xml )
 }
 
 
-bool Root::isValid() const
+void Root::setGroup( const Group &v )
 {
-  return !mId.isEmpty();
+  mGroup = v;
 }
 
-void Root::setId( const QString &v )
+Group Root::group() const
 {
-  mId = v;
-}
-
-QString Root::id() const
-{
-  return mId;
+  return mGroup;
 }
 
 Root Root::parseElement( const QDomElement &element, bool *ok )
@@ -900,8 +964,10 @@ Root Root::parseElement( const QDomElement &element, bool *ok )
   QDomNode n;
   for( n = element.firstChild(); !n.isNull(); n = n.nextSibling() ) {
     QDomElement e = n.toElement();
-    if ( e.tagName() == "id" ) {
-      result.setId( e.text() );
+    if ( e.tagName() == "group" ) {
+      bool ok;
+      Group o = Group::parseElement( e, &ok );
+      if ( ok ) result.setGroup( o );
     }
   }
 
@@ -913,9 +979,7 @@ Root Root::parseElement( const QDomElement &element, bool *ok )
 void Root::writeElement( QXmlStreamWriter &xml )
 {
   xml.writeStartElement( "root" );
-  if ( !id().isEmpty() ) {
-    xml.writeTextElement(  "id", id() );
-  }
+  group().writeElement( xml );
   xml.writeEndElement();
 }
 
@@ -990,60 +1054,6 @@ bool Bliss::remove( const Todo &v )
   }
   if ( it != mTodoList.end() ) {
     mTodoList.erase( it );
-  }
-  return true;
-}
-
-void Bliss::addGroup( const Group &v )
-{
-  mGroupList.append( v );
-}
-
-void Bliss::setGroupList( const Group::List &v )
-{
-  mGroupList = v;
-}
-
-Group::List Bliss::groupList() const
-{
-  return mGroupList;
-}
-
-Group Bliss::findGroup( const QString &id, Flags flags )
-{
-  foreach( Group v, mGroupList ) {
-    if ( v.id() == id ) return v;
-  }
-  Group v;
-  if ( flags == AutoCreate ) {
-    v.setId( id );
-  }
-  return v;
-}
-
-bool Bliss::insert( const Group &v )
-{
-  int i = 0;
-  for( ; i < mGroupList.size(); ++i ) {
-    if ( mGroupList[i].id() == v.id() ) {
-      mGroupList[i] = v;
-      return true;
-    }
-  }
-  if ( i == mGroupList.size() ) {
-    addGroup( v );
-  }
-  return true;
-}
-
-bool Bliss::remove( const Group &v )
-{
-  Group::List::Iterator it;
-  for( it = mGroupList.begin(); it != mGroupList.end(); ++it ) {
-    if ( (*it).id() == v.id() ) break;
-  }
-  if ( it != mGroupList.end() ) {
-    mGroupList.erase( it );
   }
   return true;
 }
@@ -1125,11 +1135,6 @@ Bliss Bliss::parseElement( const QDomElement &element, bool *ok )
       Todo o = Todo::parseElement( e, &ok );
       if ( ok ) result.addTodo( o );
     }
-    else if ( e.tagName() == "group" ) {
-      bool ok;
-      Group o = Group::parseElement( e, &ok );
-      if ( ok ) result.addGroup( o );
-    }
     else if ( e.tagName() == "group_view" ) {
       bool ok;
       GroupView o = GroupView::parseElement( e, &ok );
@@ -1151,9 +1156,6 @@ void Bliss::writeElement( QXmlStreamWriter &xml )
     }
   root().writeElement( xml );
   foreach( Todo e, todoList() ) {
-    e.writeElement( xml );
-  }
-  foreach( Group e, groupList() ) {
     e.writeElement( xml );
   }
   foreach( GroupView e, groupViewList() ) {

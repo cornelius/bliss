@@ -1,15 +1,22 @@
 <bliss schemaVersion="1">
   <root>
-    <id>fuhefuhf</id>
+    <group>
+      <id>fuhefuhf</id>
+    </group>
   </root>
   <todo type="individual">
     <id>7zrgrehth75</id>
-    <group_ref>
-      <id>fkjfrf6rhfrf6f5ewzf</id>
-    </group_ref>
-    <group_ref>
-      <id>633hedehe</id>
-    </group_ref>
+    <groups>
+      <group>
+        <id>fkjfrf6rhfrf6f5ewzf</id>
+      </group>
+      <group>
+        <id>633hedehe</id>
+      </group>
+    </groups>
+    <title created_at="20090901T120034Z" updated_at="20090901T120034Z">
+      Penguins
+    </title>
     <summary created_at="20090901T120034Z" updated_at="20090901T120034Z">
       Feed penguins
     </summary>
@@ -26,14 +33,10 @@
       Go fishing
     </summary>
   </todo>
-  <group>
-    <id>8838xx9348</id>
-    <title>Home</title>
-  </group>
-  <group>
+  <todo type="group">
     <id>8838xx9348</id>
     <title>Work</title>
-  </group>
+  </todo>
   <group_view>
     <id>shsh</id>
     <todo_position>

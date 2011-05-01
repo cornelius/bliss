@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+      http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+  <kcfgfile name="blissrc"/>
+  <group name="Preferences">
+    <entry name="RemoteSyncingEnabled" type="Bool">
+      <label>Enable syncing with remote data repository</label>
+      <default>false</default>
+    </entry>
+  </group>
+  <group name="State">
+    <entry name="History" type="StringList">
+      <label>History of shown groups</label>
+    </entry>
+    <entry name="FancyMode" type="Bool">
+      <label>If fancy mode is enabled</label>
+      <default>true</default>
+    </entry>
+  </group>
+  <group name="Hidden">
+    <entry name="EnableMagic" type="Bool">
+      <label>Enable magic buttons</label>
+      <default>false</default>
+    </entry>
+  </group>
+</kcfg>

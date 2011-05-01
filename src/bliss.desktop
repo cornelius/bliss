@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Bliss
+Exec=bliss %i -caption "%c"
+Icon=bliss
+Type=Application
+X-DocPath=bliss/index.html
+GenericName=Todo app
+Terminal=false

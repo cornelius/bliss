@@ -10,6 +10,6 @@ include_directories(
 
 #add_subdirectory( doc )
 add_subdirectory( lib/bliss )
-#add_subdirectory( src )
+add_subdirectory( src )
 #add_subdirectory( icons )
 #add_subdirectory( pics )

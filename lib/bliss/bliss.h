@@ -117,28 +117,6 @@ class BLISS_EXPORT GroupView
     ViewLabel::List mViewLabelList;
 };
 
-class BLISS_EXPORT Group
-{
-  public:
-    typedef QList<Group> List;
-
-  public:
-    bool isValid() const;
-    void setId( const QString &v );
-    QString id() const;
-    void setTitle( const QString &v );
-    QString title() const;
-    /**
-      Parse XML object from DOM element.
-     */
-    static Group parseElement( const QDomElement &element, bool *ok );
-    void writeElement( QXmlStreamWriter &xml );
-
-  private:
-    QString mId;
-    QString mTitle;
-};
-
 class BLISS_EXPORT Status
 {
   public:
@@ -161,10 +139,10 @@ class BLISS_EXPORT Status
     int mSequence;
 };
 
-class BLISS_EXPORT GroupRef
+class BLISS_EXPORT Group
 {
   public:
-    typedef QList<GroupRef> List;
+    typedef QList<Group> List;
 
   public:
     bool isValid() const;
@@ -173,11 +151,55 @@ class BLISS_EXPORT GroupRef
     /**
       Parse XML object from DOM element.
      */
-    static GroupRef parseElement( const QDomElement &element, bool *ok );
+    static Group parseElement( const QDomElement &element, bool *ok );
     void writeElement( QXmlStreamWriter &xml );
 
   private:
     QString mId;
+};
+
+class BLISS_EXPORT Groups
+{
+  public:
+    enum Flags { None, AutoCreate };
+
+  public:
+    void addGroup( const Group &v );
+    void setGroupList( const Group::List &v );
+    Group::List groupList() const;
+    Group findGroup( const QString &id, Flags flags = None );
+    bool insert( const Group &v );
+    bool remove( const Group &v );
+    /**
+      Parse XML object from DOM element.
+     */
+    static Groups parseElement( const QDomElement &element, bool *ok );
+    void writeElement( QXmlStreamWriter &xml );
+
+  private:
+    Group::List mGroupList;
+};
+
+class BLISS_EXPORT Title
+{
+  public:
+    Title();
+    void setCreatedAt( const QDateTime &v );
+    QDateTime createdAt() const;
+    void setUpdatedAt( const QDateTime &v );
+    QDateTime updatedAt() const;
+    void setValue( const QString &v );
+    QString value() const;
+    /**
+      Parse XML object from DOM element.
+     */
+    static Title parseElement( const QDomElement &element, bool *ok );
+    void writeElement( QXmlStreamWriter &xml );
+
+  private:
+    QDateTime mCreatedAt;
+    QDateTime mUpdatedAt;
+    QString mValue;
 };
 
 class BLISS_EXPORT Summary
@@ -230,20 +252,15 @@ class BLISS_EXPORT Todo
     typedef QList<Todo> List;
 
   public:
-    enum Flags { None, AutoCreate };
-
-  public:
     bool isValid() const;
     void setType( const QString &v );
     QString type() const;
     void setId( const QString &v );
     QString id() const;
-    void addGroupRef( const GroupRef &v );
-    void setGroupRefList( const GroupRef::List &v );
-    GroupRef::List groupRefList() const;
-    GroupRef findGroupRef( const QString &id, Flags flags = None );
-    bool insert( const GroupRef &v );
-    bool remove( const GroupRef &v );
+    void setGroups( const Groups &v );
+    Groups groups() const;
+    void setTitle( const Title &v );
+    Title title() const;
     void setSummary( const Summary &v );
     Summary summary() const;
     void setPostpone( const Postpone &v );
@@ -259,7 +276,8 @@ class BLISS_EXPORT Todo
   private:
     QString mType;
     QString mId;
-    GroupRef::List mGroupRefList;
+    Groups mGroups;
+    Title mTitle;
     Summary mSummary;
     Postpone mPostpone;
     Status mStatus;
@@ -268,9 +286,8 @@ class BLISS_EXPORT Todo
 class BLISS_EXPORT Root
 {
   public:
-    bool isValid() const;
-    void setId( const QString &v );
-    QString id() const;
+    void setGroup( const Group &v );
+    Group group() const;
     /**
       Parse XML object from DOM element.
      */
@@ -278,7 +295,7 @@ class BLISS_EXPORT Root
     void writeElement( QXmlStreamWriter &xml );
 
   private:
-    QString mId;
+    Group mGroup;
 };
 
 class BLISS_EXPORT Bliss
@@ -297,12 +314,6 @@ class BLISS_EXPORT Bliss
     Todo findTodo( const QString &id, Flags flags = None );
     bool insert( const Todo &v );
     bool remove( const Todo &v );
-    void addGroup( const Group &v );
-    void setGroupList( const Group::List &v );
-    Group::List groupList() const;
-    Group findGroup( const QString &id, Flags flags = None );
-    bool insert( const Group &v );
-    bool remove( const Group &v );
     void addGroupView( const GroupView &v );
     void setGroupViewList( const GroupView::List &v );
     GroupView::List groupViewList() const;
@@ -322,7 +333,6 @@ class BLISS_EXPORT Bliss
     int mSchemaVersion;
     Root mRoot;
     Todo::List mTodoList;
-    Group::List mGroupList;
     GroupView::List mGroupViewList;
 };
 
