@@ -55,6 +55,8 @@ class TodoItem : public QObject, public QGraphicsEllipseItem
 
     void undoMove();
 
+    int textCenterX();
+    
   signals:
     void showGroup( const Bliss::Todo & );
   
@@ -100,6 +102,8 @@ class TodoItem : public QObject, public QGraphicsEllipseItem
     QPointF m_movePos;
 
     int m_itemSize;
+    
+    int m_textCenterX;
 };
 
 #endif

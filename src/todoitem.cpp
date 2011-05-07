@@ -41,7 +41,7 @@ TodoItem::TodoItem( QGraphicsItem *item, MainModel *model,
 
 void TodoItem::init()
 {
-  m_itemSize = 110;
+  m_itemSize = 60;
   m_menusEnabled = true;
 
   setRect( -m_itemSize/2, -m_itemSize/2, m_itemSize, m_itemSize );
@@ -94,6 +94,8 @@ void TodoItem::updateItem( const Bliss::Todo &identity )
   int textWidth = textItem->boundingRect().width();
   int textHeight = textItem->boundingRect().height();
 
+  m_textCenterX = textWidth / 2;
+  
   m_nameItem = new RoundedRectItem( this );
   m_nameItem->setRect( 0, 0, textWidth, textHeight );
   m_nameItem->setBrush( QColor( 255,255,230 ) );
@@ -101,7 +103,7 @@ void TodoItem::updateItem( const Bliss::Todo &identity )
 
   textItem->setParentItem( m_nameItem );
 
-  m_nameItem->setPos( - textWidth / 2, 30 );
+  m_nameItem->setPos( m_itemSize / 2 + 16, - textHeight / 2 );
 
   m_fanMenu = new FanMenu( this );
   m_fanMenu->setZValue( 50 );
@@ -200,4 +202,9 @@ QVariant TodoItem::itemChange( GraphicsItemChange change,
 void TodoItem::undoMove()
 {
   setPos( m_movePos );
+}
+
+int TodoItem::textCenterX()
+{
+  return m_textCenterX;
 }

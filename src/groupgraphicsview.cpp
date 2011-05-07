@@ -48,7 +48,7 @@ GroupGraphicsView::GroupGraphicsView( MainModel *model, QWidget *parent )
 
   m_scene = new QGraphicsScene;
 //  m_scene->setBackgroundBrush( Qt::red );
-  m_scene->setBackgroundBrush( QColor( 70,70,100 ) );
+  m_scene->setBackgroundBrush( QColor( 231,228,211 ) );
   m_scene->setSceneRect( -1000, -1000, 2000, 2000 );
 
   m_view = new TrackingGraphicsView( m_scene );
@@ -315,24 +315,23 @@ TodoItemGroup GroupGraphicsView::prepareTodoItems( bool doAnimation )
   
   Bliss::Todo::List identities = model()->todosOfGroup( group() );
 
-  int columns = sqrt( identities.size() );
-  int spacing = 150;
+  int spacing = 80;
 
   int x = 0;
   int y = 0;
 
-  qreal minX = 0;
   qreal minY = 0;
-  qreal maxX = 0;
   qreal maxY = 0;
+
+  qreal centerX = 0;  
 
   bool firstItem = true;
 
   Bliss::GroupView view = model()->groupView( group() );
 
   foreach( Bliss::Todo identity, identities ) {
-    qreal posX = x * spacing + ( y % 2 ) * spacing / 2;
-    qreal posY = y * spacing * 0.866; // sin(60 degree)
+    qreal posX = x;
+    qreal posY = y * spacing;
 
     TodoItem *item = new TodoItem( model(), identity );
     result.items.append( item );
@@ -377,23 +376,16 @@ TodoItemGroup GroupGraphicsView::prepareTodoItems( bool doAnimation )
     if ( firstItem ) {
       firstItem = false;
     
-      minX = itemX;
+      centerX = item->textCenterX();
       minY = itemY;
-      maxX = itemX;
       maxY = itemY;
     } else {
-      if ( itemX < minX ) minX = itemX;
+      if ( item->textCenterX() > centerX ) centerX = item->textCenterX();
       if ( itemY < minY ) minY = itemY;
-      if ( itemX > maxX ) maxX = itemX;
       if ( itemY > maxY ) maxY = itemY;
     }
 
-    x++;
-    
-    if ( x >= ( columns + ( y + 1 ) % 2 ) ) {
-      x = 0;
-      y++;
-    }
+    y++;
 
     if ( previousGroup().isValid() &&
          item->todo().id() == previousGroup().id() ) {
@@ -401,7 +393,6 @@ TodoItemGroup GroupGraphicsView::prepareTodoItems( bool doAnimation )
     }
   }
   
-  qreal centerX = ( minX + maxX ) / 2;
   qreal centerY = ( minY + maxY ) / 2;
 
   result.center = QPointF( centerX, centerY );
