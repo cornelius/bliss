@@ -28,6 +28,40 @@
 
 namespace Bliss {
 
+class BLISS_EXPORT TodoId
+{
+  public:
+    typedef QList<TodoId> List;
+
+  public:
+    void setValue( const QString &v );
+    QString value() const;
+    /**
+      Parse XML object from DOM element.
+     */
+    static TodoId parseElement( const QDomElement &element, bool *ok );
+    void writeElement( QXmlStreamWriter &xml );
+
+  private:
+    QString mValue;
+};
+
+class BLISS_EXPORT TodoSequence
+{
+  public:
+    void addTodoId( const TodoId &v );
+    void setTodoIdList( const TodoId::List &v );
+    TodoId::List todoIdList() const;
+    /**
+      Parse XML object from DOM element.
+     */
+    static TodoSequence parseElement( const QDomElement &element, bool *ok );
+    void writeElement( QXmlStreamWriter &xml );
+
+  private:
+    TodoId::List mTodoIdList;
+};
+
 class BLISS_EXPORT ViewLabel
 {
   public:
@@ -105,6 +139,8 @@ class BLISS_EXPORT GroupView
     ViewLabel findViewLabel( const QString &id, Flags flags = None );
     bool insert( const ViewLabel &v );
     bool remove( const ViewLabel &v );
+    void setTodoSequence( const TodoSequence &v );
+    TodoSequence todoSequence() const;
     /**
       Parse XML object from DOM element.
      */
@@ -115,6 +151,7 @@ class BLISS_EXPORT GroupView
     QString mId;
     TodoPosition::List mTodoPositionList;
     ViewLabel::List mViewLabelList;
+    TodoSequence mTodoSequence;
 };
 
 class BLISS_EXPORT Status

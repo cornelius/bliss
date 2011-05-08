@@ -299,8 +299,34 @@ TodoItemGroup GroupGraphicsView::prepareTodoItems( bool doAnimation )
 {
   TodoItemGroup result;
   
-  Bliss::Todo::List identities = model()->todosOfGroup( group() );
+  Bliss::Todo::List todos = model()->todosOfGroup( group() );
 
+  Bliss::Todo::List sortedTodos;
+
+  Bliss::GroupView groupView = model()->groupView( group() );
+  if ( groupView.isValid() ) {
+    Bliss::TodoId::List todoIdList = groupView.todoSequence().todoIdList();
+    foreach( Bliss::TodoId id, todoIdList ) {
+      foreach( Bliss::Todo todo, todos ) {
+        if ( todo.id() == id.value() ) {
+          sortedTodos.append( todo );
+          break;
+        }
+      }
+    }
+    foreach( Bliss::Todo todo, todos ) {
+      Bliss::TodoId::List::ConstIterator it;
+      for( it = todoIdList.begin(); it != todoIdList.end(); ++it ) {
+        if ( todo.id() == (*it).value() ) break;
+      }
+      if ( it == todoIdList.end() ) {
+        sortedTodos.append( todo );
+      }
+    }
+  } else {
+    sortedTodos = todos;
+  }
+  
   int spacing = 80;
 
   int x = 0;
@@ -309,17 +335,17 @@ TodoItemGroup GroupGraphicsView::prepareTodoItems( bool doAnimation )
   qreal minY = 0;
   qreal maxY = 0;
 
-  qreal centerX = 0;  
+  qreal centerX = 0;
 
   bool firstItem = true;
 
   Bliss::GroupView view = model()->groupView( group() );
 
-  foreach( Bliss::Todo identity, identities ) {
+  foreach( Bliss::Todo todo, sortedTodos ) {
     qreal posX = x;
     qreal posY = y * spacing;
 
-    TodoItem *item = new TodoItem( model(), identity );
+    TodoItem *item = new TodoItem( model(), todo );
     result.items.append( item );
 
     connect( item, SIGNAL( showTodo( const Bliss::Todo & ) ),
@@ -328,7 +354,7 @@ TodoItemGroup GroupGraphicsView::prepareTodoItems( bool doAnimation )
       SLOT( slotRemoveTodo( const Bliss::Todo & ) ) );
 
     connect( item, SIGNAL( itemMoved( TodoItem *, const QPointF & ) ),
-      SLOT( savePosition( TodoItem *, const QPointF & ) ) );
+      SLOT( slotItemMoved( TodoItem *, const QPointF & ) ) );
 
     connect( item, SIGNAL( menuShown() ), SLOT( hideGlobalMenu() ) );
 
@@ -337,7 +363,7 @@ TodoItemGroup GroupGraphicsView::prepareTodoItems( bool doAnimation )
     qreal itemX;
     qreal itemY;
 
-    Bliss::TodoPosition p = view.findTodoPosition( identity.id() );
+    Bliss::TodoPosition p = view.findTodoPosition( todo.id() );
     if ( p.isValid() ) {
       itemX = p.x();
       itemY = p.y();
@@ -449,14 +475,20 @@ void GroupGraphicsView::slotRemoveTodo( const Bliss::Todo &identity )
   emit removeTodo( identity, group() );
 }
 
-void GroupGraphicsView::savePosition( TodoItem *item,
+void GroupGraphicsView::slotItemMoved( TodoItem *item,
   const QPointF &pos )
 {
+  Q_UNUSED( pos )
+  
   if ( item->collidesWithItem( m_groupAdderItem ) ) {
     item->undoMove();
     model()->addTodo( item->todo(), m_groupAdderItem->group() );
   } else {
-    model()->saveViewPosition( group(), item->todo(), pos );
+    QMap <qreal, QString> map;
+    foreach( TodoItem *i, m_items ) {
+      map.insert( i->pos().y(), i->todo().id() );
+    }
+    model()->saveViewSequence( group(), map.values() );
   }
 }
 

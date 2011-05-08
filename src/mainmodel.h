@@ -79,6 +79,8 @@ class MainModel : public QObject
       const QPointF &pos );
     void clearViewPositions( const Bliss::Todo &group );
 
+    void saveViewSequence( const Bliss::Todo &group, const QStringList &ids );
+    
     Bliss::GroupView groupView( const Bliss::Todo &group );
 
     QPixmap pixmap( const Bliss::Todo & ) const;

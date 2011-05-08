@@ -27,6 +27,94 @@
 
 namespace Bliss {
 
+void TodoId::setValue( const QString &v )
+{
+  mValue = v;
+}
+
+QString TodoId::value() const
+{
+  return mValue;
+}
+
+TodoId TodoId::parseElement( const QDomElement &element, bool *ok )
+{
+  if ( element.tagName() != "todo_id" ) {
+    qCritical() << "Expected 'todo_id', got '" << element.tagName() << "'.";
+    if ( ok ) *ok = false;
+    return TodoId();
+  }
+
+  TodoId result = TodoId();
+
+  result.setValue( element.text() );
+
+  if ( ok ) *ok = true;
+  return result;
+}
+
+void TodoId::writeElement( QXmlStreamWriter &xml )
+{
+  if ( !value().isEmpty() ) {
+    xml.writeStartElement( "todo_id" );
+    xml.writeCharacters( value() );
+    xml.writeEndElement();
+  }
+}
+
+
+void TodoSequence::addTodoId( const TodoId &v )
+{
+  mTodoIdList.append( v );
+}
+
+void TodoSequence::setTodoIdList( const TodoId::List &v )
+{
+  mTodoIdList = v;
+}
+
+TodoId::List TodoSequence::todoIdList() const
+{
+  return mTodoIdList;
+}
+
+TodoSequence TodoSequence::parseElement( const QDomElement &element, bool *ok )
+{
+  if ( element.tagName() != "todo_sequence" ) {
+    qCritical() << "Expected 'todo_sequence', got '" << element.tagName() << "'.";
+    if ( ok ) *ok = false;
+    return TodoSequence();
+  }
+
+  TodoSequence result = TodoSequence();
+
+  QDomNode n;
+  for( n = element.firstChild(); !n.isNull(); n = n.nextSibling() ) {
+    QDomElement e = n.toElement();
+    if ( e.tagName() == "todo_id" ) {
+      bool ok;
+      TodoId o = TodoId::parseElement( e, &ok );
+      if ( ok ) result.addTodoId( o );
+    }
+  }
+
+
+  if ( ok ) *ok = true;
+  return result;
+}
+
+void TodoSequence::writeElement( QXmlStreamWriter &xml )
+{
+  if ( !todoIdList().isEmpty() ) {
+    xml.writeStartElement( "todo_sequence" );
+    foreach( TodoId e, todoIdList() ) {
+      e.writeElement( xml );
+    }
+    xml.writeEndElement();
+  }
+}
+
+
 bool ViewLabel::isValid() const
 {
   return !mId.isEmpty();
@@ -318,6 +406,16 @@ bool GroupView::remove( const ViewLabel &v )
   return true;
 }
 
+void GroupView::setTodoSequence( const TodoSequence &v )
+{
+  mTodoSequence = v;
+}
+
+TodoSequence GroupView::todoSequence() const
+{
+  return mTodoSequence;
+}
+
 GroupView GroupView::parseElement( const QDomElement &element, bool *ok )
 {
   if ( element.tagName() != "group_view" ) {
@@ -344,6 +442,11 @@ GroupView GroupView::parseElement( const QDomElement &element, bool *ok )
       ViewLabel o = ViewLabel::parseElement( e, &ok );
       if ( ok ) result.addViewLabel( o );
     }
+    else if ( e.tagName() == "todo_sequence" ) {
+      bool ok;
+      TodoSequence o = TodoSequence::parseElement( e, &ok );
+      if ( ok ) result.setTodoSequence( o );
+    }
   }
 
 
@@ -363,6 +466,7 @@ void GroupView::writeElement( QXmlStreamWriter &xml )
   foreach( ViewLabel e, viewLabelList() ) {
     e.writeElement( xml );
   }
+  todoSequence().writeElement( xml );
   xml.writeEndElement();
 }
 

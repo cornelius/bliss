@@ -91,7 +91,7 @@ class GroupGraphicsView : public GroupView
     void removeLabel( LabelItem * );
     void renameLabel( LabelItem * );
 
-    void savePosition( TodoItem *, const QPointF & );
+    void slotItemMoved( TodoItem *item, const QPointF &pos );
     void saveLabel( const Bliss::ViewLabel &, const QPointF & );
  
     void emitCloneGroup();

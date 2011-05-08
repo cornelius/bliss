@@ -428,3 +428,25 @@ Bliss::GroupView MainModel::groupView( const Bliss::Todo &group )
 void MainModel::createFirstStartData()
 {
 }
+
+void MainModel::saveViewSequence( const Bliss::Todo &group,
+                                  const QStringList &ids )
+{
+  Bliss::GroupView v = m_bliss.findGroupView( group.id(),
+                                              Bliss::Bliss::AutoCreate );
+                                              
+  Bliss::TodoSequence sequence;
+  foreach( QString id, ids ) {
+    qDebug() << "ID" << id;
+    Bliss::TodoId todoId;
+    todoId.setValue( id );
+    sequence.addTodoId( todoId );
+  }
+  
+  v.setTodoSequence( sequence );
+
+  m_bliss.insert( v );
+
+  writeData( i18n("Updated sequence in group %1").
+    arg( group.summary().value() ) );
+}
