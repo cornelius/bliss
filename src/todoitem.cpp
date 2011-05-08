@@ -89,20 +89,13 @@ void TodoItem::updateItem( const Bliss::Todo &identity )
   QGraphicsItem *item = new QGraphicsPixmapItem( pixmap, this );  
   item->setPos( -pixmap.width() / 2, -pixmap.height() / 2 );
 
-  QGraphicsTextItem *textItem = new QGraphicsTextItem( identity.summary().value() );
+  m_nameItem = new QGraphicsTextItem( identity.summary().value(), this );
 
-  int textWidth = textItem->boundingRect().width();
-  int textHeight = textItem->boundingRect().height();
+  int textWidth = m_nameItem->boundingRect().width();
+  int textHeight = m_nameItem->boundingRect().height();
 
   m_textCenterX = textWidth / 2;
   
-  m_nameItem = new RoundedRectItem( this );
-  m_nameItem->setRect( 0, 0, textWidth, textHeight );
-  m_nameItem->setBrush( QColor( 255,255,230 ) );
-  m_nameItem->setZValue( 10 );
-
-  textItem->setParentItem( m_nameItem );
-
   m_nameItem->setPos( m_itemSize / 2 + 16, - textHeight / 2 );
 
   m_fanMenu = new FanMenu( this );

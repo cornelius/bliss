@@ -95,7 +95,7 @@ class TodoItem : public QObject, public QGraphicsEllipseItem
     QPointF m_defaultPos;
     QPointF m_rememberedPos;
 
-    RoundedRectItem *m_nameItem;
+    QGraphicsTextItem *m_nameItem;
 
     FanMenu *m_fanMenu;
 
