@@ -47,8 +47,6 @@ class GroupGraphicsView : public GroupView
   public:
     GroupGraphicsView( MainModel *, QWidget *parent = 0 );
 
-    void setCompactLayout( bool enabled );
-
     void setAdderGroup( const Bliss::Todo &group );
 
   signals:
@@ -57,9 +55,6 @@ class GroupGraphicsView : public GroupView
       const Bliss::Todo &group );
     void cloneGroup( const Bliss::Todo &group );
     void removeGroup( const Bliss::Todo &group );
-
-    void morphedToCompact();
-    void morphedFromCompact();
 
     void closeRequested();
 
@@ -71,9 +66,6 @@ class GroupGraphicsView : public GroupView
     void createLabelItems();
   
     LabelItem *createLabelItem( const Bliss::ViewLabel &label );
-
-    void morphToCompact();
-    void morphFromCompact();
 
     TodoItem *item( const Bliss::Todo & ) const;
 
@@ -113,9 +105,6 @@ class GroupGraphicsView : public GroupView
 
     void positionAbsoluteItems();
 
-    void finishMorphFromCompact();
-    void finishMorphToCompact();
-
     void finishPlaceItems();
 
     void slotTodoAdded( const Bliss::Todo & );
@@ -136,8 +125,6 @@ class GroupGraphicsView : public GroupView
 
     QGraphicsScene *m_scene;
     QGraphicsView *m_view;
-
-    bool m_compactLayout;
 
     QAnimationGroup *m_morphToAnimation;
     QAnimationGroup *m_morphFromAnimation;

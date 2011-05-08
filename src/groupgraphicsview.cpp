@@ -39,7 +39,7 @@
 
 GroupGraphicsView::GroupGraphicsView( MainModel *model, QWidget *parent )
   : GroupView( model, parent ), m_mainMenu( 0 ), m_magicMenu( 0 ),
-    m_groupAdderItem( 0 ), m_compactLayout( false ),
+    m_groupAdderItem( 0 ),
     m_morphToAnimation( 0 ), m_morphFromAnimation( 0 ),
     m_removeItemsAnimation( 0 ), m_placeItemsAnimation( 0 ), 
     m_unplaceItemsAnimation( 0 ), m_unhideItemsAnimation( 0 ), m_globalMenu( 0 )
@@ -102,16 +102,6 @@ void GroupGraphicsView::recreateItems()
 {
   m_previousItem = 0;
   placeItems();
-}
-
-void GroupGraphicsView::setCompactLayout( bool enabled )
-{
-  if ( enabled == m_compactLayout ) return;
-
-  m_compactLayout = enabled;
-
-  if ( m_compactLayout ) morphToCompact();
-  else morphFromCompact();
 }
 
 void GroupGraphicsView::doShowGroup()
@@ -178,8 +168,6 @@ void GroupGraphicsView::clearItems()
 
 void GroupGraphicsView::placeItems()
 {
-  m_compactLayout = false;
-
   bool doAnimation = false;
   QPoint previousItemPos;
 
@@ -234,8 +222,6 @@ void GroupGraphicsView::unplaceItems()
     delete item;
   }
   m_labelItems.clear();
-
-  m_compactLayout = false;
 
   if ( !m_unplaceItemsAnimation ) {
     m_unplaceItemsAnimation = new QParallelAnimationGroup( this );
@@ -466,13 +452,11 @@ void GroupGraphicsView::slotRemoveTodo( const Bliss::Todo &identity )
 void GroupGraphicsView::savePosition( TodoItem *item,
   const QPointF &pos )
 {
-  if ( !m_compactLayout ) {
-    if ( item->collidesWithItem( m_groupAdderItem ) ) {
-      item->undoMove();
-      model()->addTodo( item->todo(), m_groupAdderItem->group() );
-    } else {
-      model()->saveViewPosition( group(), item->todo(), pos );
-    }
+  if ( item->collidesWithItem( m_groupAdderItem ) ) {
+    item->undoMove();
+    model()->addTodo( item->todo(), m_groupAdderItem->group() );
+  } else {
+    model()->saveViewPosition( group(), item->todo(), pos );
   }
 }
 
@@ -585,105 +569,6 @@ void GroupGraphicsView::emitCloneGroup()
 void GroupGraphicsView::emitRemoveGroup()
 {
   emit removeGroup( group() );
-}
-
-void GroupGraphicsView::morphToCompact()
-{
-  m_mainMenu->hide();
-  if ( m_magicMenu ) m_magicMenu->hide();
-  foreach( LabelItem *item, m_labelItems ) {
-    item->hide();
-  }
-  m_groupAdderItem->hide();
-
-  QRectF rect = m_scene->sceneRect();
-
-  QPointF leftBorder = m_view->mapToScene( 0, 0 );
-
-  int x = leftBorder.x() + 60;
-  int y = leftBorder.y() + 60;
-  int spacing = 60;
-
-  if ( !m_morphToAnimation ) {
-    m_morphToAnimation = new QParallelAnimationGroup( this );
-    connect( m_morphToAnimation, SIGNAL( finished() ),
-      SIGNAL( morphedToCompact() ) );
-    connect( m_morphToAnimation, SIGNAL( finished() ),
-      SLOT( finishMorphToCompact() ) );
-  }
-  m_morphToAnimation->clear();
-
-  foreach( TodoItem *item, m_items ) {
-    QPropertyAnimation *animation = new QPropertyAnimation(item, "pos", this);
-    m_morphToAnimation->insertAnimation( 0, animation );
-
-    animation->setDuration(500);
-    item->rememberPos( item->pos() );
-    animation->setStartValue( item->pos() );
-    QPointF target( x, y );
-    animation->setEndValue( target );
-    animation->setEasingCurve( QEasingCurve::OutCubic );
-    
-    animation = new QPropertyAnimation(item, "scale", this );
-    m_morphToAnimation->insertAnimation( 0, animation );
-    
-    animation->setDuration( 300 );
-    animation->setStartValue( item->scale() );
-    animation->setEndValue( 0.5 );
-    animation->setEasingCurve( QEasingCurve::OutCubic );
-    
-    y += spacing;
-  }
-
-  m_morphToAnimation->start();
-}
-
-void GroupGraphicsView::finishMorphToCompact()
-{
-}
-
-void GroupGraphicsView::morphFromCompact()
-{
-  if ( !m_morphFromAnimation ) {
-    m_morphFromAnimation = new QParallelAnimationGroup( this );
-    connect( m_morphFromAnimation, SIGNAL( finished() ),
-      SIGNAL( morphedFromCompact() ) );
-    connect( m_morphFromAnimation, SIGNAL( finished() ),
-      SLOT( finishMorphFromCompact() ) );
-  }
-  m_morphFromAnimation->clear();
-
-  foreach( TodoItem *item, m_items ) {
-    QPropertyAnimation *animation = new QPropertyAnimation(item, "pos", this);
-    m_morphFromAnimation->insertAnimation( 0, animation );
-
-    animation->setDuration(500);
-    animation->setStartValue( item->pos() );
-    animation->setEndValue( item->rememberedPos() );
-    animation->setEasingCurve( QEasingCurve::OutCubic );
-
-    animation = new QPropertyAnimation(item, "scale", this );
-    m_morphFromAnimation->insertAnimation( 0, animation );
-    
-    animation->setDuration( 300 );
-    animation->setStartValue( item->scale() );
-    animation->setEndValue( 1 );
-    animation->setEasingCurve( QEasingCurve::OutCubic );
-  }
-  
-  m_morphFromAnimation->start();
-}
-
-void GroupGraphicsView::finishMorphFromCompact()
-{
-  m_mainMenu->show();
-  if ( m_magicMenu ) m_magicMenu->show();
-
-  foreach( LabelItem *item, m_labelItems ) {
-    item->show();
-  }  
-  
-  m_groupAdderItem->show();
 }
 
 TodoItem *GroupGraphicsView::item( const Bliss::Todo &identity ) const

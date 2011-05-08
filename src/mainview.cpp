@@ -281,7 +281,6 @@ void MainView::showView()
   } else {
     showGroup( m_group );
   }
-  m_groupGraphicsView->setCompactLayout( false );
 }
 
 void MainView::showTodo( const Bliss::Todo &todo )
