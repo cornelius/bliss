@@ -27,6 +27,7 @@
 class MainModel;
 class RoundedRectItem;
 class TodoHandleItem;
+class MenuHandler;
 
 class TodoItem : public QObject, public QGraphicsItemGroup
 {
@@ -37,7 +38,7 @@ class TodoItem : public QObject, public QGraphicsItemGroup
     Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity)
 
   public:
-    TodoItem( MainModel *, const Bliss::Todo & );
+    TodoItem( MainModel *, MenuHandler *, const Bliss::Todo & );
     TodoItem( QGraphicsItem *, MainModel *, const Bliss::Todo & );
 
     Bliss::Todo todo() const;
@@ -56,6 +57,7 @@ class TodoItem : public QObject, public QGraphicsItemGroup
 
     int textCenterX();
 
+    void showPopups();
     void hidePopups();
     
   signals:
@@ -85,6 +87,8 @@ class TodoItem : public QObject, public QGraphicsItemGroup
     void emitShowTodo();
     void emitRemoveTodo();
 
+    void checkMenuVisibility();
+
   private:
     MainModel *m_model;
     Bliss::Todo m_todo;
@@ -99,6 +103,14 @@ class TodoItem : public QObject, public QGraphicsItemGroup
     QPointF m_movePos;
 
     int m_textCenterX;
+
+    bool m_menusEnabled;
+
+    FanMenu *m_fanMenu;
+    
+    MenuHandler *m_menuHandler;
+    
+    bool m_isHovered;
 };
 
 #endif

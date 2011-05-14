@@ -42,7 +42,6 @@ TodoHandleItem::TodoHandleItem( QGraphicsItem *item, MainModel *model,
 void TodoHandleItem::init()
 {
   m_itemSize = 60;
-  m_menusEnabled = true;
 
   setRect( -m_itemSize/2, -m_itemSize/2, m_itemSize, m_itemSize );
   setBrush( Qt::white );
@@ -59,13 +58,6 @@ void TodoHandleItem::init()
 int TodoHandleItem::itemSize() const
 {
   return m_itemSize;
-}
-
-void TodoHandleItem::enableMenus( bool enabled )
-{
-  m_menusEnabled = enabled;
-  
-  if ( !m_menusEnabled ) hidePopups();
 }
 
 void TodoHandleItem::updateItem( const Bliss::Todo &todo )
@@ -91,19 +83,6 @@ void TodoHandleItem::updateItem( const Bliss::Todo &todo )
 
   QGraphicsItem *item = new QGraphicsPixmapItem( pixmap, this );  
   item->setPos( -pixmap.width() / 2, -pixmap.height() / 2 );
-
-  m_fanMenu = new FanMenu( this );
-  m_fanMenu->setZValue( 50 );
-
-  FanMenuItem *menuItem = m_fanMenu->addItem( i18n("Remove") );
-  connect( menuItem, SIGNAL( clicked() ), SIGNAL( removeClicked() ) );
-  if ( todo.type() == "group" ) {
-    menuItem = m_fanMenu->addItem( i18n("Go to") );
-  }
-  connect( menuItem, SIGNAL( clicked() ), SIGNAL( showClicked() ) );
-  m_fanMenu->setupItems();
-
-  hidePopups();
 }
 
 Bliss::Todo TodoHandleItem::todo() const
@@ -111,33 +90,14 @@ Bliss::Todo TodoHandleItem::todo() const
   return m_todo;
 }
 
-void TodoHandleItem::showPopups()
-{
-  if ( m_menusEnabled ) {
-    m_fanMenu->show();
-    emit menuShown();
-  }
-}
-
-void TodoHandleItem::hidePopups()
-{
-  m_fanMenu->hide();
-}
-
 void TodoHandleItem::hoverEnterEvent( QGraphicsSceneHoverEvent *event )
 {
   Q_UNUSED( event );
-
-  qDebug() << "TICK";
-
-  showPopups();
 }
 
 void TodoHandleItem::hoverLeaveEvent( QGraphicsSceneHoverEvent *event )
 {
   Q_UNUSED( event );
-
-  hidePopups();
 }
 
 void TodoHandleItem::mousePressEvent( QGraphicsSceneMouseEvent *event )

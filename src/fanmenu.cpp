@@ -23,7 +23,7 @@
 
 FanMenu::FanMenu( QGraphicsItem *parent )
   : QGraphicsLineItem( parent ), m_startAngle( -5 ), m_endAngle( 185 ),
-    m_spacing( 10 ), m_radius( 90 )
+    m_spacing( 10 ), m_radius( 90 ), m_isHovered( false )
 {
 }
 
@@ -76,4 +76,16 @@ void FanMenu::setEndAngle( int angle )
 void FanMenu::setSpacing( int spacing )
 {
   m_spacing = spacing;
+}
+
+void FanMenu::setIsHovered( bool hovered )
+{
+  m_isHovered = hovered;
+
+  emit hoverStateChanged( m_isHovered );
+}
+
+bool FanMenu::isHovered() const
+{
+  return m_isHovered;
 }

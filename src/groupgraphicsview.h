@@ -31,6 +31,7 @@ class QAnimationGroup;
 class MainMenuItem;
 class MagicMenuItem;
 class GroupAdderItem;
+class MenuHandler;
 
 struct TodoItemGroup {
 
@@ -137,6 +138,8 @@ class GroupGraphicsView : public GroupView
 
     FanMenu *m_globalMenu;
     FanMenuItem *m_addLabelItem;
+
+    MenuHandler *m_menuHandler;
 };
 
 #endif

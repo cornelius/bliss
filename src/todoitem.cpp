@@ -23,11 +23,14 @@
 #include "fanmenu.h"
 #include "roundedrectitem.h"
 #include "todohandleitem.h"
+#include "menuhandler.h"
 
 #include <KLocale>
 
-TodoItem::TodoItem( MainModel *model, const Bliss::Todo &identity )
-  : QObject( model ), m_model( model ), m_todo( identity )
+TodoItem::TodoItem( MainModel *model, MenuHandler *menuHandler,
+  const Bliss::Todo &identity )
+  : QObject( model ), m_model( model ), m_todo( identity ),
+    m_menuHandler( menuHandler )
 {
   init();
 }
@@ -35,13 +38,17 @@ TodoItem::TodoItem( MainModel *model, const Bliss::Todo &identity )
 TodoItem::TodoItem( QGraphicsItem *item, MainModel *model,
   const Bliss::Todo &identity )
   : QObject( model ), QGraphicsItemGroup( item ), m_model( model ),
-    m_todo( identity )
+    m_todo( identity ), m_menuHandler( 0 )
 {
   init();
 }
 
 void TodoItem::init()
 {
+  m_menusEnabled = true;
+
+  m_isHovered = false;
+
   setFlags( ItemIsMovable );
 
   updateItem( m_todo );
@@ -49,7 +56,9 @@ void TodoItem::init()
 
 void TodoItem::enableMenus( bool enabled )
 {
-  m_handleItem->enableMenus( enabled );
+  m_menusEnabled = enabled;
+
+  if ( !m_menusEnabled ) hidePopups();
 }
 
 void TodoItem::updateItem( const Bliss::Todo &todo )
@@ -61,8 +70,6 @@ void TodoItem::updateItem( const Bliss::Todo &todo )
   }
 
   m_handleItem = new TodoHandleItem( this, m_model, m_todo );
-  connect( m_handleItem, SIGNAL( removeClicked() ), SLOT( emitRemoveTodo() ) );
-  connect( m_handleItem, SIGNAL( showClicked() ), SLOT( emitShowTodo() ) );
   
   int itemSize = m_handleItem->itemSize();
   
@@ -75,6 +82,22 @@ void TodoItem::updateItem( const Bliss::Todo &todo )
   m_textCenterX = textWidth / 2;
   
   m_nameItem->setPos( itemSize / 2 + 16, - textHeight / 2 + 2 );
+
+  if ( m_menuHandler ) {
+    m_fanMenu = m_menuHandler->createMenu();
+    connect( m_fanMenu, SIGNAL( hoverStateChanged( bool ) ),
+      SLOT( checkMenuVisibility() ) );
+
+    FanMenuItem *menuItem = m_fanMenu->addItem( i18n("Remove") );
+    connect( menuItem, SIGNAL( clicked() ), SLOT( emitRemoveTodo() ) );
+    if ( todo.type() == "group" ) {
+      menuItem = m_fanMenu->addItem( i18n("Go to") );
+    }
+    connect( menuItem, SIGNAL( clicked() ), SLOT( emitShowTodo() ) );
+    m_fanMenu->setupItems();
+
+    hidePopups();
+  }
 }
 
 Bliss::Todo TodoItem::todo() const
@@ -102,22 +125,48 @@ QPointF TodoItem::rememberedPos() const
   return m_rememberedPos;
 }
 
+void TodoItem::showPopups()
+{
+  if ( m_menusEnabled ) {
+    m_menuHandler->showMenu( m_fanMenu, scenePos() );
+    emit menuShown();
+  }
+}
+
+void TodoItem::hidePopups()
+{
+  if ( m_menuHandler ) {
+    m_fanMenu->hide();
+  }
+}
+
 void TodoItem::hoverEnterEvent( QGraphicsSceneHoverEvent *event )
 {
   QLineF distance = QLineF( QPointF( 0, 0 ), event->pos() );
 
   if ( distance.length() <= m_handleItem->itemSize() / 2 + 2 ) {
-    m_handleItem->showPopups();
+    showPopups();
   }
 
   QGraphicsItemGroup::hoverEnterEvent( event );
+
+  m_isHovered = true;
 }
 
 void TodoItem::hoverLeaveEvent( QGraphicsSceneHoverEvent *event )
 {
   QGraphicsItemGroup::hoverLeaveEvent( event );
 
-  m_handleItem->hidePopups();
+  QTimer::singleShot( 0, this, SLOT( checkMenuVisibility() ) );
+
+  m_isHovered = false;
+}
+
+void TodoItem::checkMenuVisibility()
+{
+  if ( !m_fanMenu->isHovered() && !m_isHovered ) {
+    hidePopups();
+  }  
 }
 
 void TodoItem::mousePressEvent( QGraphicsSceneMouseEvent *event )
@@ -125,6 +174,8 @@ void TodoItem::mousePressEvent( QGraphicsSceneMouseEvent *event )
   m_movePos = pos();
 
   QGraphicsItemGroup::mousePressEvent( event );
+
+  hidePopups();
 }
 
 void TodoItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
@@ -154,9 +205,4 @@ void TodoItem::undoMove()
 int TodoItem::textCenterX()
 {
   return m_textCenterX;
-}
-
-void TodoItem::hidePopups()
-{
-  m_handleItem->hidePopups();
 }

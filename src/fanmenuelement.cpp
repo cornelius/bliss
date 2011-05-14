@@ -92,9 +92,20 @@ void FanMenuElement::updateText()
 void FanMenuElement::mousePressEvent( QGraphicsSceneMouseEvent * )
 {
   m_item->emitClicked();
+
+  m_menu->hide();
 }
 
 void FanMenuElement::hoverEnterEvent( QGraphicsSceneHoverEvent *event )
 {
+  m_menu->setIsHovered( true );
+
   QGraphicsPathItem::hoverEnterEvent( event );
+}
+
+void FanMenuElement::hoverLeaveEvent( QGraphicsSceneHoverEvent *event )
+{
+  m_menu->setIsHovered( false );
+
+  QGraphicsPathItem::hoverLeaveEvent( event );
 }

@@ -45,29 +45,14 @@ class TodoHandleItem : public QObject, public QGraphicsEllipseItem
 
     void updateItem( const Bliss::Todo & );
 
-    void showPopups();
-    void hidePopups();
-
-    void enableMenus( bool enabled );
-
     void undoMove();
 
     int textCenterX();
     
   signals:
-    void showGroup( const Bliss::Todo & );
-  
-    void showTodo( const Bliss::Todo & );
-    void removeTodo( const Bliss::Todo & );
-
     void itemMoved( TodoHandleItem *, const QPointF & );
-    
-    void menuShown();
 
     void itemDropped( TodoHandleItem * );
-
-    void removeClicked();
-    void showClicked();
 
   protected:
     void init();
@@ -81,10 +66,6 @@ class TodoHandleItem : public QObject, public QGraphicsEllipseItem
   private:
     MainModel *m_model;
     Bliss::Todo m_todo;
-
-    bool m_menusEnabled;
-
-    FanMenu *m_fanMenu;
 
     int m_itemSize;
     

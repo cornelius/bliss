@@ -29,7 +29,7 @@ class FanMenu : public QObject, public QGraphicsLineItem
 {
     Q_OBJECT
   public:
-    FanMenu( QGraphicsItem *parent );
+    FanMenu( QGraphicsItem *parent = 0 );
 
     /**
       Setup items. freeSpace is the percentage of the radius the menu covers.
@@ -48,6 +48,12 @@ class FanMenu : public QObject, public QGraphicsLineItem
 
     void setSpacing( int );
 
+    void setIsHovered( bool );
+    bool isHovered() const;
+
+  signals:
+    void hoverStateChanged( bool );
+
   private:
     QList<FanMenuItem *> m_items;
 
@@ -57,6 +63,8 @@ class FanMenu : public QObject, public QGraphicsLineItem
     int m_spacing;
 
     qreal m_radius;
+    
+    bool m_isHovered;
 };
 
 #endif

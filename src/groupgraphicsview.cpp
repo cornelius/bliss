@@ -28,6 +28,7 @@
 #include "magicmenuitem.h"
 #include "settings.h"
 #include "groupadderitem.h"
+#include "menuhandler.h"
 
 #include <KLocale>
 #include <KInputDialog>
@@ -47,9 +48,10 @@ GroupGraphicsView::GroupGraphicsView( MainModel *model, QWidget *parent )
   QBoxLayout *topLayout = new QVBoxLayout( this );
 
   m_scene = new QGraphicsScene;
-//  m_scene->setBackgroundBrush( Qt::red );
   m_scene->setBackgroundBrush( QColor( 231,228,211 ) );
   m_scene->setSceneRect( -1000, -1000, 2000, 2000 );
+
+  m_menuHandler = new MenuHandler( m_scene );
 
   m_view = new TrackingGraphicsView( m_scene );
   m_view->setRenderHint( QPainter::Antialiasing );
@@ -345,7 +347,7 @@ TodoItemGroup GroupGraphicsView::prepareTodoItems( bool doAnimation )
     qreal posX = x;
     qreal posY = y * spacing;
 
-    TodoItem *item = new TodoItem( model(), todo );
+    TodoItem *item = new TodoItem( model(), m_menuHandler, todo );
     result.items.append( item );
 
     connect( item, SIGNAL( showTodo( const Bliss::Todo & ) ),

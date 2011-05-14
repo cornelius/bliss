@@ -1,5 +1,5 @@
 /*
-    This file is part of KDE.
+    Copyright (c) 2011 Cornelius Schumacher <schumacher@kde.org>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,31 +16,27 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
     USA.
 */
-#ifndef FANMENUELEMENT_H
-#define FANMENUELEMENT_H
+
+#include "menuhandler.h"
 
 #include "fanmenu.h"
 
-#include <QtGui>
-
-class FanMenuElement : public QGraphicsPathItem
+MenuHandler::MenuHandler( QGraphicsScene *scene )
+  : m_scene( scene )
 {
-  public:
-    FanMenuElement( FanMenu * );
+}
 
-    void setup( FanMenuItem *, int startAngle, int endAngle, int coverage );
+FanMenu *MenuHandler::createMenu()
+{
+  FanMenu *menu = new FanMenu;
+  menu->setZValue( 100 );
+  m_scene->addItem( menu );
+  menu->hide();
+  return menu;
+}
 
-    void updateText();
-
-  protected:
-    void mousePressEvent( QGraphicsSceneMouseEvent * );
-    void hoverEnterEvent( QGraphicsSceneHoverEvent * );
-    void hoverLeaveEvent( QGraphicsSceneHoverEvent * );
-
-  private:
-    FanMenu *m_menu;
-    FanMenuItem *m_item;
-    QGraphicsTextItem *m_textItem;
-};
-
-#endif
+void MenuHandler::showMenu( FanMenu *menu, const QPointF &pos )
+{
+  menu->setPos( pos );
+  menu->show();
+}

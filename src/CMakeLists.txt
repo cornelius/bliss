@@ -1,4 +1,5 @@
 set(bliss_bin_SRCS
+  menuhandler.cpp
   todohandleitem.cpp
   matchlist.cpp
   searchresultview.cpp
