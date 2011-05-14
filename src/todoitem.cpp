@@ -22,6 +22,7 @@
 #include "mainmodel.h"
 #include "fanmenu.h"
 #include "roundedrectitem.h"
+#include "todohandleitem.h"
 
 #include <KLocale>
 
@@ -33,7 +34,7 @@ TodoItem::TodoItem( MainModel *model, const Bliss::Todo &identity )
 
 TodoItem::TodoItem( QGraphicsItem *item, MainModel *model,
   const Bliss::Todo &identity )
-  : QObject( model ), QGraphicsEllipseItem( item ), m_model( model ),
+  : QObject( model ), QGraphicsItemGroup( item ), m_model( model ),
     m_todo( identity )
 {
   init();
@@ -41,18 +42,6 @@ TodoItem::TodoItem( QGraphicsItem *item, MainModel *model,
 
 void TodoItem::init()
 {
-  m_itemSize = 60;
-  m_menusEnabled = true;
-
-  setRect( -m_itemSize/2, -m_itemSize/2, m_itemSize, m_itemSize );
-  setBrush( Qt::white );
-
-  QPen pen;
-  pen.setBrush( Qt::NoBrush );
-  setPen( pen );
-
-  setAcceptHoverEvents( true );
-
   setFlags( ItemIsMovable );
 
   updateItem( m_todo );
@@ -60,56 +49,32 @@ void TodoItem::init()
 
 void TodoItem::enableMenus( bool enabled )
 {
-  m_menusEnabled = enabled;
-  
-  if ( !m_menusEnabled ) hidePopups();
+  m_handleItem->enableMenus( enabled );
 }
 
-void TodoItem::updateItem( const Bliss::Todo &identity )
+void TodoItem::updateItem( const Bliss::Todo &todo )
 {
-  m_todo = identity;
+  m_todo = todo;
   
   foreach( QGraphicsItem *child, childItems() ) {
     delete child;
   }
-  
-  if ( identity.type() == "group" ) {
-    int circleSize = m_itemSize + 14;
-    QGraphicsEllipseItem *groupCircle = new QGraphicsEllipseItem( this );
-    groupCircle->setRect( -circleSize/2, -circleSize/2,
-      circleSize, circleSize );
-    QPen pen;
-    pen.setBrush( Qt::white );
-    pen.setWidth( 4 );
-    groupCircle->setPen( pen );
-  }
-  
-  QPixmap pixmap = m_model->pixmap( identity );
 
-  QGraphicsItem *item = new QGraphicsPixmapItem( pixmap, this );  
-  item->setPos( -pixmap.width() / 2, -pixmap.height() / 2 );
-
-  m_nameItem = new QGraphicsTextItem( identity.summary().value(), this );
+  m_handleItem = new TodoHandleItem( this, m_model, m_todo );
+  connect( m_handleItem, SIGNAL( removeClicked() ), SLOT( emitRemoveTodo() ) );
+  connect( m_handleItem, SIGNAL( showClicked() ), SLOT( emitShowTodo() ) );
+  
+  int itemSize = m_handleItem->itemSize();
+  
+  m_nameItem = new QGraphicsTextItem( todo.summary().value(), this );
+  m_nameItem->setAcceptHoverEvents( false );
 
   int textWidth = m_nameItem->boundingRect().width();
   int textHeight = m_nameItem->boundingRect().height();
 
   m_textCenterX = textWidth / 2;
   
-  m_nameItem->setPos( m_itemSize / 2 + 16, - textHeight / 2 );
-
-  m_fanMenu = new FanMenu( this );
-  m_fanMenu->setZValue( 50 );
-
-  FanMenuItem *menuItem = m_fanMenu->addItem( i18n("Remove") );
-  connect( menuItem, SIGNAL( clicked() ), SLOT( emitRemoveTodo() ) );
-  if ( identity.type() == "group" ) {
-    menuItem = m_fanMenu->addItem( i18n("Go to") );
-  }
-  connect( menuItem, SIGNAL( clicked() ), SLOT( emitShowTodo() ) );
-  m_fanMenu->setupItems();
-
-  hidePopups();
+  m_nameItem->setPos( itemSize / 2 + 16, - textHeight / 2 + 2 );
 }
 
 Bliss::Todo TodoItem::todo() const
@@ -137,34 +102,29 @@ QPointF TodoItem::rememberedPos() const
   return m_rememberedPos;
 }
 
-void TodoItem::hidePopups()
-{
-  m_fanMenu->hide();
-}
-
 void TodoItem::hoverEnterEvent( QGraphicsSceneHoverEvent *event )
 {
-  Q_UNUSED( event );
+  QLineF distance = QLineF( QPointF( 0, 0 ), event->pos() );
 
-  if ( m_menusEnabled ) {
-    m_nameItem->show();
-    m_fanMenu->show();
-    emit menuShown();
+  if ( distance.length() <= m_handleItem->itemSize() / 2 + 2 ) {
+    m_handleItem->showPopups();
   }
+
+  QGraphicsItemGroup::hoverEnterEvent( event );
 }
 
 void TodoItem::hoverLeaveEvent( QGraphicsSceneHoverEvent *event )
 {
-  Q_UNUSED( event );
+  QGraphicsItemGroup::hoverLeaveEvent( event );
 
-  hidePopups();
+  m_handleItem->hidePopups();
 }
 
 void TodoItem::mousePressEvent( QGraphicsSceneMouseEvent *event )
 {
   m_movePos = pos();
 
-  QGraphicsEllipseItem::mousePressEvent( event );
+  QGraphicsItemGroup::mousePressEvent( event );
 }
 
 void TodoItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
@@ -173,7 +133,7 @@ void TodoItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
     emit itemMoved( this, pos() );
   }
 
-  QGraphicsEllipseItem::mouseReleaseEvent( event );
+  QGraphicsItemGroup::mouseReleaseEvent( event );
 }
 
 void TodoItem::emitShowTodo()
@@ -186,12 +146,6 @@ void TodoItem::emitRemoveTodo()
   emit removeTodo( m_todo );
 }
 
-QVariant TodoItem::itemChange( GraphicsItemChange change,
-  const QVariant &value )
-{
-  return QGraphicsEllipseItem::itemChange( change, value );
-}
-
 void TodoItem::undoMove()
 {
   setPos( m_movePos );
@@ -200,4 +154,9 @@ void TodoItem::undoMove()
 int TodoItem::textCenterX()
 {
   return m_textCenterX;
+}
+
+void TodoItem::hidePopups()
+{
+  m_handleItem->hidePopups();
 }

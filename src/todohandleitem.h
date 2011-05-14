@@ -16,8 +16,8 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
     USA.
 */
-#ifndef TODOITEM_H
-#define TODOITEM_H
+#ifndef TODOHANDLEITEM_H
+#define TODOHANDLEITEM_H
 
 #include "bliss/bliss.h"
 #include "fanmenu.h"
@@ -26,9 +26,8 @@
 
 class MainModel;
 class RoundedRectItem;
-class TodoHandleItem;
 
-class TodoItem : public QObject, public QGraphicsItemGroup
+class TodoHandleItem : public QObject, public QGraphicsEllipseItem
 {
     Q_OBJECT
 
@@ -37,26 +36,23 @@ class TodoItem : public QObject, public QGraphicsItemGroup
     Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity)
 
   public:
-    TodoItem( MainModel *, const Bliss::Todo & );
-    TodoItem( QGraphicsItem *, MainModel *, const Bliss::Todo & );
+    TodoHandleItem( MainModel *, const Bliss::Todo & );
+    TodoHandleItem( QGraphicsItem *, MainModel *, const Bliss::Todo & );
+
+    int itemSize() const;
 
     Bliss::Todo todo() const;
 
     void updateItem( const Bliss::Todo & );
 
-    void setDefaultPos( const QPointF & );
-    QPointF defaultPos() const;
-
-    void rememberPos( const QPointF & );
-    QPointF rememberedPos() const;
+    void showPopups();
+    void hidePopups();
 
     void enableMenus( bool enabled );
 
     void undoMove();
 
     int textCenterX();
-
-    void hidePopups();
     
   signals:
     void showGroup( const Bliss::Todo & );
@@ -64,13 +60,14 @@ class TodoItem : public QObject, public QGraphicsItemGroup
     void showTodo( const Bliss::Todo & );
     void removeTodo( const Bliss::Todo & );
 
-    void itemMoved( TodoItem *, const QPointF & );
+    void itemMoved( TodoHandleItem *, const QPointF & );
     
-    void itemChecked( const Bliss::Todo &, bool );
-
     void menuShown();
 
-    void itemDropped( TodoItem * );
+    void itemDropped( TodoHandleItem * );
+
+    void removeClicked();
+    void showClicked();
 
   protected:
     void init();
@@ -81,23 +78,16 @@ class TodoItem : public QObject, public QGraphicsItemGroup
     void mousePressEvent( QGraphicsSceneMouseEvent *event );
     void mouseReleaseEvent( QGraphicsSceneMouseEvent *event );
 
-  protected slots:
-    void emitShowTodo();
-    void emitRemoveTodo();
-
   private:
     MainModel *m_model;
     Bliss::Todo m_todo;
 
-    QPointF m_defaultPos;
-    QPointF m_rememberedPos;
+    bool m_menusEnabled;
 
-    TodoHandleItem *m_handleItem;
+    FanMenu *m_fanMenu;
 
-    QGraphicsTextItem *m_nameItem;
-
-    QPointF m_movePos;
-
+    int m_itemSize;
+    
     int m_textCenterX;
 };
 

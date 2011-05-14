@@ -1,4 +1,5 @@
 set(bliss_bin_SRCS
+  todohandleitem.cpp
   matchlist.cpp
   searchresultview.cpp
   searchedit.cpp
