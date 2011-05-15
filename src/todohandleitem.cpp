@@ -54,7 +54,7 @@ TodoHandleItem::TodoHandleItem( QGraphicsItem *item, MainModel *model )
 
 void TodoHandleItem::init()
 {
-  m_itemSize = 60;
+  m_itemSize = 30;
 
   setRect( -m_itemSize/2, -m_itemSize/2, m_itemSize, m_itemSize );
   setBrush( Qt::white );

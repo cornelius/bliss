@@ -329,7 +329,7 @@ TodoItemGroup GroupGraphicsView::prepareTodoItems( bool doAnimation )
     sortedTodos = todos;
   }
   
-  int spacing = 80;
+  int spacing = 50;
 
   int x = 0;
   int y = 0;

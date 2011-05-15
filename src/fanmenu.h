@@ -34,7 +34,7 @@ class FanMenu : public QObject, public QGraphicsLineItem
     /**
       Setup items. freeSpace is the percentage of the radius the menu covers.
     */
-    void setupItems( int coverage = 67 );
+    void setupItems( int coverage = 80 );
 
     FanMenuItem *addItem( const QString &text ); 
 
