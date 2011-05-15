@@ -76,6 +76,9 @@ class GroupGraphicsView : public GroupView
 
     void clearItems();
 
+    void preparePos( TodoItem *item, qreal itemX, qreal itemY,
+      bool doAnimation );
+
   protected slots:
     void resetLayout();
   

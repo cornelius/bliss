@@ -43,6 +43,15 @@ TodoItem::TodoItem( QGraphicsItem *item, MainModel *model,
   init();
 }
 
+TodoItem::TodoItem( MainModel *model )
+  : QObject( model ), m_model( model ),
+    m_menuHandler( 0 )
+{
+  m_menusEnabled = false;
+
+  m_handleItem = new TodoHandleItem( this, m_model );
+}
+
 void TodoItem::init()
 {
   m_menusEnabled = true;
@@ -166,7 +175,7 @@ void TodoItem::checkMenuVisibility()
 {
   if ( !m_fanMenu->isHovered() && !m_isHovered ) {
     hidePopups();
-  }  
+  }
 }
 
 void TodoItem::mousePressEvent( QGraphicsSceneMouseEvent *event )
@@ -176,6 +185,8 @@ void TodoItem::mousePressEvent( QGraphicsSceneMouseEvent *event )
   QGraphicsItemGroup::mousePressEvent( event );
 
   hidePopups();
+
+  emit itemPressed();
 }
 
 void TodoItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )

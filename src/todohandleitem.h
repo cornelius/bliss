@@ -38,6 +38,7 @@ class TodoHandleItem : public QObject, public QGraphicsEllipseItem
   public:
     TodoHandleItem( MainModel *, const Bliss::Todo & );
     TodoHandleItem( QGraphicsItem *, MainModel *, const Bliss::Todo & );
+    TodoHandleItem( QGraphicsItem *item, MainModel *model );
 
     int itemSize() const;
 
@@ -56,6 +57,7 @@ class TodoHandleItem : public QObject, public QGraphicsEllipseItem
 
   protected:
     void init();
+    void initTodo();
   
     void hoverEnterEvent( QGraphicsSceneHoverEvent *event );
     void hoverLeaveEvent( QGraphicsSceneHoverEvent *event );

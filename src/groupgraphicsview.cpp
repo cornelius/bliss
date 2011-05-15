@@ -57,7 +57,7 @@ GroupGraphicsView::GroupGraphicsView( MainModel *model, QWidget *parent )
   m_view->setRenderHint( QPainter::Antialiasing );
   topLayout->addWidget( m_view );
   m_view->show();
-  m_view->installEventFilter( this );
+//  m_view->installEventFilter( this );
   connect( m_view, SIGNAL( mouseMoved( const QPoint & ) ),
     SLOT( slotMouseMoved( const QPoint & ) ) );
   connect( m_view, SIGNAL( viewportMoved() ), SLOT( positionAbsoluteItems() ) );
@@ -374,18 +374,7 @@ TodoItemGroup GroupGraphicsView::prepareTodoItems( bool doAnimation )
       itemY = posY;
     }
 
-    if ( doAnimation ) {
-      QPropertyAnimation *animation = new QPropertyAnimation(item, "pos", this);
-      m_placeItemsAnimation->insertAnimation( 0, animation );
-      m_placeItemsAnimations.append( animation );
-
-      animation->setDuration( 300 );
-      QPointF target( itemX, itemY );
-      animation->setEndValue( target );
-      animation->setEasingCurve( QEasingCurve::OutCubic );
-    } else {
-      item->setPos( itemX, itemY );
-    }
+    preparePos( item, itemX, itemY, doAnimation );
 
     if ( firstItem ) {
       firstItem = false;
@@ -406,12 +395,36 @@ TodoItemGroup GroupGraphicsView::prepareTodoItems( bool doAnimation )
       result.previousGroup = item;
     }
   }
+
+  // Create handle item for adding new todos
+  TodoItem *item = new TodoItem( model() );
+  result.items.append( item );
+  maxY += spacing;
+  preparePos( item, x, maxY, doAnimation );
+  connect( item, SIGNAL( itemPressed() ), SIGNAL( newTodo() ) );
   
   qreal centerY = ( minY + maxY ) / 2;
 
   result.center = QPointF( centerX, centerY );
 
   return result;
+}
+
+void GroupGraphicsView::preparePos( TodoItem *item, qreal itemX, qreal itemY,
+  bool doAnimation )
+{
+  if ( doAnimation ) {
+    QPropertyAnimation *animation = new QPropertyAnimation(item, "pos", this);
+    m_placeItemsAnimation->insertAnimation( 0, animation );
+    m_placeItemsAnimations.append( animation );
+
+    animation->setDuration( 300 );
+    QPointF target( itemX, itemY );
+    animation->setEndValue( target );
+    animation->setEasingCurve( QEasingCurve::OutCubic );
+  } else {
+    item->setPos( itemX, itemY );
+  }
 }
 
 void GroupGraphicsView::createLabelItems()

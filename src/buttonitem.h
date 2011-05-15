@@ -35,6 +35,8 @@ class ButtonItem : public QObject, public QGraphicsEllipseItem
     void setNext();
     void setPrevious();
 
+    void setClickEnabled( bool enabled );
+
   signals:
     void clicked();
 
@@ -47,6 +49,8 @@ class ButtonItem : public QObject, public QGraphicsEllipseItem
 
   private:
     int m_defaultItemSize;
+
+    bool m_clickEnabled;
 
     QGraphicsPolygonItem *m_decoration;
     

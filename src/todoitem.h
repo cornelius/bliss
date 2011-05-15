@@ -40,6 +40,7 @@ class TodoItem : public QObject, public QGraphicsItemGroup
   public:
     TodoItem( MainModel *, MenuHandler *, const Bliss::Todo & );
     TodoItem( QGraphicsItem *, MainModel *, const Bliss::Todo & );
+    TodoItem( MainModel * );
 
     Bliss::Todo todo() const;
 
@@ -69,6 +70,8 @@ class TodoItem : public QObject, public QGraphicsItemGroup
     void itemMoved( TodoItem *, const QPointF & );
     
     void itemChecked( const Bliss::Todo &, bool );
+
+    void itemPressed();
 
     void menuShown();
 

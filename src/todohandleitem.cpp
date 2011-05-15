@@ -22,6 +22,7 @@
 #include "mainmodel.h"
 #include "fanmenu.h"
 #include "roundedrectitem.h"
+#include "buttonitem.h"
 
 #include <KLocale>
 
@@ -29,6 +30,7 @@ TodoHandleItem::TodoHandleItem( MainModel *model, const Bliss::Todo &identity )
   : QObject( model ), m_model( model ), m_todo( identity )
 {
   init();
+  initTodo();
 }
 
 TodoHandleItem::TodoHandleItem( QGraphicsItem *item, MainModel *model,
@@ -37,6 +39,17 @@ TodoHandleItem::TodoHandleItem( QGraphicsItem *item, MainModel *model,
     m_todo( identity )
 {
   init();
+  initTodo();
+}
+
+TodoHandleItem::TodoHandleItem( QGraphicsItem *item, MainModel *model )
+  : QObject( model ), QGraphicsEllipseItem( item ), m_model( model )
+{
+  init();
+  
+  ButtonItem *button = new ButtonItem( this );
+  button->setPlus();
+  button->setClickEnabled( false );
 }
 
 void TodoHandleItem::init()
@@ -49,7 +62,10 @@ void TodoHandleItem::init()
   QPen pen;
   pen.setBrush( Qt::NoBrush );
   setPen( pen );
+}
 
+void TodoHandleItem::initTodo()
+{
   setAcceptHoverEvents( true );
 
   updateItem( m_todo );

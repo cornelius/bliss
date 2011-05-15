@@ -20,7 +20,8 @@
 #include "buttonitem.h"
 
 ButtonItem::ButtonItem( QGraphicsItem *parentItem )
-  : QGraphicsEllipseItem( parentItem ), m_defaultItemSize( 30 )
+  : QGraphicsEllipseItem( parentItem ), m_defaultItemSize( 30 ),
+    m_clickEnabled( true )
 {
   setItemSize( m_defaultItemSize );
  
@@ -66,6 +67,19 @@ ButtonItem::ButtonItem( QGraphicsItem *parentItem )
   m_arrowPolygon.append( QPointF( - outer, inner ) );
 
   setPlus();
+}
+
+void ButtonItem::setClickEnabled( bool enabled )
+{
+  m_clickEnabled = enabled;
+  
+  if ( m_clickEnabled ) {
+    setAcceptedMouseButtons( Qt::LeftButton );
+    m_decoration->setAcceptedMouseButtons( Qt::LeftButton );
+  } else {
+    setAcceptedMouseButtons( 0 );
+    m_decoration->setAcceptedMouseButtons( 0 );
+  }
 }
 
 void ButtonItem::setPlus()
