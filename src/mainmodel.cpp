@@ -471,7 +471,6 @@ void MainModel::saveViewSequence( const Bliss::Todo &group,
                                               
   Bliss::TodoSequence sequence;
   foreach( QString id, ids ) {
-    qDebug() << "ID" << id;
     Bliss::TodoId todoId;
     todoId.setValue( id );
     sequence.addTodoId( todoId );
