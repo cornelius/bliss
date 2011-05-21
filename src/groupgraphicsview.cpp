@@ -168,6 +168,17 @@ void GroupGraphicsView::clearItems()
   m_globalMenu = 0;
 }
 
+void GroupGraphicsView::preparePlaceItemsAnimation()
+{
+  if ( !m_placeItemsAnimation ) {
+    m_placeItemsAnimation = new QParallelAnimationGroup( this );
+    connect( m_placeItemsAnimation, SIGNAL( finished() ),
+      SLOT( finishPlaceItems() ) );
+  }
+  m_placeItemsAnimation->clear();
+  m_placeItemsAnimations.clear();
+}
+
 void GroupGraphicsView::placeItems()
 {
   bool doAnimation = false;
@@ -176,13 +187,7 @@ void GroupGraphicsView::placeItems()
   if ( m_previousItem ) {
     doAnimation = true;
 
-    if ( !m_placeItemsAnimation ) {
-      m_placeItemsAnimation = new QParallelAnimationGroup( this );
-      connect( m_placeItemsAnimation, SIGNAL( finished() ),
-        SLOT( finishPlaceItems() ) );
-    }
-    m_placeItemsAnimation->clear();
-    m_placeItemsAnimations.clear();
+    preparePlaceItemsAnimation();
 
     previousItemPos = m_view->mapFromScene( m_previousItem->pos() );
   }
@@ -202,7 +207,7 @@ void GroupGraphicsView::placeItems()
     foreach( QPropertyAnimation *animation, m_placeItemsAnimations ) {
       animation->setStartValue( m_view->mapToScene( previousItemPos ) );
     }
-  
+    
     m_placeItemsAnimation->start();
   } else {
     createLabelItems();
@@ -470,20 +475,37 @@ void GroupGraphicsView::slotRemoveTodo( const Bliss::Todo &identity )
   emit removeTodo( identity, group() );
 }
 
-void GroupGraphicsView::slotItemMoved( TodoItem *item,
+void GroupGraphicsView::slotItemMoved( TodoItem *todoItem,
   const QPointF &pos )
 {
   Q_UNUSED( pos )
   
-  if ( item->collidesWithItem( m_groupAdderItem ) ) {
-    item->undoMove();
-    model()->addTodo( item->todo(), m_groupAdderItem->group() );
+  if ( todoItem->collidesWithItem( m_groupAdderItem ) ) {
+    todoItem->undoMove();
+    model()->addTodo( todoItem->todo(), m_groupAdderItem->group() );
   } else {
+    if ( m_placeItemsAnimation ) m_placeItemsAnimation->stop();
+
+    preparePlaceItemsAnimation();
+    
     QMap <qreal, QString> map;
     foreach( TodoItem *i, m_items ) {
       map.insert( i->pos().y(), i->todo().id() );
     }
     model()->saveViewSequence( group(), map.values() );
+  
+    QList<TodoItem *> sortedItems;
+    
+    Bliss::Todo::List todos = model()->todosOfGroup( group() );
+    foreach( Bliss::Todo todo, todos ) {
+      sortedItems.append( item( todo ) );
+    }
+    
+    m_items = sortedItems;
+
+    preparePositions( m_items, true );
+
+    m_placeItemsAnimation->start();
   }
 }
 

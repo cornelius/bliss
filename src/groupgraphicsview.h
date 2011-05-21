@@ -76,6 +76,8 @@ class GroupGraphicsView : public GroupView
 
     void clearItems();
 
+    void preparePlaceItemsAnimation();
+
     QPointF preparePositions(const QList<TodoItem *> &todoItems,
       bool doAnimation );
 
