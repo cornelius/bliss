@@ -115,7 +115,36 @@ Bliss::Todo::List MainModel::todosOfGroup( const QString &id )
   if ( !m_groupMap.contains( id ) ) {
     m_groupMap.insert( id, Bliss::Todo::List() );
   }
-  return m_groupMap[ id ];
+
+  Bliss::Todo::List todos = m_groupMap[ id ];
+
+  Bliss::Todo::List sortedTodos;
+
+  Bliss::GroupView view = groupView( id );
+  if ( view.isValid() ) {
+    Bliss::TodoId::List todoIdList = view.todoSequence().todoIdList();
+    foreach( Bliss::TodoId id, todoIdList ) {
+      foreach( Bliss::Todo todo, todos ) {
+        if ( todo.id() == id.value() ) {
+          sortedTodos.append( todo );
+          break;
+        }
+      }
+    }
+    foreach( Bliss::Todo todo, todos ) {
+      Bliss::TodoId::List::ConstIterator it;
+      for( it = todoIdList.begin(); it != todoIdList.end(); ++it ) {
+        if ( todo.id() == (*it).value() ) break;
+      }
+      if ( it == todoIdList.end() ) {
+        sortedTodos.append( todo );
+      }
+    }
+  } else {
+    sortedTodos = todos;
+  }
+  
+  return sortedTodos;
 }
 
 BlissItemModel *MainModel::allItemModel()
@@ -422,7 +451,12 @@ void MainModel::clearViewPositions( const Bliss::Todo &group )
 
 Bliss::GroupView MainModel::groupView( const Bliss::Todo &group )
 {
-  return m_bliss.findGroupView( group.id() );
+  return groupView( group.id() );
+}
+
+Bliss::GroupView MainModel::groupView( const QString &groupId )
+{
+  return m_bliss.findGroupView( groupId );
 }
 
 void MainModel::createFirstStartData()

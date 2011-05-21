@@ -303,33 +303,7 @@ TodoItemGroup GroupGraphicsView::prepareTodoItems( bool doAnimation )
   
   Bliss::Todo::List todos = model()->todosOfGroup( group() );
 
-  Bliss::Todo::List sortedTodos;
-
-  Bliss::GroupView groupView = model()->groupView( group() );
-  if ( groupView.isValid() ) {
-    Bliss::TodoId::List todoIdList = groupView.todoSequence().todoIdList();
-    foreach( Bliss::TodoId id, todoIdList ) {
-      foreach( Bliss::Todo todo, todos ) {
-        if ( todo.id() == id.value() ) {
-          sortedTodos.append( todo );
-          break;
-        }
-      }
-    }
-    foreach( Bliss::Todo todo, todos ) {
-      Bliss::TodoId::List::ConstIterator it;
-      for( it = todoIdList.begin(); it != todoIdList.end(); ++it ) {
-        if ( todo.id() == (*it).value() ) break;
-      }
-      if ( it == todoIdList.end() ) {
-        sortedTodos.append( todo );
-      }
-    }
-  } else {
-    sortedTodos = todos;
-  }
-  
-  foreach( Bliss::Todo todo, sortedTodos ) {
+  foreach( Bliss::Todo todo, todos ) {
     TodoItem *item = new TodoItem( model(), m_menuHandler, todo );
     result.items.append( item );
 

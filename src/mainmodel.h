@@ -82,6 +82,7 @@ class MainModel : public QObject
     void saveViewSequence( const Bliss::Todo &group, const QStringList &ids );
     
     Bliss::GroupView groupView( const Bliss::Todo &group );
+    Bliss::GroupView groupView( const QString &groupId );
 
     QPixmap pixmap( const Bliss::Todo & ) const;
 
