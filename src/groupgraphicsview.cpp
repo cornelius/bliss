@@ -354,15 +354,13 @@ TodoItemGroup GroupGraphicsView::prepareTodoItems( bool doAnimation )
   connect( item, SIGNAL( itemPressed() ), SIGNAL( newTodo() ) );
   result.items.append( item );
   
-  Bliss::GroupView view = model()->groupView( group() );
-
-  result.center = preparePositions( result.items, view, doAnimation );
+  result.center = preparePositions( result.items, doAnimation );
 
   return result;
 }
 
 QPointF GroupGraphicsView::preparePositions( const QList<TodoItem *> &todoItems,
-  Bliss::GroupView &view, bool doAnimation )
+  bool doAnimation )
 {
   int spacing = 50;
 
@@ -375,6 +373,8 @@ QPointF GroupGraphicsView::preparePositions( const QList<TodoItem *> &todoItems,
   qreal centerX = 0;
 
   bool firstItem = true;
+
+  Bliss::GroupView view = model()->groupView( group() );
 
   foreach( TodoItem *item, todoItems ) {
     qreal posX = x;

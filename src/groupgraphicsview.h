@@ -77,7 +77,7 @@ class GroupGraphicsView : public GroupView
     void clearItems();
 
     QPointF preparePositions(const QList<TodoItem *> &todoItems,
-      Bliss::GroupView &view, bool doAnimation );
+      bool doAnimation );
 
     void preparePos( TodoItem *item, qreal itemX, qreal itemY,
       bool doAnimation );
