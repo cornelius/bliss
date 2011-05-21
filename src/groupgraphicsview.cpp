@@ -329,24 +329,7 @@ TodoItemGroup GroupGraphicsView::prepareTodoItems( bool doAnimation )
     sortedTodos = todos;
   }
   
-  int spacing = 50;
-
-  int x = 0;
-  int y = 0;
-
-  qreal minY = 0;
-  qreal maxY = 0;
-
-  qreal centerX = 0;
-
-  bool firstItem = true;
-
-  Bliss::GroupView view = model()->groupView( group() );
-
   foreach( Bliss::Todo todo, sortedTodos ) {
-    qreal posX = x;
-    qreal posY = y * spacing;
-
     TodoItem *item = new TodoItem( model(), m_menuHandler, todo );
     result.items.append( item );
 
@@ -360,12 +343,49 @@ TodoItemGroup GroupGraphicsView::prepareTodoItems( bool doAnimation )
 
     connect( item, SIGNAL( menuShown() ), SLOT( hideGlobalMenu() ) );
 
+    if ( previousGroup().isValid() &&
+         item->todo().id() == previousGroup().id() ) {
+      result.previousGroup = item;
+    }
+  }
+
+  // Create handle item for adding new todos
+  TodoItem *item = new TodoItem( model() );
+  connect( item, SIGNAL( itemPressed() ), SIGNAL( newTodo() ) );
+  result.items.append( item );
+  
+  Bliss::GroupView view = model()->groupView( group() );
+
+  result.center = preparePositions( result.items, view, doAnimation );
+
+  return result;
+}
+
+QPointF GroupGraphicsView::preparePositions( const QList<TodoItem *> &todoItems,
+  Bliss::GroupView &view, bool doAnimation )
+{
+  int spacing = 50;
+
+  int x = 0;
+  int y = 0;
+
+  qreal minY = 0;
+  qreal maxY = 0;
+
+  qreal centerX = 0;
+
+  bool firstItem = true;
+
+  foreach( TodoItem *item, todoItems ) {
+    qreal posX = x;
+    qreal posY = y * spacing;
+
     item->setDefaultPos( QPointF( posX, posY ) );
 
     qreal itemX;
     qreal itemY;
 
-    Bliss::TodoPosition p = view.findTodoPosition( todo.id() );
+    Bliss::TodoPosition p = view.findTodoPosition( item->todo().id() );
     if ( p.isValid() ) {
       itemX = p.x();
       itemY = p.y();
@@ -388,28 +408,14 @@ TodoItemGroup GroupGraphicsView::prepareTodoItems( bool doAnimation )
       if ( itemY > maxY ) maxY = itemY;
     }
 
-    y++;
-
-    if ( previousGroup().isValid() &&
-         item->todo().id() == previousGroup().id() ) {
-      result.previousGroup = item;
-    }
+    y++;    
   }
 
-  // Create handle item for adding new todos
-  TodoItem *item = new TodoItem( model() );
-  result.items.append( item );
-  maxY += spacing;
-  preparePos( item, x, maxY, doAnimation );
-  connect( item, SIGNAL( itemPressed() ), SIGNAL( newTodo() ) );
-  
   qreal centerY = ( minY + maxY ) / 2;
 
-  result.center = QPointF( centerX, centerY );
-
-  return result;
+  return QPointF( centerX, centerY );
 }
-
+  
 void GroupGraphicsView::preparePos( TodoItem *item, qreal itemX, qreal itemY,
   bool doAnimation )
 {
