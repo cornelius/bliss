@@ -358,24 +358,16 @@ void MainModel::removeTodo( const Bliss::Todo &todo,
     }
   }
   
-  if ( todo.type() != "group" && newGroups.isEmpty() ) {
-    m_bliss.remove( todo );
-    
-    setupGroups();
-    
-    emit todoRemoved( todo );
-  } else {
-    Bliss::Todo newtodo = todo;
+  Bliss::Todo newtodo = todo;
+
+  Bliss::Groups gg;
+  gg.setGroupList( newGroups );
+  newtodo.setGroups( gg );
+  m_bliss.insert( newtodo );
   
-    Bliss::Groups gg;
-    gg.setGroupList( newGroups );
-    newtodo.setGroups( gg );
-    m_bliss.insert( newtodo );
-    
-    setupGroups();
-    
-    emit todoChanged( newtodo );
-  }
+  setupGroups();
+  
+  emit todoChanged( newtodo );
 }
 
 void MainModel::deleteTodo( const Bliss::Todo &todo )
