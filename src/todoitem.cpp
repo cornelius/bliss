@@ -31,7 +31,7 @@
 TodoItem::TodoItem( MainModel *model, MenuHandler *menuHandler,
   const Bliss::Todo &todo )
   : QObject( model ), m_model( model ), m_todo( todo ),
-    m_menuHandler( menuHandler ), m_edit( 0 ), m_editProxy( 0 )
+    m_fanMenu( 0 ), m_menuHandler( menuHandler ), m_edit( 0 ), m_editProxy( 0 )
 {
   init();
 }
@@ -39,13 +39,14 @@ TodoItem::TodoItem( MainModel *model, MenuHandler *menuHandler,
 TodoItem::TodoItem( QGraphicsItem *item, MainModel *model,
   const Bliss::Todo &todo )
   : QObject( model ), QGraphicsItemGroup( item ), m_model( model ),
-    m_todo( todo ), m_menuHandler( 0 ), m_edit( 0 ), m_editProxy( 0 )
+    m_todo( todo ), m_fanMenu( 0 ), m_menuHandler( 0 ), m_edit( 0 ),
+    m_editProxy( 0 )
 {
   init();
 }
 
 TodoItem::TodoItem( MainModel *model )
-  : QObject( model ), m_model( model ),
+  : QObject( model ), m_model( model ), m_fanMenu( 0 ),
     m_menuHandler( 0 ), m_edit( 0 ), m_editProxy( 0 )
 {
   m_menusEnabled = false;
@@ -184,7 +185,7 @@ void TodoItem::hoverLeaveEvent( QGraphicsSceneHoverEvent *event )
 
 void TodoItem::checkMenuVisibility()
 {
-  if ( !m_fanMenu->isHovered() && !m_isHovered ) {
+  if ( m_fanMenu && !m_fanMenu->isHovered() && !m_isHovered ) {
     hidePopups();
   }
 }
