@@ -271,3 +271,8 @@ int TodoItem::textCenterX()
 {
   return m_textCenterX;
 }
+
+TodoHandleItem *TodoItem::handleItem() const
+{
+  return m_handleItem;
+}

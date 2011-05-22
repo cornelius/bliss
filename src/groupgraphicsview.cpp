@@ -29,6 +29,7 @@
 #include "settings.h"
 #include "groupadderitem.h"
 #include "menuhandler.h"
+#include "todohandleitem.h"
 
 #include <KLocale>
 #include <KInputDialog>
@@ -497,7 +498,7 @@ void GroupGraphicsView::slotItemMoved( TodoItem *todoItem,
 {
   Q_UNUSED( pos )
   
-  if ( todoItem->collidesWithItem( m_groupAdderItem ) ) {
+  if ( todoItem->handleItem()->collidesWithItem( m_groupAdderItem ) ) {
     todoItem->undoMove();
     model()->addTodo( todoItem->todo(), m_groupAdderItem->group() );
   } else {

@@ -45,6 +45,8 @@ class TodoItem : public QObject, public QGraphicsItemGroup
 
     Bliss::Todo todo() const;
 
+    TodoHandleItem *handleItem() const;
+    
     void updateItem( const Bliss::Todo & );
 
     void setDefaultPos( const QPointF & );
