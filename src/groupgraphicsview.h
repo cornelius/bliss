@@ -94,6 +94,7 @@ class GroupGraphicsView : public GroupView
     void recreateItems();
 
     void slotRemoveTodo( const Bliss::Todo & );
+    void slotDone( const Bliss::Todo & );
 
     void addLabel();
     void addLabel( const QPointF & );
@@ -119,7 +120,7 @@ class GroupGraphicsView : public GroupView
     void slotTodoAdded( const Bliss::Todo & );
     void slotTodoChanged( const Bliss::Todo & );
     void slotTodoRemoved( const Bliss::Todo & );
-
+    
   private:
     QList<TodoItem *> m_items;
     QList<LabelItem *> m_labelItems;

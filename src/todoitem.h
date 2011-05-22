@@ -66,6 +66,7 @@ class TodoItem : public QObject, public QGraphicsItemGroup
   
     void showTodo( const Bliss::Todo & );
     void removeTodo( const Bliss::Todo & );
+    void done( const Bliss::Todo & );
 
     void itemMoved( TodoItem *, const QPointF & );
     
@@ -89,6 +90,7 @@ class TodoItem : public QObject, public QGraphicsItemGroup
   protected slots:
     void emitShowTodo();
     void emitRemoveTodo();
+    void emitDone();
 
     void checkMenuVisibility();
 

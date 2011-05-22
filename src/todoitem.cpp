@@ -99,10 +99,17 @@ void TodoItem::updateItem( const Bliss::Todo &todo )
 
     FanMenuItem *menuItem = m_fanMenu->addItem( i18n("Remove") );
     connect( menuItem, SIGNAL( clicked() ), SLOT( emitRemoveTodo() ) );
+    
     if ( todo.type() == "group" ) {
       menuItem = m_fanMenu->addItem( i18n("Go to") );
     }
     connect( menuItem, SIGNAL( clicked() ), SLOT( emitShowTodo() ) );
+
+    if ( todo.type() != "group" ) {
+      menuItem = m_fanMenu->addItem( i18n("Done") );
+      connect( menuItem, SIGNAL( clicked() ), SLOT( emitDone() ) );
+    }
+    
     m_fanMenu->setupItems();
 
     hidePopups();
@@ -206,6 +213,11 @@ void TodoItem::emitShowTodo()
 void TodoItem::emitRemoveTodo()
 {
   emit removeTodo( m_todo );
+}
+
+void TodoItem::emitDone()
+{
+  emit done( m_todo );
 }
 
 void TodoItem::undoMove()

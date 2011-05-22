@@ -378,6 +378,14 @@ void MainModel::removeTodo( const Bliss::Todo &todo,
   }
 }
 
+void MainModel::deleteTodo( const Bliss::Todo &todo )
+{
+  m_bliss.remove( todo );
+  setupGroups();
+  
+  emit todoRemoved( todo );
+}
+
 void MainModel::removeGroup( const Bliss::Todo &group )
 {
   Bliss::Todo::List members = m_groupMap.value( group.id() );

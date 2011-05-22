@@ -61,7 +61,8 @@ class MainModel : public QObject
 
     void removeTodo( const Bliss::Todo &todo,
       const Bliss::Todo &group );
-
+    void deleteTodo( const Bliss::Todo &todo );
+      
     void removeGroup( const Bliss::Todo &group );
 
     BlissItemModel *allItemModel();

@@ -93,11 +93,19 @@ void GroupGraphicsView::slotTodoAdded( const Bliss::Todo &identity )
   recreateItems();
 }
 
-void GroupGraphicsView::slotTodoRemoved( const Bliss::Todo &identity )
+void GroupGraphicsView::slotTodoRemoved( const Bliss::Todo &todo )
 {
-  Q_UNUSED( identity )
+  TodoItem *todoItem = item( todo );
+  if ( todoItem ) {
+    delete todoItem;
+    m_items.removeAll( todoItem );
+  }
+  
+  preparePlaceItemsAnimation();
+  
+  preparePositions( m_items, true );
 
-  recreateItems();
+  m_placeItemsAnimation->start();
 }
 
 void GroupGraphicsView::recreateItems()
@@ -174,6 +182,8 @@ void GroupGraphicsView::preparePlaceItemsAnimation()
     m_placeItemsAnimation = new QParallelAnimationGroup( this );
     connect( m_placeItemsAnimation, SIGNAL( finished() ),
       SLOT( finishPlaceItems() ) );
+  } else {
+    m_placeItemsAnimation->stop();
   }
   m_placeItemsAnimation->clear();
   m_placeItemsAnimations.clear();
@@ -316,7 +326,9 @@ TodoItemGroup GroupGraphicsView::prepareTodoItems( bool doAnimation )
       SIGNAL( showTodo( const Bliss::Todo & ) ) );
     connect( item, SIGNAL( removeTodo( const Bliss::Todo & ) ),
       SLOT( slotRemoveTodo( const Bliss::Todo & ) ) );
-
+    connect( item, SIGNAL( done( const Bliss::Todo & ) ),
+      SLOT( slotDone( const Bliss::Todo & ) ) );
+      
     connect( item, SIGNAL( itemMoved( TodoItem *, const QPointF & ) ),
       SLOT( slotItemMoved( TodoItem *, const QPointF & ) ) );
 
@@ -475,6 +487,11 @@ void GroupGraphicsView::slotRemoveTodo( const Bliss::Todo &identity )
   emit removeTodo( identity, group() );
 }
 
+void GroupGraphicsView::slotDone( const Bliss::Todo &todo )
+{
+  model()->deleteTodo( todo );
+}
+
 void GroupGraphicsView::slotItemMoved( TodoItem *todoItem,
   const QPointF &pos )
 {
@@ -484,8 +501,6 @@ void GroupGraphicsView::slotItemMoved( TodoItem *todoItem,
     todoItem->undoMove();
     model()->addTodo( todoItem->todo(), m_groupAdderItem->group() );
   } else {
-    if ( m_placeItemsAnimation ) m_placeItemsAnimation->stop();
-
     preparePlaceItemsAnimation();
     
     QMap <qreal, QString> map;
