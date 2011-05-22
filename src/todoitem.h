@@ -21,7 +21,8 @@
 
 #include "bliss/bliss.h"
 #include "fanmenu.h"
-
+#include "hidinglineedit.h"
+#
 #include <QtGui>
 
 class MainModel;
@@ -94,6 +95,9 @@ class TodoItem : public QObject, public QGraphicsItemGroup
 
     void checkMenuVisibility();
 
+    void editTodo();
+    void editTodoDone();
+    
   private:
     MainModel *m_model;
     Bliss::Todo m_todo;
@@ -116,6 +120,9 @@ class TodoItem : public QObject, public QGraphicsItemGroup
     MenuHandler *m_menuHandler;
     
     bool m_isHovered;
+    
+    HidingLineEdit *m_edit;
+    QGraphicsProxyWidget *m_editProxy;
 };
 
 #endif

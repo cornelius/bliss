@@ -1,4 +1,5 @@
 set(bliss_bin_SRCS
+  hidinglineedit.cpp
   menuhandler.cpp
   todohandleitem.cpp
   matchlist.cpp

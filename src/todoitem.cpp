@@ -25,12 +25,13 @@
 #include "todohandleitem.h"
 #include "menuhandler.h"
 
+
 #include <KLocale>
 
 TodoItem::TodoItem( MainModel *model, MenuHandler *menuHandler,
   const Bliss::Todo &identity )
   : QObject( model ), m_model( model ), m_todo( identity ),
-    m_menuHandler( menuHandler )
+    m_menuHandler( menuHandler ), m_edit( 0 ), m_editProxy( 0 )
 {
   init();
 }
@@ -38,14 +39,14 @@ TodoItem::TodoItem( MainModel *model, MenuHandler *menuHandler,
 TodoItem::TodoItem( QGraphicsItem *item, MainModel *model,
   const Bliss::Todo &identity )
   : QObject( model ), QGraphicsItemGroup( item ), m_model( model ),
-    m_todo( identity ), m_menuHandler( 0 )
+    m_todo( identity ), m_menuHandler( 0 ), m_edit( 0 ), m_editProxy( 0 )
 {
   init();
 }
 
 TodoItem::TodoItem( MainModel *model )
   : QObject( model ), m_model( model ),
-    m_menuHandler( 0 )
+    m_menuHandler( 0 ), m_edit( 0 ), m_editProxy( 0 )
 {
   m_menusEnabled = false;
 
@@ -109,7 +110,10 @@ void TodoItem::updateItem( const Bliss::Todo &todo )
       menuItem = m_fanMenu->addItem( i18n("Done") );
       connect( menuItem, SIGNAL( clicked() ), SLOT( emitDone() ) );
     }
-    
+
+    menuItem = m_fanMenu->addItem( i18n("Edit") );
+    connect( menuItem, SIGNAL( clicked() ), SLOT( editTodo() ) );
+
     m_fanMenu->setupItems();
 
     hidePopups();
@@ -213,6 +217,44 @@ void TodoItem::emitShowTodo()
 void TodoItem::emitRemoveTodo()
 {
   emit removeTodo( m_todo );
+}
+
+void TodoItem::editTodo()
+{
+  if ( !m_edit ) {
+    m_edit = new HidingLineEdit;
+    connect( m_edit, SIGNAL( returnPressed() ), SLOT( editTodoDone() ) );
+    connect( m_edit, SIGNAL( lostFocus() ), SLOT( editTodoDone() ) );
+    m_editProxy = scene()->addWidget( m_edit );
+  }
+
+  m_edit->setText( m_todo.summary().value() );
+  m_edit->setFocus();
+
+  QRect rect;
+  rect.setHeight( m_edit->height() );
+  rect.setWidth( m_nameItem->boundingRect().width() + 20 );
+  m_edit->setGeometry( rect );
+  
+  m_editProxy->setPos( mapToScene( m_nameItem->pos() ) );
+
+  m_editProxy->show();
+}
+
+void TodoItem::editTodoDone()
+{
+  QString newText = m_edit->text();
+  
+  Bliss::Summary summary = m_todo.summary();
+
+  if ( summary.value() != newText ) {
+    summary.setValue( newText );
+    m_todo.setSummary( summary );
+    m_model->insert( m_todo, i18n("Changed text of todo to '%1'.")
+      .arg( newText ) );
+  }
+
+  m_editProxy->hide();
 }
 
 void TodoItem::emitDone()
