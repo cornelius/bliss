@@ -88,7 +88,7 @@ class MainModel : public QObject
     QPixmap pixmap( const Bliss::Todo & ) const;
 
   public slots:
-    bool readData();
+    bool readData( const QString &file = QString() );
 
   signals:
     void dataWritten();
@@ -111,6 +111,8 @@ class MainModel : public QObject
   private:
     GitDir *m_gitDir;
     GitRemote *m_gitRemote;
+  
+    QString m_dataFile;
   
     Bliss::Bliss m_bliss;
     bool m_dataIsValid;

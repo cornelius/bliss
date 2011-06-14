@@ -48,7 +48,7 @@ class MainView : public QWidget
     void readConfig();
     void writeConfig();
 
-    void readData();
+    void readData( const QString &file = QString() );
     void writeData( const QString &msg );
 
   public slots:

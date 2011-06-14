@@ -180,53 +180,59 @@ BlissItemModel *MainModel::groupItemModel()
   return m_groupItemModel;
 }
 
-bool MainModel::readData()
+bool MainModel::readData( const QString &file )
 {
-  QString dataFile = m_gitDir->filePath( "std.bliss" );
+  if ( file.isEmpty() ) {
+    QString dataFile = m_gitDir->filePath( "std.bliss" );
 
-  if ( QFile::exists( dataFile ) ) {
-    m_bliss = Bliss::Bliss::parseFile( dataFile, &m_dataIsValid );
+    if ( QFile::exists( dataFile ) ) {
+      m_bliss = Bliss::Bliss::parseFile( dataFile, &m_dataIsValid );
 
-    if ( !m_dataIsValid ) {
-      return false;
+      if ( !m_dataIsValid ) {
+        return false;
+      }
+    } else {
+      m_dataIsValid = true;
     }
+
+    foreach( Bliss::Todo todo, m_bliss.todoList() ) {
+      if ( todo.id().isEmpty() ) {
+        todo.setId( KRandom::randomString( 10 ) );
+        m_bliss.insert( todo );
+      }
+    }
+
+    Bliss::Group rootGroup = m_bliss.root().group();
+
+    m_rootGroup = m_bliss.findTodo( rootGroup.id() );
+    if ( !m_rootGroup.isValid() ) {
+      m_rootGroup.setId( KRandom::randomString( 10 ) );
+
+      m_rootGroup.setType( "group" );
+      Bliss::Summary n;
+      n.setValue( i18n("Your todos") );
+      m_rootGroup.setSummary( n );
+
+      m_bliss.insert( m_rootGroup );
+
+      Bliss::Root root;
+      rootGroup.setId( m_rootGroup.id() );
+      root.setGroup( rootGroup );
+      m_bliss.setRoot( root );
+    }
+
+    setupGroups();
+
+    if ( !QFile::exists( dataFile ) ) {
+      createFirstStartData();
+    }
+
+    return true;
   } else {
-    m_dataIsValid = true;
+    m_dataFile = file;
+    qDebug() << "READ FROM" << file;
+    return false;
   }
-
-  foreach( Bliss::Todo todo, m_bliss.todoList() ) {
-    if ( todo.id().isEmpty() ) {
-      todo.setId( KRandom::randomString( 10 ) );
-      m_bliss.insert( todo );
-    }
-  }
-
-  Bliss::Group rootGroup = m_bliss.root().group();
-
-  m_rootGroup = m_bliss.findTodo( rootGroup.id() );
-  if ( !m_rootGroup.isValid() ) {
-    m_rootGroup.setId( KRandom::randomString( 10 ) );
-    
-    m_rootGroup.setType( "group" );
-    Bliss::Summary n;
-    n.setValue( i18n("Your todos") );
-    m_rootGroup.setSummary( n );
-    
-    m_bliss.insert( m_rootGroup );
-
-    Bliss::Root root;
-    rootGroup.setId( m_rootGroup.id() );
-    root.setGroup( rootGroup );
-    m_bliss.setRoot( root );
-  }
-  
-  setupGroups();
-
-  if ( !QFile::exists( dataFile ) ) {
-    createFirstStartData();
-  }
-
-  return true;
 }
 
 void MainModel::setupGroups()
@@ -259,20 +265,25 @@ void MainModel::setupGroups()
 
 void MainModel::writeData( const QString &msg )
 {
-  if ( !m_dataIsValid) {
+  if ( m_dataFile.isEmpty() ) {
+    if ( !m_dataIsValid) {
+      emit dataWritten();
+      return;
+    }
+
+    // FIXME: Queue commands instead of silently failing them.
+    if ( m_commitCommand > 0 ) {
+      qDebug() << "ERROR" << "Commit command still running";
+      return;
+    }
+
+    m_bliss.writeFile( m_gitDir->filePath( "std.bliss" ) );
+    m_gitDir->addFile( "std.bliss", msg );
+    m_commitCommand = m_gitDir->commitData( i18n("Saving pending changes") );
+  } else {
+    qDebug() << "WRITE FILE" << msg;
     emit dataWritten();
-    return;
   }
-
-  // FIXME: Queue commands instead of silently failing them.
-  if ( m_commitCommand > 0 ) {
-    qDebug() << "ERROR" << "Commit command still running";
-    return;
-  }
-
-  m_bliss.writeFile( m_gitDir->filePath( "std.bliss" ) );
-  m_gitDir->addFile( "std.bliss", msg );
-  m_commitCommand = m_gitDir->commitData( i18n("Saving pending changes") );
 }
 
 void MainModel::slotCommandExecuted( const GitCommand &cmd )

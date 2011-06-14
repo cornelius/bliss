@@ -32,6 +32,8 @@ class MainWindow : public KXmlGuiWindow
     MainWindow();
     virtual ~MainWindow();
 
+    void readData( const QString &file = QString() );
+
   protected:
     bool queryClose();
 

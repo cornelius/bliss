@@ -58,6 +58,11 @@ void MainWindow::setupActions()
   KStandardAction::quit( qApp, SLOT( closeAllWindows() ), actionCollection() );
 }
 
+void MainWindow::readData( const QString &file )
+{
+  m_view->readData( file );
+}
+
 bool MainWindow::queryClose()
 {
   qDebug() << "queryClose";

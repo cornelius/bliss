@@ -118,8 +118,6 @@ MainView::MainView(QWidget *parent)
   m_settingsWidget->hide();
 
   readConfig();
-
-  readData();
 }
 
 MainView::~MainView()
@@ -152,9 +150,9 @@ void MainView::writeConfig()
   Settings::self()->writeConfig();
 }
 
-void MainView::readData()
+void MainView::readData( const QString &file )
 {
-  if ( !m_model->readData() ) {
+  if ( !m_model->readData( file ) ) {
     KMessageBox::error( this, i18n("Error reading data file") );
     return;
   }
