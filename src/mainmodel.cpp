@@ -19,8 +19,7 @@
 
 #include "mainmodel.h"
 
-#include "gitdir.h"
-#include "gitremote.h"
+#include "storagegit.h"
 #include "settings.h"
 #include "blissallitemmodel.h"
 #include "blisstodoitemmodel.h"
@@ -34,8 +33,7 @@
 
 MainModel::MainModel( QObject *parent )
   : QObject( parent ), m_allItemModel( 0 ), m_personsItemModel( 0 ),
-    m_groupItemModel( 0 ),
-    m_commitCommand( 0 )
+    m_groupItemModel( 0 )
 {
   m_defaultGroupPixmapPath = KStandardDirs::locate( "appdata",
     "bliss_group.png" );
@@ -44,29 +42,33 @@ MainModel::MainModel( QObject *parent )
     "bliss_todo.png" );
   m_defaultPersonPixmap = QPixmap( m_defaultPersonPixmapPath );
 
-  m_gitDir = new GitDir( QDir::homePath() + "/.bliss" );
-
-  m_gitRemote = new GitRemote( m_gitDir );
-  connect( m_gitRemote, SIGNAL( pulled() ), SLOT( readData() ) );
-  connect( m_gitRemote, SIGNAL( pushed() ), SLOT( slotPushed() ) );
-
-  connect( m_gitDir, SIGNAL( commandExecuted( const GitCommand & ) ),
-    SLOT( slotCommandExecuted( const GitCommand & ) ) );
+  m_storageGit = new StorageGit( this );
+  connect( m_storageGit, SIGNAL( dataWritten() ), SIGNAL( dataWritten() ) );
+  connect( m_storageGit, SIGNAL( logRetrieved( const QStringList & ) ),
+    SIGNAL( logRetrieved( const QStringList & ) ) );
+  connect( m_storageGit, SIGNAL( syncingStatusChanged( const QString & ) ),
+    SIGNAL( syncingStatusChanged( const QString & ) ) );
 }
 
 MainModel::~MainModel()
 {
-  delete m_gitDir;
 }
 
-GitRemote *MainModel::gitRemote() const
+void MainModel::retrieveLog()
 {
-  return m_gitRemote;
+  if ( m_dataFile.isEmpty() ) {
+    m_storageGit->retrieveLog();
+  }
 }
 
-GitDir *MainModel::gitDir() const
+void MainModel::pullData()
 {
-  return m_gitDir;
+  m_storageGit->pullData();
+}
+
+void MainModel::pushData()
+{
+  m_storageGit->pushData();
 }
 
 Bliss::Todo MainModel::findTodo( const QString &id )
@@ -183,17 +185,7 @@ BlissItemModel *MainModel::groupItemModel()
 bool MainModel::readData( const QString &file )
 {
   if ( file.isEmpty() ) {
-    QString dataFile = m_gitDir->filePath( "std.bliss" );
-
-    if ( QFile::exists( dataFile ) ) {
-      m_bliss = Bliss::Bliss::parseFile( dataFile, &m_dataIsValid );
-
-      if ( !m_dataIsValid ) {
-        return false;
-      }
-    } else {
-      m_dataIsValid = true;
-    }
+    m_bliss = m_storageGit->readData();
 
     foreach( Bliss::Todo todo, m_bliss.todoList() ) {
       if ( todo.id().isEmpty() ) {
@@ -222,10 +214,6 @@ bool MainModel::readData( const QString &file )
     }
 
     setupGroups();
-
-    if ( !QFile::exists( dataFile ) ) {
-      createFirstStartData();
-    }
 
     return true;
   } else {
@@ -266,39 +254,11 @@ void MainModel::setupGroups()
 void MainModel::writeData( const QString &msg )
 {
   if ( m_dataFile.isEmpty() ) {
-    if ( !m_dataIsValid) {
-      emit dataWritten();
-      return;
-    }
-
-    // FIXME: Queue commands instead of silently failing them.
-    if ( m_commitCommand > 0 ) {
-      qDebug() << "ERROR" << "Commit command still running";
-      return;
-    }
-
-    m_bliss.writeFile( m_gitDir->filePath( "std.bliss" ) );
-    m_gitDir->addFile( "std.bliss", msg );
-    m_commitCommand = m_gitDir->commitData( i18n("Saving pending changes") );
+    m_storageGit->writeData( m_bliss, msg );
   } else {
     qDebug() << "WRITE FILE" << msg;
     emit dataWritten();
   }
-}
-
-void MainModel::slotCommandExecuted( const GitCommand &cmd )
-{
-  if ( cmd.id() == m_commitCommand ) {
-    m_commitCommand = 0;
-    if ( !Settings::remoteSyncingEnabled() ) {
-      emit dataWritten();
-    }
-  }
-}
-
-void MainModel::slotPushed()
-{
-  emit dataWritten();
 }
 
 Bliss::Todo MainModel::insert( Bliss::Todo todo,
@@ -468,10 +428,6 @@ Bliss::GroupView MainModel::groupView( const Bliss::Todo &group )
 Bliss::GroupView MainModel::groupView( const QString &groupId )
 {
   return m_bliss.findGroupView( groupId );
-}
-
-void MainModel::createFirstStartData()
-{
 }
 
 void MainModel::saveViewSequence( const Bliss::Todo &group,

@@ -169,7 +169,7 @@ void MainView::readData( const QString &file )
   }
 
   if ( Settings::remoteSyncingEnabled() ) {
-    m_model->gitRemote()->pull();
+    m_model->pullData();
   }
 
   m_groupGraphicsView->setAdderGroup( m_model->rootGroup() );
@@ -180,7 +180,7 @@ void MainView::writeData( const QString &msg )
   m_model->writeData( msg );
 
   if ( Settings::remoteSyncingEnabled() ) {
-    m_model->gitRemote()->push();
+    m_model->pushData();
   }
 }
 

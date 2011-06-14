@@ -23,7 +23,6 @@
 
 #include "settings.h"
 #include "mainmodel.h"
-#include "gitremote.h"
 
 #include <KLocale>
 
@@ -47,7 +46,7 @@ SettingsWidget::SettingsWidget( MainModel *model, QWidget *parent)
 
   QLabel *label = new QLabel;
   controlLayout->addWidget( label );
-  connect( m_model->gitRemote(), SIGNAL( statusChanged( const QString & ) ),
+  connect( m_model, SIGNAL( syncingStatusChanged( const QString & ) ),
     label, SLOT( setText( const QString & ) ) );
 
   controlLayout->addStretch( 1 );

@@ -26,8 +26,7 @@
 #include <QObject>
 #include <QPixmap>
 
-class GitDir;
-class GitRemote;
+class StorageGit;
 
 class MainModel : public QObject
 {
@@ -35,9 +34,6 @@ class MainModel : public QObject
   public:
     MainModel( QObject *parent = 0 );
     ~MainModel();
-
-    GitRemote *gitRemote() const;
-    GitDir *gitDir() const;
 
     void writeData( const QString &msg );
 
@@ -87,35 +83,36 @@ class MainModel : public QObject
 
     QPixmap pixmap( const Bliss::Todo & ) const;
 
+    void retrieveLog();
+
+    void pullData();
+    void pushData();
+
   public slots:
     bool readData( const QString &file = QString() );
 
   signals:
     void dataWritten();
 
+    void logRetrieved( const QStringList & );
+
     void todoAdded( const Bliss::Todo & );
     void todoChanged( const Bliss::Todo & );
     void todoRemoved( const Bliss::Todo & );
 
-  protected slots:
-    void slotCommandExecuted( const GitCommand & );
-    void slotPushed();
+    void syncingStatusChanged( const QString & );
 
   protected:
     void setupGroups();
 
     QPixmap defaultPixmap( const Bliss::Todo &identity ) const;
 
-    void createFirstStartData();
-
   private:
-    GitDir *m_gitDir;
-    GitRemote *m_gitRemote;
+    StorageGit *m_storageGit;
   
     QString m_dataFile;
   
     Bliss::Bliss m_bliss;
-    bool m_dataIsValid;
 
     Bliss::Todo m_rootGroup;
     Bliss::Todo::List m_groups;
@@ -126,8 +123,6 @@ class MainModel : public QObject
     BlissItemModel *m_groupItemModel;
     QMap<QString,BlissItemModel *> m_itemModels;
     
-    int m_commitCommand;
-
     QPixmap m_defaultGroupPixmap;
     QPixmap m_defaultPersonPixmap;
 

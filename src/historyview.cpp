@@ -23,15 +23,15 @@
 #include "gitdir.h"
 
 HistoryView::HistoryView( MainModel *model )
-  : m_model( model ), m_logCommand( -1 )
+  : m_model( model )
 {
   QBoxLayout *topLayout = new QVBoxLayout( this );
 
   m_list = new QListWidget;
   topLayout->addWidget( m_list );
 
-  connect( m_model->gitDir(), SIGNAL( commandExecuted( const GitCommand & ) ),
-    SLOT( slotCommandExecuted( const GitCommand & ) ) );
+  connect( m_model, SIGNAL( logRetrieved( const QStringList & ) ),
+    SLOT( historyLoaded( const QStringList & ) ) );
 }
 
 void HistoryView::loadHistory()
@@ -39,21 +39,14 @@ void HistoryView::loadHistory()
   m_list->clear();
   m_list->addItem( "Loading..." );
 
-  m_logCommand = m_model->gitDir()->getLog();
+  m_model->retrieveLog();
 }
 
-void HistoryView::slotCommandExecuted( const GitCommand &cmd )
+void HistoryView::historyLoaded( const QStringList &log )
 {
-  if ( m_logCommand == cmd.id() ) {
-    m_logCommand = -1;
-    m_list->clear();
+  m_list->clear();
     
-    foreach( QString line, cmd.result() ) {
-      int pos = line.indexOf( " " );
-      QString revision = line.left( pos );
-//      qDebug() << revision;
-      QString message = line.mid( pos + 2 );
-      m_list->addItem( message );
-    }
+  foreach( QString line, log ) {
+    m_list->addItem( line );
   }
 }

@@ -16,30 +16,53 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
     USA.
 */
-#ifndef HISTORYVIEW_H
-#define HISTORYVIEW_H
+#ifndef STORAGEGIT_H
+#define STORAGEGIT_H
+
+#include "bliss/bliss.h"
 
 #include "gitcommand.h"
 
-#include <QtGui>
+#include <QObject>
 
-class MainModel;
+class GitDir;
+class GitRemote;
 
-class HistoryView : public QWidget
+class StorageGit : public QObject
 {
     Q_OBJECT
   public:
-    HistoryView( MainModel * );
+    StorageGit( QObject *parent = 0 );
+    ~StorageGit();
 
-    void loadHistory();
+    void writeData( const Bliss::Bliss &, const QString &msg );
+
+    Bliss::Bliss readData();
+
+    void retrieveLog();
+
+    void pushData();
+    void pullData();
+
+  signals:
+    void syncingStatusChanged( const QString & );
+  
+    void dataWritten();
+    
+    void logRetrieved( const QStringList & );
 
   protected slots:
-    void historyLoaded( const QStringList & );
+    void slotCommandExecuted( const GitCommand & );
+    void slotPushed();
 
   private:
-    MainModel *m_model;
-
-    QListWidget *m_list;
+    GitDir *m_gitDir;
+    GitRemote *m_gitRemote;
+  
+    bool m_dataIsValid;
+    
+    int m_commitCommand;
+    int m_logCommand;
 };
 
 #endif

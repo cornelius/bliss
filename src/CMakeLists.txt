@@ -1,4 +1,5 @@
 set(bliss_bin_SRCS
+  storagegit.cpp
   hidinglineedit.cpp
   menuhandler.cpp
   todohandleitem.cpp
