@@ -27,6 +27,7 @@
 #include <QPixmap>
 
 class StorageGit;
+class StorageFile;
 
 class MainModel : public QObject
 {
@@ -109,6 +110,7 @@ class MainModel : public QObject
 
   private:
     StorageGit *m_storageGit;
+    StorageFile *m_storageFile;
   
     QString m_dataFile;
   

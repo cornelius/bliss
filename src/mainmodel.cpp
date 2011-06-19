@@ -20,6 +20,7 @@
 #include "mainmodel.h"
 
 #include "storagegit.h"
+#include "storagefile.h"
 #include "settings.h"
 #include "blissallitemmodel.h"
 #include "blisstodoitemmodel.h"
@@ -48,6 +49,8 @@ MainModel::MainModel( QObject *parent )
     SIGNAL( logRetrieved( const QStringList & ) ) );
   connect( m_storageGit, SIGNAL( syncingStatusChanged( const QString & ) ),
     SIGNAL( syncingStatusChanged( const QString & ) ) );
+
+  m_storageFile = new StorageFile( this );
 }
 
 MainModel::~MainModel()
@@ -186,41 +189,42 @@ bool MainModel::readData( const QString &file )
 {
   if ( file.isEmpty() ) {
     m_bliss = m_storageGit->readData();
-
-    foreach( Bliss::Todo todo, m_bliss.todoList() ) {
-      if ( todo.id().isEmpty() ) {
-        todo.setId( KRandom::randomString( 10 ) );
-        m_bliss.insert( todo );
-      }
-    }
-
-    Bliss::Group rootGroup = m_bliss.root().group();
-
-    m_rootGroup = m_bliss.findTodo( rootGroup.id() );
-    if ( !m_rootGroup.isValid() ) {
-      m_rootGroup.setId( KRandom::randomString( 10 ) );
-
-      m_rootGroup.setType( "group" );
-      Bliss::Summary n;
-      n.setValue( i18n("Your todos") );
-      m_rootGroup.setSummary( n );
-
-      m_bliss.insert( m_rootGroup );
-
-      Bliss::Root root;
-      rootGroup.setId( m_rootGroup.id() );
-      root.setGroup( rootGroup );
-      m_bliss.setRoot( root );
-    }
-
-    setupGroups();
-
-    return true;
   } else {
     m_dataFile = file;
     qDebug() << "READ FROM" << file;
-    return false;
+    m_storageFile->setFileName( m_dataFile );
+    m_bliss = m_storageFile->readData();
   }
+
+  foreach( Bliss::Todo todo, m_bliss.todoList() ) {
+    if ( todo.id().isEmpty() ) {
+      todo.setId( KRandom::randomString( 10 ) );
+      m_bliss.insert( todo );
+    }
+  }
+
+  Bliss::Group rootGroup = m_bliss.root().group();
+
+  m_rootGroup = m_bliss.findTodo( rootGroup.id() );
+  if ( !m_rootGroup.isValid() ) {
+    m_rootGroup.setId( KRandom::randomString( 10 ) );
+
+    m_rootGroup.setType( "group" );
+    Bliss::Summary n;
+    n.setValue( i18n("Your todos") );
+    m_rootGroup.setSummary( n );
+
+    m_bliss.insert( m_rootGroup );
+
+    Bliss::Root root;
+    rootGroup.setId( m_rootGroup.id() );
+    root.setGroup( rootGroup );
+    m_bliss.setRoot( root );
+  }
+
+  setupGroups();
+
+  return true;
 }
 
 void MainModel::setupGroups()
