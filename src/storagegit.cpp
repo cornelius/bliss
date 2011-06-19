@@ -35,7 +35,7 @@ StorageGit::StorageGit( QObject *parent )
   m_gitDir = new GitDir( QDir::homePath() + "/.bliss" );
 
   m_gitRemote = new GitRemote( m_gitDir );
-  connect( m_gitRemote, SIGNAL( pulled() ), SLOT( readData() ) );
+  connect( m_gitRemote, SIGNAL( pulled() ), SLOT( slotPulled() ) );
   connect( m_gitRemote, SIGNAL( pushed() ), SLOT( slotPushed() ) );
   connect( m_gitRemote, SIGNAL( statusChanged( const QString & ) ),
     SIGNAL( syncingStatusChanged( const QString & ) ) );
@@ -122,6 +122,11 @@ void StorageGit::slotCommandExecuted( const GitCommand &cmd )
 void StorageGit::slotPushed()
 {
   emit dataWritten();
+}
+
+void StorageGit::slotPulled()
+{
+  emit dataRead( readData() );
 }
 
 void StorageGit::retrieveLog()

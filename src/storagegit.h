@@ -48,12 +48,14 @@ class StorageGit : public QObject
     void syncingStatusChanged( const QString & );
   
     void dataWritten();
+    void dataRead( const Bliss::Bliss & );
     
     void logRetrieved( const QStringList & );
 
   protected slots:
     void slotCommandExecuted( const GitCommand & );
     void slotPushed();
+    void slotPulled();
 
   private:
     GitDir *m_gitDir;
