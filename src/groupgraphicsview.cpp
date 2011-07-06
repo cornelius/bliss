@@ -517,7 +517,9 @@ void GroupGraphicsView::slotItemMoved( TodoItem *todoItem,
       sortedItems.append( item( todo ) );
     }
     
+    TodoItem *addNewItem = m_items.last();
     m_items = sortedItems;
+    m_items.append( addNewItem );
 
     preparePositions( m_items, true );
 
