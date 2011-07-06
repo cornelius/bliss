@@ -76,14 +76,14 @@ GroupGraphicsView::GroupGraphicsView( MainModel *model, QWidget *parent )
   setMinimumWidth( 50 );
 }
 
-void GroupGraphicsView::slotTodoChanged( const Bliss::Todo &identity )
+void GroupGraphicsView::slotTodoChanged( const Bliss::Todo &todo )
 {
-  TodoItem *i = item( identity );
+  TodoItem *i = item( todo );
     
-  if ( identity.groups().findGroup( group().id() ).isValid() && i ) {
-    i->updateItem( identity );
+  if ( todo.groups().findGroup( group().id() ).isValid() && i ) {
+    i->updateItem( todo );
   } else {
-    recreateItems();
+    slotTodoRemoved( todo);
   }
 }
 
@@ -485,7 +485,7 @@ void GroupGraphicsView::positionAbsoluteItems()
 
 void GroupGraphicsView::slotRemoveTodo( const Bliss::Todo &identity )
 {
-  emit removeTodo( identity, group() );
+  model()->removeTodo( identity, group() );
 }
 
 void GroupGraphicsView::slotDone( const Bliss::Todo &todo )

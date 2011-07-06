@@ -97,9 +97,6 @@ MainView::MainView(QWidget *parent)
   m_listLayout->addWidget( m_groupGraphicsView );
   connectGroupView( m_groupGraphicsView );
   connect( m_groupGraphicsView, SIGNAL( newGroup() ), SLOT( newSubGroup() ) );
-  connect( m_groupGraphicsView, SIGNAL( removeTodo( const Bliss::Todo &,
-    const Bliss::Todo & ) ),
-    SLOT( removeTodo( const Bliss::Todo &, const Bliss::Todo & ) ) );
   connect( m_groupGraphicsView, SIGNAL( cloneGroup( const Bliss::Todo & ) ),
     SLOT( cloneGroup( const Bliss::Todo & ) ) );
   connect( m_groupGraphicsView, SIGNAL( removeGroup( const Bliss::Todo & ) ),
@@ -288,12 +285,6 @@ void MainView::showTodo( const Bliss::Todo &todo )
   } else {
     showTodo( todo );
   }
-}
-
-void MainView::removeTodo( const Bliss::Todo &todo,
-  const Bliss::Todo &group )
-{
-  m_model->removeTodo( todo, group );
 }
 
 void MainView::showSettings()

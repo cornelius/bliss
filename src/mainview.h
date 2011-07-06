@@ -63,8 +63,6 @@ class MainView : public QWidget
     void goBack();
     void showGroup( const Bliss::Todo & );
     void showTodo( const Bliss::Todo & );
-    void removeTodo( const Bliss::Todo &person,
-      const Bliss::Todo &group );
 
     void showSettings();
 
