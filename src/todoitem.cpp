@@ -237,10 +237,9 @@ void TodoItem::editTodo()
   rect.setHeight( m_edit->height() );
   rect.setWidth( m_nameItem->boundingRect().width() + 20 );
   m_edit->setGeometry( rect );
-  
-  m_editProxy->setPos( mapToScene( m_nameItem->pos() ) );
 
   m_editProxy->show();
+  m_editProxy->setPos( mapToScene( m_nameItem->pos() ) );
 }
 
 void TodoItem::editTodoDone()
