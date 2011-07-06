@@ -22,7 +22,7 @@
 #include "fanmenuelement.h"
 
 FanMenu::FanMenu( QGraphicsItem *parent )
-  : QGraphicsLineItem( parent ), m_startAngle( -5 ), m_endAngle( 185 ),
+  : QGraphicsLineItem( parent ), m_startAngle( 100 ), m_endAngle( 260 ),
     m_spacing( 10 ), m_radius( 70 ), m_isHovered( false )
 {
 }
