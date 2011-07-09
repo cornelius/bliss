@@ -218,11 +218,11 @@ void TodoItem::mousePressEvent( QGraphicsSceneMouseEvent *event )
 
 void TodoItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
 {
+  QGraphicsItemGroup::mouseReleaseEvent( event );
+
   if ( pos() != m_movePos ) {
     emit itemMoved( this, pos() );
   }
-
-  QGraphicsItemGroup::mouseReleaseEvent( event );
 }
 
 void TodoItem::emitShowTodo()

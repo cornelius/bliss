@@ -499,8 +499,9 @@ void GroupGraphicsView::slotItemMoved( TodoItem *todoItem,
   Q_UNUSED( pos )
   
   if ( todoItem->handleItem()->collidesWithItem( m_groupAdderItem ) ) {
-    todoItem->undoMove();
-    model()->addTodo( todoItem->todo(), m_groupAdderItem->group() );
+    Bliss::Todo todo = todoItem->todo();
+    model()->removeTodo( todo, group() );
+    model()->addTodo( todo, m_groupAdderItem->group() );
   } else {
     preparePlaceItemsAnimation();
     
