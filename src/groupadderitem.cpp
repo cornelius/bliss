@@ -23,6 +23,7 @@
 #include "fanmenu.h"
 #include "buttonitem.h"
 #include "todoitem.h"
+#include "todohandleitem.h"
 
 #include <KLocale>
 

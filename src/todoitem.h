@@ -49,6 +49,9 @@ class TodoItem : public QObject, public QGraphicsItemGroup
     
     void updateItem( const Bliss::Todo & );
 
+    void setTextIsCentered( bool );
+    void setHandleSize( int );
+    
     void setDefaultPos( const QPointF & );
     QPointF defaultPos() const;
 
@@ -104,6 +107,9 @@ class TodoItem : public QObject, public QGraphicsItemGroup
     MainModel *m_model;
     Bliss::Todo m_todo;
 
+    int m_handleSize;
+    bool m_textIsCentered;
+    
     QPointF m_defaultPos;
     QPointF m_rememberedPos;
 

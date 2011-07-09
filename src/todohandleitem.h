@@ -40,6 +40,7 @@ class TodoHandleItem : public QObject, public QGraphicsEllipseItem
     TodoHandleItem( QGraphicsItem *, MainModel *, const Bliss::Todo & );
     TodoHandleItem( QGraphicsItem *item, MainModel *model );
 
+    void setItemSize( int );
     int itemSize() const;
 
     Bliss::Todo todo() const;

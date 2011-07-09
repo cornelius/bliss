@@ -54,9 +54,8 @@ TodoHandleItem::TodoHandleItem( QGraphicsItem *item, MainModel *model )
 
 void TodoHandleItem::init()
 {
-  m_itemSize = 30;
+  setItemSize( 30 );
 
-  setRect( -m_itemSize/2, -m_itemSize/2, m_itemSize, m_itemSize );
   setBrush( Qt::white );
 
   QPen pen;
@@ -68,6 +67,15 @@ void TodoHandleItem::initTodo()
 {
   setAcceptHoverEvents( true );
 
+  updateItem( m_todo );
+}
+
+void TodoHandleItem::setItemSize( int size )
+{
+  m_itemSize = size;
+
+  setRect( -m_itemSize/2, -m_itemSize/2, m_itemSize, m_itemSize );
+  
   updateItem( m_todo );
 }
 

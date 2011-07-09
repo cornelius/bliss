@@ -2,6 +2,5 @@
 * Make kxml_compiler generate const writeFile function.
 * Implement StorageFile for file-based todo lists.
 * Scroll by dragging canvas
-* Fix group selector in size of circle and position of text
 * Move to group instead of adding duplicate
 * Clarify remove and done
