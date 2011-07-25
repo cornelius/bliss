@@ -1,5 +1,6 @@
+* Scroll by dragging canvas
+* History dependent on file
 * Use common storage base class and switch via instances rather than ifs
 * Make kxml_compiler generate const writeFile function.
 * Implement StorageFile for file-based todo lists.
-* Scroll by dragging canvas
 * Clarify remove and done

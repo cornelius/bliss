@@ -30,9 +30,23 @@
 #include <QDebug>
 
 StorageGit::StorageGit( QObject *parent )
-  : QObject( parent ), m_commitCommand( 0 ), m_logCommand( -1 )
+  : QObject( parent ), m_gitDir( 0 ), m_gitRemote( 0 ),m_commitCommand( 0 ),
+    m_logCommand( -1 )
 {
-  m_gitDir = new GitDir( QDir::homePath() + "/.bliss" );
+}
+
+StorageGit::~StorageGit()
+{
+  delete m_gitDir;
+  delete m_gitRemote;
+}
+
+void StorageGit::setLocation( const QString &location )
+{
+  delete m_gitDir;
+  delete m_gitRemote;
+  
+  m_gitDir = new GitDir( location );
 
   m_gitRemote = new GitRemote( m_gitDir );
   connect( m_gitRemote, SIGNAL( pulled() ), SLOT( slotPulled() ) );
@@ -41,12 +55,7 @@ StorageGit::StorageGit( QObject *parent )
     SIGNAL( syncingStatusChanged( const QString & ) ) );
 
   connect( m_gitDir, SIGNAL( commandExecuted( const GitCommand & ) ),
-    SLOT( slotCommandExecuted( const GitCommand & ) ) );
-}
-
-StorageGit::~StorageGit()
-{
-  delete m_gitDir;
+    SLOT( slotCommandExecuted( const GitCommand & ) ) );  
 }
 
 Bliss::Bliss StorageGit::readData()

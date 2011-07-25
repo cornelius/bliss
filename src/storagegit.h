@@ -35,6 +35,8 @@ class StorageGit : public QObject
     StorageGit( QObject *parent = 0 );
     ~StorageGit();
 
+    void setLocation( const QString & );
+    
     void writeData( const Bliss::Bliss &, const QString &msg );
 
     Bliss::Bliss readData();

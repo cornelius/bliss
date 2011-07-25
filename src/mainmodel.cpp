@@ -185,13 +185,20 @@ BlissItemModel *MainModel::groupItemModel()
   return m_groupItemModel;
 }
 
-bool MainModel::readData( const QString &file )
+bool MainModel::readData( const QString &location )
 {
-  if ( file.isEmpty() ) {
+  QFileInfo fi( location );
+  
+  if ( location.isEmpty() || fi.isDir() ) {
+    if ( location.isEmpty() ) {
+      m_storageGit->setLocation( QDir::homePath() + "/.bliss" );
+    } else {
+      m_storageGit->setLocation( location );
+    }
     m_bliss = m_storageGit->readData();
   } else {
-    m_dataFile = file;
-    qDebug() << "READ FROM" << file;
+    m_dataFile = location;
+    qDebug() << "READ FROM" << location;
     m_storageFile->setFileName( m_dataFile );
     m_bliss = m_storageFile->readData();
   }
