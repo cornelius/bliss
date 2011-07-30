@@ -58,7 +58,6 @@ GroupGraphicsView::GroupGraphicsView( MainModel *model, QWidget *parent )
   m_view->setRenderHint( QPainter::Antialiasing );
   topLayout->addWidget( m_view );
   m_view->show();
-//  m_view->installEventFilter( this );
   connect( m_view, SIGNAL( mouseMoved( const QPoint & ) ),
     SLOT( slotMouseMoved( const QPoint & ) ) );
   connect( m_view, SIGNAL( viewportMoved() ), SLOT( positionAbsoluteItems() ) );
@@ -645,33 +644,6 @@ TodoItem *GroupGraphicsView::item( const Bliss::Todo &identity ) const
     if ( item->todo().id() == identity.id() ) return item;
   }
   return 0;
-}
-
-bool GroupGraphicsView::eventFilter( QObject *watched, QEvent *event )
-{
-  if ( watched == m_view ) {
-    if ( event->type() == QEvent::MouseButtonPress ) {
-      QMouseEvent *mouseEvent = static_cast<QMouseEvent*>( event );
-
-      if ( !m_globalMenu ) {
-        m_globalMenu = new FanMenu( 0 );
-        m_globalMenu->setZValue( 50 );
-        FanMenuItem *menuItem = m_globalMenu->addItem( i18n("Add label") );
-        connect( menuItem, SIGNAL( clicked() ), SLOT( addLabelClicked() ) );
-        m_globalMenu->setupItems();
-
-        m_scene->addItem( m_globalMenu );
-      }
-      m_globalMenu->setPos( m_view->mapToScene( mouseEvent->pos() ) );
-      m_globalMenu->show();
-    } else if ( event->type() == QEvent::KeyPress ) {
-      QKeyEvent *keyEvent = static_cast<QKeyEvent*>( event );
-      if ( keyEvent->key() == Qt::Key_Escape ) {
-        hideGlobalMenu();
-      }
-    }
-  }
-  return QWidget::eventFilter( watched, event );
 }
 
 void GroupGraphicsView::addLabelClicked()

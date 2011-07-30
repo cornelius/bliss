@@ -33,8 +33,16 @@ class TrackingGraphicsView : public QGraphicsView
 
   protected:
     void mouseMoveEvent( QMouseEvent *event );
+    void mousePressEvent( QMouseEvent *event );
+    void mouseReleaseEvent( QMouseEvent *event );
     void scrollContentsBy( int dx, int dy );
     void resizeEvent( QResizeEvent *event );
+
+  private:
+    bool m_mousePressed;
+    int m_pressedValueHorizontal;
+    int m_pressedValueVertical;
+    QPoint m_pressedPos;
 };
 
 #endif

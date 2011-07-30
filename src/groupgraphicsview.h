@@ -70,8 +70,6 @@ class GroupGraphicsView : public GroupView
 
     TodoItem *item( const Bliss::Todo & ) const;
 
-    bool eventFilter( QObject * watched, QEvent * event );
-
     void positionMenuItems();
 
     void clearItems();

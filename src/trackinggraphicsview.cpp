@@ -24,7 +24,7 @@
 #include <QScrollBar>
 
 TrackingGraphicsView::TrackingGraphicsView( QGraphicsScene *scene )
-  : QGraphicsView( scene )
+  : QGraphicsView( scene ), m_mousePressed( false )
 {
   setMouseTracking( true );
 
@@ -36,6 +36,14 @@ TrackingGraphicsView::TrackingGraphicsView( QGraphicsScene *scene )
 
 void TrackingGraphicsView::mouseMoveEvent( QMouseEvent *event )
 {
+  if ( m_mousePressed ) {
+    int offsetX = event->pos().x() - m_pressedPos.x();
+    int offsetY = event->pos().y() - m_pressedPos.y();
+
+    horizontalScrollBar()->setValue( m_pressedValueHorizontal - offsetX );
+    verticalScrollBar()->setValue( m_pressedValueVertical - offsetY );
+  }
+  
   emit mouseMoved( event->pos() );
 
   QGraphicsView::mouseMoveEvent( event );
@@ -53,4 +61,27 @@ void TrackingGraphicsView::resizeEvent( QResizeEvent *event )
   emit viewportMoved();
   
   QGraphicsView::resizeEvent( event );
+}
+
+void TrackingGraphicsView::mousePressEvent( QMouseEvent *event )
+{
+  m_pressedPos = event->pos();
+  if ( !itemAt( m_pressedPos ) ) {
+    m_mousePressed = true;
+    m_pressedValueHorizontal = horizontalScrollBar()->value();
+    m_pressedValueVertical = verticalScrollBar()->value();
+  
+    setCursor( Qt::OpenHandCursor );
+  }
+    
+  QGraphicsView::mousePressEvent( event );
+}
+
+void TrackingGraphicsView::mouseReleaseEvent( QMouseEvent *event )
+{
+  m_mousePressed = false;
+
+  setCursor( Qt::ArrowCursor );
+
+  QGraphicsView::mouseReleaseEvent( event );
 }
