@@ -32,6 +32,9 @@ TrackingGraphicsView::TrackingGraphicsView( QGraphicsScene *scene )
     SIGNAL( viewportMoved() ) );
   connect( horizontalScrollBar(), SIGNAL( valueChanged( int ) ),
     SIGNAL( viewportMoved() ) );
+
+  setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
+  setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
 }
 
 void TrackingGraphicsView::mouseMoveEvent( QMouseEvent *event )
