@@ -125,8 +125,8 @@ void MainView::connectGroupView( GroupView *groupView )
 {
   connect( groupView, SIGNAL( goBack() ), SLOT( goBack() ) );
   connect( groupView, SIGNAL( newTodo() ), SLOT( newTodo() ) );
-  connect( groupView, SIGNAL( showTodo( const Bliss::Todo & ) ),
-    SLOT( showTodo( const Bliss::Todo & ) ) );
+  connect( groupView, SIGNAL( requestShowGroup( const Bliss::Todo & ) ),
+           SLOT( showGroup( const Bliss::Todo & ) ) );
   connect( groupView, SIGNAL( showSettings() ),
     SLOT( showSettings() ) );
 }
@@ -275,15 +275,6 @@ void MainView::showView()
     showRoot();
   } else {
     showGroup( m_group );
-  }
-}
-
-void MainView::showTodo( const Bliss::Todo &todo )
-{
-  if ( todo.type() == "group" ) {
-    showGroup( todo );
-  } else {
-    showTodo( todo );
   }
 }
 

@@ -322,8 +322,8 @@ TodoItemGroup GroupGraphicsView::prepareTodoItems( bool doAnimation )
     TodoItem *item = new TodoItem( model(), m_menuHandler, todo );
     result.items.append( item );
 
-    connect( item, SIGNAL( showTodo( const Bliss::Todo & ) ),
-      SIGNAL( showTodo( const Bliss::Todo & ) ) );
+    connect( item, SIGNAL( showGroup( const Bliss::Todo & ) ),
+      SIGNAL( requestShowGroup( const Bliss::Todo & ) ) );
     connect( item, SIGNAL( removeTodo( const Bliss::Todo & ) ),
       SLOT( slotRemoveTodo( const Bliss::Todo & ) ) );
     connect( item, SIGNAL( done( const Bliss::Todo & ) ),
@@ -498,9 +498,7 @@ void GroupGraphicsView::slotItemMoved( TodoItem *todoItem,
   Q_UNUSED( pos )
   
   if ( todoItem->handleItem()->collidesWithItem( m_groupAdderItem ) ) {
-    Bliss::Todo todo = todoItem->todo();
-    model()->removeTodo( todo, group() );
-    model()->addTodo( todo, m_groupAdderItem->group() );
+    model()->moveTodo( todoItem->todo(), group(), m_groupAdderItem->group() );
   } else {
     preparePlaceItemsAnimation();
     

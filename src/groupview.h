@@ -34,14 +34,17 @@ class GroupView : public QWidget
 
     MainModel *model() const;
 
-    void showGroup( const Bliss::Todo & );
     Bliss::Todo group() const;
     Bliss::Todo previousGroup() const;
+
+  public slots:
+    void showGroup( const Bliss::Todo & );
 
   signals:
     void goBack();
     void newTodo();
     void showTodo( const Bliss::Todo & );
+    void requestShowGroup( const Bliss::Todo & );
     
     void showSettings();
 

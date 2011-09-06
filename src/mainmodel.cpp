@@ -308,28 +308,59 @@ Bliss::Todo MainModel::insert( Bliss::Todo todo,
   return todo;
 }
 
+void MainModel::moveTodo( const Bliss::Todo &t, const Bliss::Todo &fromGroup,
+                          const Bliss::Todo &toGroup )
+{
+  Bliss::Todo todo = t;
+
+  if ( todo.groups().findGroup( toGroup.id() ).isValid() ) {
+    return;
+  }
+  
+  doAddTodo( todo, toGroup );
+  doRemoveTodo( todo, fromGroup );
+  
+  insert( todo, i18n("Moved %1 from group %2 to group %3")
+    .arg( todo.summary().value() )
+    .arg( fromGroup.summary().value() )
+    .arg( toGroup.summary().value() ) );
+}
+
 Bliss::Todo MainModel::addTodo( const Bliss::Todo &t,
   const Bliss::Todo &group )
 {
   Bliss::Todo todo = t;
 
-  Bliss::Groups groups = todo.groups();
-
-  if ( !groups.findGroup( group.id() ).isValid() ) {
-    Bliss::Group g;
-    g.setId( group.id() );
-    groups.addGroup( g );
-    todo.setGroups( groups );
-
-    return insert( todo, i18n("Add %1 to group %2").arg( todo.summary().value() )
-      .arg( group.summary().value() ) );
-  }
+  if ( todo.groups().findGroup( group.id() ).isValid() ) return Bliss::Todo();
   
-  return Bliss::Todo();
+  doAddTodo( todo, group );
+
+  return insert( todo, i18n("Add %1 to group %2").arg( todo.summary().value() )
+      .arg( group.summary().value() ) );
 }
 
-void MainModel::removeTodo( const Bliss::Todo &todo,
+void MainModel::doAddTodo( Bliss::Todo &todo, const Bliss::Todo &group )
+{
+  Bliss::Groups groups = todo.groups();
+
+  Bliss::Group g;
+  g.setId( group.id() );
+  groups.addGroup( g );
+  todo.setGroups( groups );
+}
+
+void MainModel::removeTodo( const Bliss::Todo &t,
   const Bliss::Todo &group )
+{
+  Bliss::Todo todo = t;
+  
+  doRemoveTodo( todo, group );
+  
+  insert( todo, i18n("Remove %1 from group %2").arg( todo.summary().value() )
+    .arg( group.summary().value() ) );
+}
+
+void MainModel::doRemoveTodo( Bliss::Todo &todo, const Bliss::Todo &group )
 {
   Bliss::Group::List groups = todo.groups().groupList();
   Bliss::Group::List newGroups;
@@ -339,17 +370,10 @@ void MainModel::removeTodo( const Bliss::Todo &todo,
       newGroups.append( g );
     }
   }
-  
-  Bliss::Todo newtodo = todo;
 
   Bliss::Groups gg;
   gg.setGroupList( newGroups );
-  newtodo.setGroups( gg );
-  m_bliss.insert( newtodo );
-  
-  setupGroups();
-  
-  emit todoChanged( newtodo );
+  todo.setGroups( gg );
 }
 
 void MainModel::deleteTodo( const Bliss::Todo &todo )

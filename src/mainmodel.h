@@ -55,9 +55,10 @@ class MainModel : public QObject
 
     Bliss::Todo addTodo( const Bliss::Todo &todo,
       const Bliss::Todo &group );
-
     void removeTodo( const Bliss::Todo &todo,
       const Bliss::Todo &group );
+    void moveTodo( const Bliss::Todo &todo, const Bliss::Todo &fromGroup,
+                   const Bliss::Todo &toGroup );
     void deleteTodo( const Bliss::Todo &todo );
       
     void removeGroup( const Bliss::Todo &group );
@@ -104,6 +105,9 @@ class MainModel : public QObject
     void syncingStatusChanged( const QString & );
 
   protected:
+    void doAddTodo( Bliss::Todo &todo, const Bliss::Todo &group );
+    void doRemoveTodo( Bliss::Todo &todo, const Bliss::Todo &group );
+    
     void setupGroups();
 
     QPixmap defaultPixmap( const Bliss::Todo &identity ) const;

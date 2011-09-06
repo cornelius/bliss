@@ -22,7 +22,7 @@
 #include "bliss/bliss.h"
 #include "fanmenu.h"
 #include "hidinglineedit.h"
-#
+
 #include <QtGui>
 
 class MainModel;
@@ -70,7 +70,6 @@ class TodoItem : public QObject, public QGraphicsItemGroup
   signals:
     void showGroup( const Bliss::Todo & );
   
-    void showTodo( const Bliss::Todo & );
     void removeTodo( const Bliss::Todo & );
     void done( const Bliss::Todo & );
 
@@ -94,7 +93,7 @@ class TodoItem : public QObject, public QGraphicsItemGroup
     void mouseReleaseEvent( QGraphicsSceneMouseEvent *event );
 
   protected slots:
-    void emitShowTodo();
+    void emitShowGroup();
     void emitRemoveTodo();
     void emitDone();
 

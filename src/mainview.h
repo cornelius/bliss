@@ -62,7 +62,6 @@ class MainView : public QWidget
     void showView();
     void goBack();
     void showGroup( const Bliss::Todo & );
-    void showTodo( const Bliss::Todo & );
 
     void showSettings();
 

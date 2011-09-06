@@ -1,6 +1,4 @@
-* Remove todos properly when moving via group adder
 * When todo is done properly commit it to git.
-* Properly commit removal from group to git.
 * History dependent on file
 * Use common storage base class and switch via instances rather than ifs
 * Make kxml_compiler generate const writeFile function.

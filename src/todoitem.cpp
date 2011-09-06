@@ -119,8 +119,8 @@ void TodoItem::updateItem( const Bliss::Todo &todo )
     
     if ( todo.type() == "group" ) {
       menuItem = m_fanMenu->addItem( i18n("Go to") );
+      connect( menuItem, SIGNAL( clicked() ), SLOT( emitShowGroup() ) );
     }
-    connect( menuItem, SIGNAL( clicked() ), SLOT( emitShowTodo() ) );
 
     if ( todo.type() != "group" ) {
       menuItem = m_fanMenu->addItem( i18n("Done") );
@@ -225,9 +225,9 @@ void TodoItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
   }
 }
 
-void TodoItem::emitShowTodo()
+void TodoItem::emitShowGroup()
 {
-  emit showTodo( m_todo );
+  emit showGroup( m_todo );
 }
 
 void TodoItem::emitRemoveTodo()

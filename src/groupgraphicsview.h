@@ -56,7 +56,7 @@ class GroupGraphicsView : public GroupView
       const Bliss::Todo &group );
     void cloneGroup( const Bliss::Todo &group );
     void removeGroup( const Bliss::Todo &group );
-
+    
     void closeRequested();
 
   protected:
