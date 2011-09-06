@@ -380,6 +380,8 @@ void MainModel::deleteTodo( const Bliss::Todo &todo )
 {
   m_bliss.remove( todo );
   setupGroups();
+
+  writeData( i18n("Deleted %1").arg( todo.summary().value() ) );
   
   emit todoRemoved( todo );
 }
