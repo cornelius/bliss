@@ -308,20 +308,20 @@ Bliss::Todo MainModel::insert( Bliss::Todo todo,
   return todo;
 }
 
-Bliss::Todo MainModel::addTodo( const Bliss::Todo &person,
+Bliss::Todo MainModel::addTodo( const Bliss::Todo &t,
   const Bliss::Todo &group )
 {
-  Bliss::Todo p = person;
+  Bliss::Todo todo = t;
 
-  Bliss::Groups groups = p.groups();
+  Bliss::Groups groups = todo.groups();
 
   if ( !groups.findGroup( group.id() ).isValid() ) {
     Bliss::Group g;
     g.setId( group.id() );
     groups.addGroup( g );
-    p.setGroups( groups );
+    todo.setGroups( groups );
 
-    return insert( p, i18n("Add %1 to group %2").arg( person.summary().value() )
+    return insert( todo, i18n("Add %1 to group %2").arg( todo.summary().value() )
       .arg( group.summary().value() ) );
   }
   
