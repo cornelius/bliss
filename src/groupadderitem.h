@@ -25,7 +25,7 @@
 #include <QtGui>
 
 class ButtonItem;
-class TodoItem;
+class DropTargetItem;
 
 class GroupAdderItem : public QObject, public QGraphicsEllipseItem
 {
@@ -38,7 +38,16 @@ class GroupAdderItem : public QObject, public QGraphicsEllipseItem
     void setGroup( const Bliss::Todo &group );
     Bliss::Todo group() const;
 
+    Bliss::Todo collidedGroup( QGraphicsItem * );
+
+    void showAsSidebar( bool enabled );
+    bool shownAsSidebar() const;
+
+    void showGroupItems();
+    
   protected:
+    void createGroupItem( int x, int y );
+    
     void hoverEnterEvent( QGraphicsSceneHoverEvent *event );
     void hoverLeaveEvent( QGraphicsSceneHoverEvent *event );
 
@@ -58,12 +67,14 @@ class GroupAdderItem : public QObject, public QGraphicsEllipseItem
 
     bool m_expanded;
 
+    QGraphicsRectItem *m_sidebarBackground;
+
     ButtonItem *m_expandButton;
 
     ButtonItem *m_upButton;
     ButtonItem *m_downButton;
 
-    TodoItem *m_groupItem;
+    QList<DropTargetItem *> m_groupItems;
 };
 
 #endif

@@ -1,4 +1,6 @@
 set(bliss_bin_SRCS
+  droptargetitem.cpp
+  groupaddersidebaritem.cpp
   storagefile.cpp
   storagegit.cpp
   hidinglineedit.cpp

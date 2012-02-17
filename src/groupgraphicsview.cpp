@@ -496,9 +496,11 @@ void GroupGraphicsView::slotItemMoved( TodoItem *todoItem,
   const QPointF &pos )
 {
   Q_UNUSED( pos )
-  
-  if ( todoItem->handleItem()->collidesWithItem( m_groupAdderItem ) ) {
-    model()->moveTodo( todoItem->todo(), group(), m_groupAdderItem->group() );
+
+  Bliss::Todo target =
+    m_groupAdderItem->collidedGroup( todoItem->handleItem() );
+  if ( target.isValid() ) {
+    model()->moveTodo( todoItem->todo(), group(), target );
   } else {
     preparePlaceItemsAnimation();
     

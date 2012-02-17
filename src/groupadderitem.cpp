@@ -22,21 +22,29 @@
 #include "mainmodel.h"
 #include "fanmenu.h"
 #include "buttonitem.h"
-#include "todoitem.h"
 #include "todohandleitem.h"
+#include "groupaddersidebaritem.h"
+#include "droptargetitem.h"
 
 #include <KLocale>
 
 GroupAdderItem::GroupAdderItem( MainModel *model )
   : m_model( model ), m_defaultItemSize( 100 ), m_expanded( false )
 {
-  setItemSize( m_defaultItemSize );
- 
-  setBrush( QColor( 230,229,229 ) );
+  QColor backgroundColor( 230,229,229 );
+  
+  setBrush( backgroundColor );
 
   QPen pen;
   pen.setBrush( Qt::NoBrush );
   setPen( pen );
+
+  m_sidebarBackground = new GroupAdderSidebarItem( this );
+  m_sidebarBackground->setBrush( backgroundColor );
+  m_sidebarBackground->setPen( pen );
+  showAsSidebar( false );
+
+  setItemSize( m_defaultItemSize );
 
   m_expandButton = new ButtonItem( this );
   m_expandButton->setPos( 21, -21 );
@@ -44,11 +52,10 @@ GroupAdderItem::GroupAdderItem( MainModel *model )
 
   int groupOffset = 85;
 
-  m_groupItem = new TodoItem( this, m_model, m_model->rootGroup() );
-  m_groupItem->setPos( groupOffset, -groupOffset );
-  m_groupItem->hide();
-  m_groupItem->enableMenus( false );
-
+  createGroupItem( groupOffset, -groupOffset );
+  createGroupItem( groupOffset, -groupOffset - 140 );
+  createGroupItem( groupOffset, -groupOffset - 280 );
+  
   m_upButton = new ButtonItem( this );
   m_upButton->setPos( 151, -21 );
   m_upButton->hide();
@@ -63,9 +70,19 @@ GroupAdderItem::GroupAdderItem( MainModel *model )
   m_downButton->setPrevious();
 }
 
+void GroupAdderItem::createGroupItem( int x, int y )
+{  
+  DropTargetItem *groupItem = new DropTargetItem( this, m_model,
+    m_model->rootGroup() );
+  groupItem->setPos( x, y );
+  groupItem->hide();
+  m_groupItems.append( groupItem );
+}
+
 void GroupAdderItem::setItemSize( int size )
 {
   setRect( -size/2, -size/2, size, size );
+  m_sidebarBackground->setRect( 0, -2000, size/2, 2000 );
 }
 
 void GroupAdderItem::hoverEnterEvent( QGraphicsSceneHoverEvent *event )
@@ -82,7 +99,7 @@ void GroupAdderItem::mousePressEvent( QGraphicsSceneMouseEvent *event )
 {
   Q_UNUSED( event )
 
-  // Don't call event handler from parent, so mouse press does nothing.
+  showAsSidebar( !shownAsSidebar() );
 }
 
 void GroupAdderItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
@@ -99,26 +116,67 @@ void GroupAdderItem::expand()
   if ( m_expanded ) {
     setItemSize( 400 );
     m_expandButton->setMinus();
-    m_groupItem->show();
+    showGroupItems();
     m_upButton->show();
     m_downButton->show();
   } else {
     setItemSize( 100 );
     m_expandButton->setPlus();
-    m_groupItem->hide();
+    foreach( DropTargetItem *item, m_groupItems ) {
+      item->hide();
+    }
     m_upButton->hide();
     m_downButton->hide();
   }
 }
 
-void GroupAdderItem::setGroup( const Bliss::Todo &group )
+void GroupAdderItem::showGroupItems()
 {
-  m_groupItem->updateItem( group );
+  for( int i = 0; i < m_groupItems.size(); ++i ) {
+    if ( m_expanded && ( shownAsSidebar() || i == 0 ) ) {
+      m_groupItems[i]->show();
+    } else {
+      m_groupItems[i]->hide();
+    }
+  }
 }
 
-Bliss::Todo GroupAdderItem::group() const
+void GroupAdderItem::setGroup( const Bliss::Todo &group )
 {
-  return m_groupItem->todo();
+  bool foundGroup = false;
+  int i = 0;
+  
+  Bliss::Todo::List list = m_model->groups();
+  Bliss::Todo::List::ConstIterator it;
+  for( it = list.constBegin(); it != list.constEnd(); ++it ) {
+    if ( (*it).id() == group.id() ) {
+      foundGroup = true;
+    }
+    if ( foundGroup && i < m_groupItems.size() ) {
+      m_groupItems[i]->updateItem( *it );
+      ++i;
+    }
+  }
+}
+
+Bliss::Todo GroupAdderItem::collidedGroup( QGraphicsItem *dropItem )
+{
+  if ( shownAsSidebar() ) {
+    foreach( DropTargetItem *item, m_groupItems ) {
+      if ( dropItem->collidesWithItem( item ) ) {
+        qDebug() << "DROPPED ON" << item->todo().summary().value();
+        return item->todo();
+      }
+    }
+  } else {
+    if ( dropItem->collidesWithItem( this ) ) {
+      qDebug() << "DROPPED ON COLLAPSED" <<
+        m_groupItems.first()->todo().summary().value();
+      return m_groupItems.first()->todo();
+    }
+  }
+  
+  return Bliss::Todo();
 }
 
 void GroupAdderItem::nextGroup()
@@ -126,7 +184,7 @@ void GroupAdderItem::nextGroup()
   Bliss::Todo::List list = m_model->groups();
   Bliss::Todo::List::ConstIterator it;
   for( it = list.constBegin(); it != list.constEnd(); ++it ) {
-    if ( (*it).id() == group().id() ) break;
+    if ( (*it).id() == m_groupItems.first()->todo().id() ) break;
   }
   ++it;
   if ( it != list.constEnd() ) {
@@ -141,7 +199,7 @@ void GroupAdderItem::previousGroup()
   Bliss::Todo::List list = m_model->groups();
   Bliss::Todo::List::ConstIterator it;
   for( it = list.constBegin(); it != list.constEnd(); ++it ) {
-    if ( (*it).id() == group().id() ) break;
+    if ( (*it).id() == m_groupItems.first()->todo().id() ) break;
   }
   if ( it == list.constEnd() ) {
     setGroup( list.first() );
@@ -153,4 +211,19 @@ void GroupAdderItem::previousGroup()
       setGroup( *it );
     }
   }
+}
+
+bool GroupAdderItem::shownAsSidebar() const
+{
+  return m_sidebarBackground->isVisible();
+}
+
+void GroupAdderItem::showAsSidebar( bool show )
+{
+  if ( show ) {
+    m_sidebarBackground->show();
+  } else {
+    m_sidebarBackground->hide();
+  }
+  showGroupItems();
 }
