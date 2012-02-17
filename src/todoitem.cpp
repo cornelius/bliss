@@ -31,26 +31,13 @@
 TodoItem::TodoItem( MainModel *model, MenuHandler *menuHandler,
   const Bliss::Todo &todo )
   : QObject( model ), m_model( model ), m_todo( todo ),
-    m_handleSize( 30 ), m_textIsCentered( false ),
     m_fanMenu( 0 ), m_menuHandler( menuHandler ), m_edit( 0 ), m_editProxy( 0 )
 {
   init();
 }
 
-TodoItem::TodoItem( QGraphicsItem *item, MainModel *model,
-  const Bliss::Todo &todo )
-  : QObject( model ), QGraphicsItemGroup( item ), m_model( model ),
-    m_todo( todo ), m_handleSize( 90 ), m_textIsCentered( true ),
-    m_textCenterX( 0 ), m_fanMenu( 0 ), m_menuHandler( 0 ),
-    m_edit( 0 ),
-    m_editProxy( 0 )
-{
-  init();
-}
-
 TodoItem::TodoItem( MainModel *model )
-  : QObject( model ), m_model( model ), m_handleSize( 30 ),
-    m_textIsCentered( false ),
+  : QObject( model ), m_model( model ),
     m_textCenterX( 0 ), m_fanMenu( 0 ),
     m_menuHandler( 0 ), m_edit( 0 ), m_editProxy( 0 )
 {
@@ -77,11 +64,6 @@ void TodoItem::enableMenus( bool enabled )
   if ( !m_menusEnabled ) hidePopups();
 }
 
-void TodoItem::setTextIsCentered( bool centered )
-{
-  m_textIsCentered = centered;
-}
-
 void TodoItem::updateItem( const Bliss::Todo &todo )
 {
   m_todo = todo;
@@ -91,7 +73,7 @@ void TodoItem::updateItem( const Bliss::Todo &todo )
   }
 
   m_handleItem = new TodoHandleItem( this, m_model, m_todo );
-  m_handleItem->setItemSize( m_handleSize );
+  m_handleItem->setItemSize( 30 );
   
   int itemSize = m_handleItem->itemSize();
   
@@ -103,11 +85,7 @@ void TodoItem::updateItem( const Bliss::Todo &todo )
 
   m_textCenterX = textWidth / 2;
  
-  if ( m_textIsCentered ) {
-    m_nameItem->setPos( -textWidth / 2, -textHeight / 2 + 2 );
-  } else {
-    m_nameItem->setPos( itemSize / 2 + 16, - textHeight / 2 + 2 );
-  }
+  m_nameItem->setPos( itemSize / 2 + 16, - textHeight / 2 + 2 );
   
   if ( m_menuHandler ) {
     m_fanMenu = m_menuHandler->createMenu();
