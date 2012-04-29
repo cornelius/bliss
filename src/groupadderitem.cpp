@@ -45,8 +45,8 @@ GroupAdderItem::GroupAdderItem( MainModel *model )
   m_sidebarBackground = new GroupAdderSidebarItem( this );
   m_sidebarBackground->setBrush( backgroundColor );
   m_sidebarBackground->setPen( pen );
-  showAsSidebar( false );
-
+  m_sidebarBackground->hide();
+  
   setItemSize( m_defaultItemSize );
 
   m_expandButton = new ButtonItem( this );
@@ -151,7 +151,8 @@ void GroupAdderItem::expandGroupItems()
   }
   m_expandGroupsAnimation->clear();
 
-  for( int i = 0; i < m_groupItems.size(); ++i ) {
+  int i = 0;
+  for( ; i < m_groupItems.size(); ++i ) {
     QPropertyAnimation *animation =
       new QPropertyAnimation(m_groupItems[i], "pos", this);
 
@@ -162,6 +163,13 @@ void GroupAdderItem::expandGroupItems()
 
     m_expandGroupsAnimation->insertAnimation( 0, animation );
   }
+
+  QPropertyAnimation *a = new QPropertyAnimation( m_downButton, "pos", this );
+  a->setDuration( 300 );
+  a->setEndValue( QPointF( m_buttonOffsetLow,
+    - m_buttonOffsetHigh - ( i - 1 ) * m_groupSpacing ) );
+  a->setEasingCurve( QEasingCurve::OutCubic );
+  m_expandGroupsAnimation->insertAnimation( 0, a );
   
   m_expandGroupsAnimation->start();
 }
@@ -189,7 +197,14 @@ void GroupAdderItem::collapseGroupItems()
                                      -m_groupOffset + i * m_groupSpacing ) );
     animation->setEasingCurve( QEasingCurve::OutCubic );
   }
-  
+
+  QPropertyAnimation *a = new QPropertyAnimation( m_downButton, "pos", this );
+  a->setDuration( 300 );
+  a->setEndValue( QPointF( m_buttonOffsetLow,
+    - m_buttonOffsetHigh ) );
+  a->setEasingCurve( QEasingCurve::OutCubic );
+  m_collapseGroupsAnimation->insertAnimation( 0, a );
+
   m_collapseGroupsAnimation->start();
 }
 

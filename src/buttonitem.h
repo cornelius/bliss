@@ -24,6 +24,9 @@
 class ButtonItem : public QObject, public QGraphicsEllipseItem
 {
     Q_OBJECT
+
+    Q_PROPERTY(QPointF pos READ pos WRITE setPos)
+
   public:
     ButtonItem( QGraphicsItem * );
 
