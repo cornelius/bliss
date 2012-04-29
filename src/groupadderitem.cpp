@@ -30,7 +30,8 @@
 
 GroupAdderItem::GroupAdderItem( MainModel *model )
   : m_model( model ), m_defaultItemSize( 100 ), m_expanded( false ),
-    m_expandGroupsAnimation( 0 ), m_collapseGroupsAnimation( 0 )
+    m_expandGroupsAnimation( 0 ), m_collapseGroupsAnimation( 0 ),
+    m_groupOffset( 85 )
 {
   QColor backgroundColor( 230,229,229 );
   
@@ -51,12 +52,10 @@ GroupAdderItem::GroupAdderItem( MainModel *model )
   m_expandButton->setPos( 21, -21 );
   connect( m_expandButton, SIGNAL( clicked() ), SLOT( expand() ) );
 
-  int groupOffset = 85;
-
-  createGroupItem( groupOffset, -groupOffset );
-  createGroupItem( groupOffset, -groupOffset + 140 );
-  createGroupItem( groupOffset, -groupOffset + 280 );
-  createGroupItem( groupOffset, -groupOffset + 420 );
+  createGroupItem( m_groupOffset, -m_groupOffset );
+  createGroupItem( m_groupOffset, -m_groupOffset + 140 );
+  createGroupItem( m_groupOffset, -m_groupOffset + 280 );
+  createGroupItem( m_groupOffset, -m_groupOffset + 420 );
   
   m_upButton = new ButtonItem( this );
   m_upButton->setPos( 151, -21 );
@@ -157,8 +156,8 @@ void GroupAdderItem::expandGroupItems()
       new QPropertyAnimation(m_groupItems[i], "pos", this);
 
     animation->setDuration( 300 );
-    animation->setEndValue( QPointF( 85,
-      -85 - ( m_groupItems.size() - 1 - i ) * 140 ) );
+    animation->setEndValue( QPointF( m_groupOffset,
+      -m_groupOffset - ( m_groupItems.size() - 1 - i ) * 140 ) );
     animation->setEasingCurve( QEasingCurve::OutCubic );
 
     m_expandGroupsAnimation->insertAnimation( 0, animation );
@@ -186,7 +185,8 @@ void GroupAdderItem::collapseGroupItems()
     m_collapseGroupsAnimation->insertAnimation( 0, animation );
 
     animation->setDuration( 300 );
-    animation->setEndValue( QPointF( 85, -85 + i * 140 ) );
+    animation->setEndValue( QPointF( m_groupOffset,
+                                     -m_groupOffset + i * 140 ) );
     animation->setEasingCurve( QEasingCurve::OutCubic );
   }
   

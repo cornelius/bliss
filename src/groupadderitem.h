@@ -82,6 +82,8 @@ class GroupAdderItem : public QObject, public QGraphicsEllipseItem
     
     QParallelAnimationGroup *m_expandGroupsAnimation;
     QParallelAnimationGroup *m_collapseGroupsAnimation;
+    
+    int m_groupOffset;
 };
 
 #endif
