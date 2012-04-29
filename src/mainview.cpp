@@ -135,12 +135,14 @@ void MainView::readConfig()
 {
   Settings::self()->readConfig();
 
+  m_groupGraphicsView->readConfig();
   m_settingsWidget->readConfig();
 }
 
 void MainView::writeConfig()
 {
   m_settingsWidget->writeConfig();
+  m_groupGraphicsView->writeConfig();
 
   Settings::setHistory( m_history );
 

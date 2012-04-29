@@ -19,6 +19,16 @@
       <default>true</default>
     </entry>
   </group>
+  <group name="GroupView">
+    <entry name="GroupAdderExpanded" type="Bool">
+      <label>If Group Adder is expanded</label>
+      <default>false</default>
+    </entry>
+    <entry name="GroupAdderGroupsExpanded" type="Bool">
+      <label>If Group Adder Groups are expanded</label>
+      <default>false</default>
+    </entry>
+  </group>    
   <group name="Hidden">
     <entry name="EnableMagic" type="Bool">
       <label>Enable magic buttons</label>

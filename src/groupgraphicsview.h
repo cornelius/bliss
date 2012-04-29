@@ -48,6 +48,9 @@ class GroupGraphicsView : public GroupView
   public:
     GroupGraphicsView( MainModel *, QWidget *parent = 0 );
 
+    void readConfig();
+    void writeConfig();
+    
     void setAdderGroup( const Bliss::Todo &group );
 
   signals:

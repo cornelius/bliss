@@ -75,6 +75,20 @@ GroupGraphicsView::GroupGraphicsView( MainModel *model, QWidget *parent )
   setMinimumWidth( 50 );
 }
 
+void GroupGraphicsView::readConfig()
+{
+  if ( Settings::groupAdderExpanded() ) m_groupAdderItem->expand();
+  if ( Settings::groupAdderGroupsExpanded() ) {
+    m_groupAdderItem->expandGroupItems();
+  }
+}
+
+void GroupGraphicsView::writeConfig()
+{
+  Settings::setGroupAdderExpanded( m_groupAdderItem->isExpanded() );
+  Settings::setGroupAdderGroupsExpanded( m_groupAdderItem->shownAsSidebar() );
+}
+
 void GroupGraphicsView::slotTodoChanged( const Bliss::Todo &todo )
 {
   TodoItem *i = item( todo );

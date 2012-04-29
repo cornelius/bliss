@@ -43,9 +43,14 @@ class GroupAdderItem : public QObject, public QGraphicsEllipseItem
     void showAsSidebar( bool enabled );
     bool shownAsSidebar() const;
 
+    bool isExpanded() const;
+    
     void expandGroupItems();
     void collapseGroupItems();
-    
+
+  public slots:
+    void expand();
+
   protected:
     void createGroupItem( int x, int y );
     
@@ -56,8 +61,6 @@ class GroupAdderItem : public QObject, public QGraphicsEllipseItem
     void mouseReleaseEvent( QGraphicsSceneMouseEvent *event );
 
   protected slots:
-    void expand();
-
     void nextGroup();
     void previousGroup();
     

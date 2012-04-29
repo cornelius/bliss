@@ -134,8 +134,15 @@ void GroupAdderItem::expand()
   }
 }
 
+bool GroupAdderItem::isExpanded() const
+{
+  return m_expanded;
+}
+
 void GroupAdderItem::expandGroupItems()
 {
+  m_sidebarBackground->show();
+
   if ( m_collapseGroupsAnimation ) {
     m_collapseGroupsAnimation->stop();
   }
@@ -162,6 +169,8 @@ void GroupAdderItem::expandGroupItems()
 
 void GroupAdderItem::collapseGroupItems()
 {
+  m_sidebarBackground->hide();
+
   if ( m_expandGroupsAnimation ) {
     m_expandGroupsAnimation->stop();
   }
@@ -264,10 +273,8 @@ bool GroupAdderItem::shownAsSidebar() const
 void GroupAdderItem::showAsSidebar( bool show )
 {
   if ( show ) {
-    m_sidebarBackground->show();
     expandGroupItems();
   } else {
-    m_sidebarBackground->hide();
     collapseGroupItems();
   }
 }
