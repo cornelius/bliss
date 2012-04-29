@@ -25,8 +25,11 @@
 
 class MainModel;
 
-class DropTargetItem : public QGraphicsEllipseItem
+class DropTargetItem : public QObject, public QGraphicsEllipseItem
 {
+    Q_OBJECT
+
+    Q_PROPERTY(QPointF pos READ pos WRITE setPos)
   public:
     DropTargetItem( QGraphicsItem *, MainModel *, const Bliss::Todo & );
 

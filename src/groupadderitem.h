@@ -43,7 +43,8 @@ class GroupAdderItem : public QObject, public QGraphicsEllipseItem
     void showAsSidebar( bool enabled );
     bool shownAsSidebar() const;
 
-    void showGroupItems();
+    void expandGroupItems();
+    void collapseGroupItems();
     
   protected:
     void createGroupItem( int x, int y );
@@ -75,6 +76,9 @@ class GroupAdderItem : public QObject, public QGraphicsEllipseItem
     ButtonItem *m_downButton;
 
     QList<DropTargetItem *> m_groupItems;
+    
+    QParallelAnimationGroup *m_expandGroupsAnimation;
+    QParallelAnimationGroup *m_collapseGroupsAnimation;
 };
 
 #endif

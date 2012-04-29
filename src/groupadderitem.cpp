@@ -29,7 +29,8 @@
 #include <KLocale>
 
 GroupAdderItem::GroupAdderItem( MainModel *model )
-  : m_model( model ), m_defaultItemSize( 100 ), m_expanded( false )
+  : m_model( model ), m_defaultItemSize( 100 ), m_expanded( false ),
+    m_expandGroupsAnimation( 0 ), m_collapseGroupsAnimation( 0 )
 {
   QColor backgroundColor( 230,229,229 );
   
@@ -53,8 +54,9 @@ GroupAdderItem::GroupAdderItem( MainModel *model )
   int groupOffset = 85;
 
   createGroupItem( groupOffset, -groupOffset );
-  createGroupItem( groupOffset, -groupOffset - 140 );
-  createGroupItem( groupOffset, -groupOffset - 280 );
+  createGroupItem( groupOffset, -groupOffset + 140 );
+  createGroupItem( groupOffset, -groupOffset + 280 );
+  createGroupItem( groupOffset, -groupOffset + 420 );
   
   m_upButton = new ButtonItem( this );
   m_upButton->setPos( 151, -21 );
@@ -116,7 +118,9 @@ void GroupAdderItem::expand()
   if ( m_expanded ) {
     setItemSize( 400 );
     m_expandButton->setMinus();
-    showGroupItems();
+    foreach( DropTargetItem *item, m_groupItems ) {
+      item->show();
+    }
     m_upButton->show();
     m_downButton->show();
   } else {
@@ -130,15 +134,54 @@ void GroupAdderItem::expand()
   }
 }
 
-void GroupAdderItem::showGroupItems()
+void GroupAdderItem::expandGroupItems()
 {
-  for( int i = 0; i < m_groupItems.size(); ++i ) {
-    if ( m_expanded && ( shownAsSidebar() || i == 0 ) ) {
-      m_groupItems[i]->show();
-    } else {
-      m_groupItems[i]->hide();
-    }
+  if ( m_collapseGroupsAnimation ) {
+    m_collapseGroupsAnimation->stop();
   }
+  
+  if ( !m_expandGroupsAnimation ) {
+    m_expandGroupsAnimation = new QParallelAnimationGroup( this );
+  }
+  m_expandGroupsAnimation->clear();
+
+  for( int i = 0; i < m_groupItems.size(); ++i ) {
+    QPropertyAnimation *animation =
+      new QPropertyAnimation(m_groupItems[i], "pos", this);
+
+    animation->setDuration( 300 );
+    animation->setEndValue( QPointF( 85,
+      -85 - ( m_groupItems.size() - 1 - i ) * 140 ) );
+    animation->setEasingCurve( QEasingCurve::OutCubic );
+
+    m_expandGroupsAnimation->insertAnimation( 0, animation );
+  }
+  
+  m_expandGroupsAnimation->start();
+}
+
+void GroupAdderItem::collapseGroupItems()
+{
+  if ( m_expandGroupsAnimation ) {
+    m_expandGroupsAnimation->stop();
+  }
+  
+  if ( !m_collapseGroupsAnimation ) {
+    m_collapseGroupsAnimation = new QParallelAnimationGroup( this );
+  }
+  m_collapseGroupsAnimation->clear();
+
+  for( int i = 0; i < m_groupItems.size(); ++i ) {
+    QPropertyAnimation *animation =
+      new QPropertyAnimation( m_groupItems[i], "pos", this );
+    m_collapseGroupsAnimation->insertAnimation( 0, animation );
+
+    animation->setDuration( 300 );
+    animation->setEndValue( QPointF( 85, -85 + i * 140 ) );
+    animation->setEasingCurve( QEasingCurve::OutCubic );
+  }
+  
+  m_collapseGroupsAnimation->start();
 }
 
 void GroupAdderItem::setGroup( const Bliss::Todo &group )
@@ -222,8 +265,9 @@ void GroupAdderItem::showAsSidebar( bool show )
 {
   if ( show ) {
     m_sidebarBackground->show();
+    expandGroupItems();
   } else {
     m_sidebarBackground->hide();
+    collapseGroupItems();
   }
-  showGroupItems();
 }
