@@ -195,19 +195,22 @@ void GroupAdderItem::collapseGroupItems()
 
 void GroupAdderItem::setGroup( const Bliss::Todo &group )
 {
-  bool foundGroup = false;
-  int i = 0;
-  
   Bliss::Todo::List list = m_model->groups();
   Bliss::Todo::List::ConstIterator it;
   for( it = list.constBegin(); it != list.constEnd(); ++it ) {
     if ( (*it).id() == group.id() ) {
-      foundGroup = true;
+      break;
     }
-    if ( foundGroup && i < m_groupItems.size() ) {
-      m_groupItems[i]->updateItem( *it );
-      ++i;
+  }
+  
+  for( int i = 0; i < m_groupItems.size(); ++i ) {
+    if ( it == list.constEnd() ) {
+      it = list.constBegin();
     }
+
+    m_groupItems[i]->updateItem( *it );
+
+    ++it;
   }
 }
 
@@ -239,10 +242,10 @@ void GroupAdderItem::nextGroup()
     if ( (*it).id() == m_groupItems.first()->todo().id() ) break;
   }
   ++it;
-  if ( it != list.constEnd() ) {
-    setGroup( *it );
-  } else {
+  if ( it == list.constEnd() ) {
     setGroup( list.first() );
+  } else {
+    setGroup( *it );
   }
 }
 
@@ -253,15 +256,11 @@ void GroupAdderItem::previousGroup()
   for( it = list.constBegin(); it != list.constEnd(); ++it ) {
     if ( (*it).id() == m_groupItems.first()->todo().id() ) break;
   }
-  if ( it == list.constEnd() ) {
-    setGroup( list.first() );
+  if ( it == list.constBegin() ) {
+    setGroup( list.last() );
   } else {
-    if ( it == list.constBegin() ) {
-      setGroup( list.last() );
-    } else {
-      --it;
-      setGroup( *it );
-    }
+    --it;
+    setGroup( *it );
   }
 }
 
