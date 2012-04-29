@@ -31,7 +31,8 @@
 GroupAdderItem::GroupAdderItem( MainModel *model )
   : m_model( model ), m_defaultItemSize( 100 ), m_expanded( false ),
     m_expandGroupsAnimation( 0 ), m_collapseGroupsAnimation( 0 ),
-    m_groupOffset( 85 ), m_groupSpacing( 140 )
+    m_groupOffset( 85 ), m_groupSpacing( 140 ),
+    m_buttonOffsetLow( 21 ), m_buttonOffsetHigh( 151 )
 {
   QColor backgroundColor( 230,229,229 );
   
@@ -49,7 +50,7 @@ GroupAdderItem::GroupAdderItem( MainModel *model )
   setItemSize( m_defaultItemSize );
 
   m_expandButton = new ButtonItem( this );
-  m_expandButton->setPos( 21, -21 );
+  m_expandButton->setPos( m_buttonOffsetLow, - m_buttonOffsetLow );
   connect( m_expandButton, SIGNAL( clicked() ), SLOT( expand() ) );
 
   for( int i = 0; i < 4; ++i ) {
@@ -57,13 +58,13 @@ GroupAdderItem::GroupAdderItem( MainModel *model )
   }
     
   m_upButton = new ButtonItem( this );
-  m_upButton->setPos( 151, -21 );
+  m_upButton->setPos( m_buttonOffsetHigh, - m_buttonOffsetLow );
   m_upButton->hide();
   connect( m_upButton, SIGNAL( clicked() ), SLOT( nextGroup() ) );
   m_upButton->setNext();
   
   m_downButton = new ButtonItem( this );
-  m_downButton->setPos( 21, -151 );
+  m_downButton->setPos( m_buttonOffsetLow, - m_buttonOffsetHigh );
   m_downButton->hide();
   m_downButton->setMinus();
   connect( m_downButton, SIGNAL( clicked() ), SLOT( previousGroup() ) );

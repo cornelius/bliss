@@ -85,6 +85,9 @@ class GroupAdderItem : public QObject, public QGraphicsEllipseItem
     
     int m_groupOffset;
     int m_groupSpacing;
+    
+    int m_buttonOffsetLow;
+    int m_buttonOffsetHigh;
 };
 
 #endif
