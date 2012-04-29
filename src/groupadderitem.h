@@ -45,7 +45,7 @@ class GroupAdderItem : public QObject, public QGraphicsEllipseItem
 
     bool isExpanded() const;
     
-    void expandGroupItems();
+    void expandGroupItems( bool doAnimation = true );
     void collapseGroupItems();
 
   public slots:

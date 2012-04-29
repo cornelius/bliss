@@ -79,7 +79,7 @@ void GroupGraphicsView::readConfig()
 {
   if ( Settings::groupAdderExpanded() ) m_groupAdderItem->expand();
   if ( Settings::groupAdderGroupsExpanded() ) {
-    m_groupAdderItem->expandGroupItems();
+    m_groupAdderItem->expandGroupItems( false );
   }
 }
 

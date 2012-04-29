@@ -143,40 +143,53 @@ bool GroupAdderItem::isExpanded() const
   return m_expanded;
 }
 
-void GroupAdderItem::expandGroupItems()
+void GroupAdderItem::expandGroupItems( bool doAnimation )
 {
   m_sidebarBackground->show();
 
-  if ( m_collapseGroupsAnimation ) {
-    m_collapseGroupsAnimation->stop();
+  if ( doAnimation ) {
+    if ( m_collapseGroupsAnimation ) {
+      m_collapseGroupsAnimation->stop();
+    }
+    
+    if ( !m_expandGroupsAnimation ) {
+      m_expandGroupsAnimation = new QParallelAnimationGroup( this );
+    }
+    m_expandGroupsAnimation->clear();
   }
   
-  if ( !m_expandGroupsAnimation ) {
-    m_expandGroupsAnimation = new QParallelAnimationGroup( this );
-  }
-  m_expandGroupsAnimation->clear();
-
   int i = 0;
   for( ; i < m_groupItems.size(); ++i ) {
-    QPropertyAnimation *animation =
-      new QPropertyAnimation(m_groupItems[i], "pos", this);
+    QPointF pos( m_groupOffset,
+      -m_groupOffset - ( m_groupItems.size() - 1 - i ) * m_groupSpacing );
 
-    animation->setDuration( 300 );
-    animation->setEndValue( QPointF( m_groupOffset,
-      -m_groupOffset - ( m_groupItems.size() - 1 - i ) * m_groupSpacing ) );
-    animation->setEasingCurve( QEasingCurve::OutCubic );
+    if ( doAnimation ) {
+      QPropertyAnimation *animation =
+        new QPropertyAnimation(m_groupItems[i], "pos", this);
+      m_expandGroupsAnimation->insertAnimation( 0, animation );
 
-    m_expandGroupsAnimation->insertAnimation( 0, animation );
+      animation->setDuration( 300 );
+      animation->setEndValue( pos );
+      animation->setEasingCurve( QEasingCurve::OutCubic );
+    } else {
+      m_groupItems[i]->setPos( pos );
+    }
   }
 
-  QPropertyAnimation *a = new QPropertyAnimation( m_downButton, "pos", this );
-  a->setDuration( 300 );
-  a->setEndValue( QPointF( m_buttonOffsetLow,
-    - m_buttonOffsetHigh - ( i - 1 ) * m_groupSpacing ) );
-  a->setEasingCurve( QEasingCurve::OutCubic );
-  m_expandGroupsAnimation->insertAnimation( 0, a );
+  QPointF pos( m_buttonOffsetLow,
+    - m_buttonOffsetHigh - ( i - 1 ) * m_groupSpacing );
   
-  m_expandGroupsAnimation->start();
+  if ( doAnimation ) {
+    QPropertyAnimation *a = new QPropertyAnimation( m_downButton, "pos", this );
+    a->setDuration( 300 );
+    a->setEndValue( pos );
+    a->setEasingCurve( QEasingCurve::OutCubic );
+    m_expandGroupsAnimation->insertAnimation( 0, a );
+  
+    m_expandGroupsAnimation->start();
+  } else {
+    m_downButton->setPos( pos );
+  }
 }
 
 void GroupAdderItem::collapseGroupItems()

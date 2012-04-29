@@ -1,4 +1,3 @@
-* Don't animate adder groups on startup
 * Make sidebar only extend to top item and keep it round at the end
 * History dependent on file
 * Use common storage base class and switch via instances rather than ifs
