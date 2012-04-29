@@ -171,7 +171,10 @@ void MainView::readData( const QString &file )
     m_model->pullData();
   }
 
-  m_groupGraphicsView->setAdderGroup( m_model->rootGroup() );
+  Bliss::Todo adderGroup = m_model->findTodo( Settings::adderGroup() );
+  if ( !adderGroup.isValid() ) adderGroup = m_model->rootGroup();
+
+  m_groupGraphicsView->setAdderGroup( adderGroup );
 }
 
 void MainView::writeData( const QString &msg )

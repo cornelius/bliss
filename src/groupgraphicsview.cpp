@@ -87,6 +87,7 @@ void GroupGraphicsView::writeConfig()
 {
   Settings::setGroupAdderExpanded( m_groupAdderItem->isExpanded() );
   Settings::setGroupAdderGroupsExpanded( m_groupAdderItem->shownAsSidebar() );
+  Settings::setAdderGroup( m_groupAdderItem->group().id() );
 }
 
 void GroupGraphicsView::slotTodoChanged( const Bliss::Todo &todo )

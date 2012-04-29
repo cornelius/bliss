@@ -28,6 +28,9 @@
       <label>If Group Adder Groups are expanded</label>
       <default>false</default>
     </entry>
+    <entry name="AdderGroup" type="String">
+      <label>Current group for group adder</label>
+    </entry>
   </group>    
   <group name="Hidden">
     <entry name="EnableMagic" type="Bool">

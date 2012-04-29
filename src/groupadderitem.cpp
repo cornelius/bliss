@@ -80,6 +80,11 @@ void GroupAdderItem::createGroupItem( int x, int y )
   m_groupItems.append( groupItem );
 }
 
+Bliss::Todo GroupAdderItem::group() const
+{
+  return m_groupItems.first()->todo();
+}
+
 void GroupAdderItem::setItemSize( int size )
 {
   setRect( -size/2, -size/2, size, size );
