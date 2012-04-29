@@ -88,6 +88,10 @@ Bliss::Bliss StorageFile::readData()
     } while ( !line.isNull() );
   }
 
+  if ( !bliss.writeFile( "out.bliss" ) ) {
+    qDebug() << "ERROR WRITING out.bliss";
+  }
+
   return bliss;
 }
 
