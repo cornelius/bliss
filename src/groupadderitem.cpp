@@ -88,7 +88,7 @@ Bliss::Todo GroupAdderItem::group() const
 void GroupAdderItem::setItemSize( int size )
 {
   setRect( -size/2, -size/2, size, size );
-  m_sidebarBackground->setRect( 0, -2000, size/2, 2000 );
+  m_sidebarBackground->setRect( 0, 0, size/2, 2000 );
 }
 
 void GroupAdderItem::hoverEnterEvent( QGraphicsSceneHoverEvent *event )
@@ -178,11 +178,19 @@ void GroupAdderItem::expandGroupItems( bool doAnimation )
 
   QPointF pos( m_buttonOffsetLow,
     - m_buttonOffsetHigh - ( i - 1 ) * m_groupSpacing );
+
+  QPointF backgroundPos( foo, bar );
   
   if ( doAnimation ) {
     QPropertyAnimation *a = new QPropertyAnimation( m_downButton, "pos", this );
     a->setDuration( 300 );
     a->setEndValue( pos );
+    a->setEasingCurve( QEasingCurve::OutCubic );
+    m_expandGroupsAnimation->insertAnimation( 0, a );
+
+    a = new QPropertyAnimation( m_sidebarBackground, "pos", this );
+    a->setDuration( 300 );
+    a->setEndValue( backgroundPos );
     a->setEasingCurve( QEasingCurve::OutCubic );
     m_expandGroupsAnimation->insertAnimation( 0, a );
   
