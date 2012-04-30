@@ -4,3 +4,10 @@
 * Make kxml_compiler generate const writeFile function.
 * Implement StorageFile for file-based todo lists.
 * Clarify remove and done
+
+* Positional UI
+  * Multiple lists per group
+  * Make ordered lists one positional item
+  * Trigger between ordered and positional
+
+ 
