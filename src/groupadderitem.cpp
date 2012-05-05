@@ -30,22 +30,18 @@
 
 GroupAdderItem::GroupAdderItem( MainModel *model )
   : m_model( model ), m_defaultItemSize( 100 ), m_expanded( false ),
+    m_groupItemsExpanded( false ),
     m_expandGroupsAnimation( 0 ), m_collapseGroupsAnimation( 0 ),
     m_groupOffset( 85 ), m_groupSpacing( 140 ),
     m_buttonOffsetLow( 21 ), m_buttonOffsetHigh( 151 )
 {
-  QColor backgroundColor( 230,229,229 );
-  
-  setBrush( backgroundColor );
-
+  // This item is just a container
+  setRect( 0, 0, 0, 0 );
   QPen pen;
   pen.setBrush( Qt::NoBrush );
   setPen( pen );
 
   m_sidebarBackground = new GroupAdderSidebarItem( this );
-  m_sidebarBackground->setBrush( backgroundColor );
-  m_sidebarBackground->setPen( pen );
-  m_sidebarBackground->hide();
   
   setItemSize( m_defaultItemSize );
 
@@ -87,8 +83,7 @@ Bliss::Todo GroupAdderItem::group() const
 
 void GroupAdderItem::setItemSize( int size )
 {
-  setRect( -size/2, -size/2, size, size );
-  m_sidebarBackground->setRect( 0, 0, size/2, 2000 );
+  m_sidebarBackground->setSize( size );
 }
 
 void GroupAdderItem::hoverEnterEvent( QGraphicsSceneHoverEvent *event )
@@ -145,7 +140,7 @@ bool GroupAdderItem::isExpanded() const
 
 void GroupAdderItem::expandGroupItems( bool doAnimation )
 {
-  m_sidebarBackground->show();
+  m_groupItemsExpanded = true;
 
   if ( doAnimation ) {
     if ( m_collapseGroupsAnimation ) {
@@ -179,7 +174,7 @@ void GroupAdderItem::expandGroupItems( bool doAnimation )
   QPointF pos( m_buttonOffsetLow,
     - m_buttonOffsetHigh - ( i - 1 ) * m_groupSpacing );
 
-  QPointF backgroundPos( foo, bar );
+  QPointF backgroundPos( 0, - ( i - 1 ) * m_groupSpacing );
   
   if ( doAnimation ) {
     QPropertyAnimation *a = new QPropertyAnimation( m_downButton, "pos", this );
@@ -197,12 +192,13 @@ void GroupAdderItem::expandGroupItems( bool doAnimation )
     m_expandGroupsAnimation->start();
   } else {
     m_downButton->setPos( pos );
+    m_sidebarBackground->setPos( backgroundPos );
   }
 }
 
 void GroupAdderItem::collapseGroupItems()
 {
-  m_sidebarBackground->hide();
+  m_groupItemsExpanded = false;
 
   if ( m_expandGroupsAnimation ) {
     m_expandGroupsAnimation->stop();
@@ -228,6 +224,12 @@ void GroupAdderItem::collapseGroupItems()
   a->setDuration( 300 );
   a->setEndValue( QPointF( m_buttonOffsetLow,
     - m_buttonOffsetHigh ) );
+  a->setEasingCurve( QEasingCurve::OutCubic );
+  m_collapseGroupsAnimation->insertAnimation( 0, a );
+
+  a = new QPropertyAnimation( m_sidebarBackground, "pos", this );
+  a->setDuration( 300 );
+  a->setEndValue( QPointF( 0, 0 ) );
   a->setEasingCurve( QEasingCurve::OutCubic );
   m_collapseGroupsAnimation->insertAnimation( 0, a );
 
@@ -307,7 +309,12 @@ void GroupAdderItem::previousGroup()
 
 bool GroupAdderItem::shownAsSidebar() const
 {
-  return m_sidebarBackground->isVisible();
+  return m_groupItemsExpanded;
+}
+
+void GroupAdderItem::toggleShowAsSidebar()
+{
+  showAsSidebar( !shownAsSidebar() );
 }
 
 void GroupAdderItem::showAsSidebar( bool show )

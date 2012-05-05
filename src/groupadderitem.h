@@ -21,6 +21,7 @@
 
 #include "mainmodel.h"
 #include "fanmenu.h"
+#include "groupaddersidebaritem.h"
 
 #include <QtGui>
 
@@ -40,6 +41,7 @@ class GroupAdderItem : public QObject, public QGraphicsEllipseItem
 
     Bliss::Todo collidedGroup( QGraphicsItem * );
 
+    void toggleShowAsSidebar();
     void showAsSidebar( bool enabled );
     bool shownAsSidebar() const;
 
@@ -70,8 +72,9 @@ class GroupAdderItem : public QObject, public QGraphicsEllipseItem
     int m_defaultItemSize;
 
     bool m_expanded;
-
-    QGraphicsRectItem *m_sidebarBackground;
+    bool m_groupItemsExpanded;
+    
+    GroupAdderSidebarItem *m_sidebarBackground;
 
     ButtonItem *m_expandButton;
 

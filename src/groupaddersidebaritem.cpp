@@ -24,17 +24,35 @@
 #include <QPainter>
 
 GroupAdderSidebarItem::GroupAdderSidebarItem( GroupAdderItem *parent )
-  : QGraphicsRectItem( parent ), m_parent( parent )
+  : QGraphicsItemGroup( parent ), m_parent( parent )
 {
+  m_top = new QGraphicsEllipseItem( this );
+  m_bar = new QGraphicsRectItem( this );
+  
+  QColor color( 230,229,229 );
+
+  m_bar->setBrush( color );
+  m_top->setBrush( color );
+  
+  QPen pen;
+  pen.setBrush( Qt::NoBrush );
+  m_bar->setPen( pen );
+  m_top->setPen( pen );
 }
 
 GroupAdderSidebarItem::~GroupAdderSidebarItem()
 {
 }
 
+void GroupAdderSidebarItem::setSize( int size )
+{
+  m_bar->setRect( 0, 0, size/2, 2000 );
+  m_top->setRect( -size/2, -size/2, size/2 * 2, size/2 * 2 );
+}
+
 void GroupAdderSidebarItem::mousePressEvent( QGraphicsSceneMouseEvent *event )
 {
   Q_UNUSED( event )
   
-  m_parent->showAsSidebar( false );
+  m_parent->toggleShowAsSidebar();
 }

@@ -23,17 +23,26 @@
 
 class GroupAdderItem;
 
-class GroupAdderSidebarItem : public QGraphicsRectItem
+class GroupAdderSidebarItem : public QObject, public QGraphicsItemGroup
 {
+    Q_OBJECT
+
+    Q_PROPERTY(QPointF pos READ pos WRITE setPos)
+
   public:
     GroupAdderSidebarItem( GroupAdderItem *parent = 0 );
     ~GroupAdderSidebarItem();
 
+    void setSize( int );
+    
   protected:
     void mousePressEvent( QGraphicsSceneMouseEvent *event );
 
   private:
     GroupAdderItem *m_parent;
+
+    QGraphicsEllipseItem *m_top;
+    QGraphicsRectItem *m_bar;
 };
 
 #endif
