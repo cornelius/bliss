@@ -59,6 +59,8 @@ MainMenuItem::MainMenuItem()
   connect( menuItem, SIGNAL( clicked() ), SIGNAL( removeGroup() ) );
   menuItem = m_fanMenu->addItem( i18n("Add\ngroup") );
   connect( menuItem, SIGNAL( clicked() ), SIGNAL( addGroup() ) );
+  menuItem = m_fanMenu->addItem( i18n("Add\nlist") );
+  connect( menuItem, SIGNAL( clicked() ), SIGNAL( addList() ) );
   menuItem = m_fanMenu->addItem( i18n("Add\ntodo") );
   connect( menuItem, SIGNAL( clicked() ), SIGNAL( addTodo() ) );
 

@@ -36,6 +36,7 @@ class MainMenuItem : public QObject, public QGraphicsEllipseItem
     void removeGroup();
     void addTodo();
     void addGroup();
+    void addList();
   
     void menuShown();
 
