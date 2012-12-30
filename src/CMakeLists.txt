@@ -1,4 +1,5 @@
 set(bliss_bin_SRCS
+  newlistdialog.cpp
   droptargetitem.cpp
   groupaddersidebaritem.cpp
   storagefile.cpp
