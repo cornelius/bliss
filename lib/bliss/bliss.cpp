@@ -27,6 +27,61 @@
 
 namespace Bliss {
 
+void ListPosition::setX( int v )
+{
+  mX = v;
+}
+
+int ListPosition::x() const
+{
+  return mX;
+}
+
+void ListPosition::setY( int v )
+{
+  mY = v;
+}
+
+int ListPosition::y() const
+{
+  return mY;
+}
+
+ListPosition ListPosition::parseElement( const QDomElement &element, bool *ok )
+{
+  if ( element.tagName() != "list_position" ) {
+    qCritical() << "Expected 'list_position', got '" << element.tagName() << "'.";
+    if ( ok ) *ok = false;
+    return ListPosition();
+  }
+
+  ListPosition result = ListPosition();
+
+  QDomNode n;
+  for( n = element.firstChild(); !n.isNull(); n = n.nextSibling() ) {
+    QDomElement e = n.toElement();
+    if ( e.tagName() == "x" ) {
+      result.setX( e.text().toInt() );
+    }
+    else if ( e.tagName() == "y" ) {
+      result.setY( e.text().toInt() );
+    }
+  }
+
+
+  if ( ok ) *ok = true;
+  return result;
+}
+
+void ListPosition::writeElement( QXmlStreamWriter &xml )
+{
+  xml.writeStartElement( "list_position" );
+  xml.writeTextElement(  "x", QString::number( x() ) );
+  xml.writeTextElement(  "y", QString::number( y() ) );
+  xml.writeEndElement();
+}
+
+
 void TodoId::setValue( const QString &v )
 {
   mValue = v;
@@ -108,6 +163,193 @@ void TodoSequence::writeElement( QXmlStreamWriter &xml )
   if ( !todoIdList().isEmpty() ) {
     xml.writeStartElement( "todo_sequence" );
     foreach( TodoId e, todoIdList() ) {
+      e.writeElement( xml );
+    }
+    xml.writeEndElement();
+  }
+}
+
+
+bool TodoList::isValid() const
+{
+  return !mId.isEmpty();
+}
+
+void TodoList::setId( const QString &v )
+{
+  mId = v;
+}
+
+QString TodoList::id() const
+{
+  return mId;
+}
+
+void TodoList::setName( const QString &v )
+{
+  mName = v;
+}
+
+QString TodoList::name() const
+{
+  return mName;
+}
+
+void TodoList::setListPosition( const ListPosition &v )
+{
+  mListPosition = v;
+}
+
+ListPosition TodoList::listPosition() const
+{
+  return mListPosition;
+}
+
+void TodoList::setTodoSequence( const TodoSequence &v )
+{
+  mTodoSequence = v;
+}
+
+TodoSequence TodoList::todoSequence() const
+{
+  return mTodoSequence;
+}
+
+TodoList TodoList::parseElement( const QDomElement &element, bool *ok )
+{
+  if ( element.tagName() != "todo_list" ) {
+    qCritical() << "Expected 'todo_list', got '" << element.tagName() << "'.";
+    if ( ok ) *ok = false;
+    return TodoList();
+  }
+
+  TodoList result = TodoList();
+
+  QDomNode n;
+  for( n = element.firstChild(); !n.isNull(); n = n.nextSibling() ) {
+    QDomElement e = n.toElement();
+    if ( e.tagName() == "id" ) {
+      result.setId( e.text() );
+    }
+    else if ( e.tagName() == "name" ) {
+      result.setName( e.text() );
+    }
+    else if ( e.tagName() == "list_position" ) {
+      bool ok;
+      ListPosition o = ListPosition::parseElement( e, &ok );
+      if ( ok ) result.setListPosition( o );
+    }
+    else if ( e.tagName() == "todo_sequence" ) {
+      bool ok;
+      TodoSequence o = TodoSequence::parseElement( e, &ok );
+      if ( ok ) result.setTodoSequence( o );
+    }
+  }
+
+
+  if ( ok ) *ok = true;
+  return result;
+}
+
+void TodoList::writeElement( QXmlStreamWriter &xml )
+{
+  xml.writeStartElement( "todo_list" );
+  if ( !id().isEmpty() ) {
+    xml.writeTextElement(  "id", id() );
+  }
+  if ( !name().isEmpty() ) {
+    xml.writeTextElement(  "name", name() );
+  }
+  listPosition().writeElement( xml );
+  todoSequence().writeElement( xml );
+  xml.writeEndElement();
+}
+
+
+void TodoLists::addTodoList( const TodoList &v )
+{
+  mTodoListList.append( v );
+}
+
+void TodoLists::setTodoListList( const TodoList::List &v )
+{
+  mTodoListList = v;
+}
+
+TodoList::List TodoLists::todoListList() const
+{
+  return mTodoListList;
+}
+
+TodoList TodoLists::findTodoList( const QString &id, Flags flags )
+{
+  foreach( TodoList v, mTodoListList ) {
+    if ( v.id() == id ) return v;
+  }
+  TodoList v;
+  if ( flags == AutoCreate ) {
+    v.setId( id );
+  }
+  return v;
+}
+
+bool TodoLists::insert( const TodoList &v )
+{
+  int i = 0;
+  for( ; i < mTodoListList.size(); ++i ) {
+    if ( mTodoListList[i].id() == v.id() ) {
+      mTodoListList[i] = v;
+      return true;
+    }
+  }
+  if ( i == mTodoListList.size() ) {
+    addTodoList( v );
+  }
+  return true;
+}
+
+bool TodoLists::remove( const TodoList &v )
+{
+  TodoList::List::Iterator it;
+  for( it = mTodoListList.begin(); it != mTodoListList.end(); ++it ) {
+    if ( (*it).id() == v.id() ) break;
+  }
+  if ( it != mTodoListList.end() ) {
+    mTodoListList.erase( it );
+  }
+  return true;
+}
+
+TodoLists TodoLists::parseElement( const QDomElement &element, bool *ok )
+{
+  if ( element.tagName() != "todo_lists" ) {
+    qCritical() << "Expected 'todo_lists', got '" << element.tagName() << "'.";
+    if ( ok ) *ok = false;
+    return TodoLists();
+  }
+
+  TodoLists result = TodoLists();
+
+  QDomNode n;
+  for( n = element.firstChild(); !n.isNull(); n = n.nextSibling() ) {
+    QDomElement e = n.toElement();
+    if ( e.tagName() == "todo_list" ) {
+      bool ok;
+      TodoList o = TodoList::parseElement( e, &ok );
+      if ( ok ) result.addTodoList( o );
+    }
+  }
+
+
+  if ( ok ) *ok = true;
+  return result;
+}
+
+void TodoLists::writeElement( QXmlStreamWriter &xml )
+{
+  if ( !todoListList().isEmpty() ) {
+    xml.writeStartElement( "todo_lists" );
+    foreach( TodoList e, todoListList() ) {
       e.writeElement( xml );
     }
     xml.writeEndElement();
@@ -416,6 +658,16 @@ TodoSequence GroupView::todoSequence() const
   return mTodoSequence;
 }
 
+void GroupView::setTodoLists( const TodoLists &v )
+{
+  mTodoLists = v;
+}
+
+TodoLists GroupView::todoLists() const
+{
+  return mTodoLists;
+}
+
 GroupView GroupView::parseElement( const QDomElement &element, bool *ok )
 {
   if ( element.tagName() != "group_view" ) {
@@ -447,6 +699,11 @@ GroupView GroupView::parseElement( const QDomElement &element, bool *ok )
       TodoSequence o = TodoSequence::parseElement( e, &ok );
       if ( ok ) result.setTodoSequence( o );
     }
+    else if ( e.tagName() == "todo_lists" ) {
+      bool ok;
+      TodoLists o = TodoLists::parseElement( e, &ok );
+      if ( ok ) result.setTodoLists( o );
+    }
   }
 
 
@@ -467,6 +724,7 @@ void GroupView::writeElement( QXmlStreamWriter &xml )
     e.writeElement( xml );
   }
   todoSequence().writeElement( xml );
+  todoLists().writeElement( xml );
   xml.writeEndElement();
 }
 

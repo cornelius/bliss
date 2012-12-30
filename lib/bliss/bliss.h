@@ -20,13 +20,31 @@
 #define BLISS_BLISS_H
 
 #include <bliss/bliss_export.h>
-#include <QString>
 #include <QDomElement>
+#include <QString>
 #include <QList>
 #include <QDateTime>
 #include <QtXml/QXmlStreamWriter>
 
 namespace Bliss {
+
+class BLISS_EXPORT ListPosition
+{
+  public:
+    void setX( int v );
+    int x() const;
+    void setY( int v );
+    int y() const;
+    /**
+      Parse XML object from DOM element.
+     */
+    static ListPosition parseElement( const QDomElement &element, bool *ok );
+    void writeElement( QXmlStreamWriter &xml );
+
+  private:
+    int mX;
+    int mY;
+};
 
 class BLISS_EXPORT TodoId
 {
@@ -60,6 +78,56 @@ class BLISS_EXPORT TodoSequence
 
   private:
     TodoId::List mTodoIdList;
+};
+
+class BLISS_EXPORT TodoList
+{
+  public:
+    typedef QList<TodoList> List;
+
+  public:
+    bool isValid() const;
+    void setId( const QString &v );
+    QString id() const;
+    void setName( const QString &v );
+    QString name() const;
+    void setListPosition( const ListPosition &v );
+    ListPosition listPosition() const;
+    void setTodoSequence( const TodoSequence &v );
+    TodoSequence todoSequence() const;
+    /**
+      Parse XML object from DOM element.
+     */
+    static TodoList parseElement( const QDomElement &element, bool *ok );
+    void writeElement( QXmlStreamWriter &xml );
+
+  private:
+    QString mId;
+    QString mName;
+    ListPosition mListPosition;
+    TodoSequence mTodoSequence;
+};
+
+class BLISS_EXPORT TodoLists
+{
+  public:
+    enum Flags { None, AutoCreate };
+
+  public:
+    void addTodoList( const TodoList &v );
+    void setTodoListList( const TodoList::List &v );
+    TodoList::List todoListList() const;
+    TodoList findTodoList( const QString &id, Flags flags = None );
+    bool insert( const TodoList &v );
+    bool remove( const TodoList &v );
+    /**
+      Parse XML object from DOM element.
+     */
+    static TodoLists parseElement( const QDomElement &element, bool *ok );
+    void writeElement( QXmlStreamWriter &xml );
+
+  private:
+    TodoList::List mTodoListList;
 };
 
 class BLISS_EXPORT ViewLabel
@@ -141,6 +209,8 @@ class BLISS_EXPORT GroupView
     bool remove( const ViewLabel &v );
     void setTodoSequence( const TodoSequence &v );
     TodoSequence todoSequence() const;
+    void setTodoLists( const TodoLists &v );
+    TodoLists todoLists() const;
     /**
       Parse XML object from DOM element.
      */
@@ -152,6 +222,7 @@ class BLISS_EXPORT GroupView
     TodoPosition::List mTodoPositionList;
     ViewLabel::List mViewLabelList;
     TodoSequence mTodoSequence;
+    TodoLists mTodoLists;
 };
 
 class BLISS_EXPORT Status
