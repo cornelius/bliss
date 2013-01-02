@@ -400,6 +400,18 @@ void MainModel::removeGroup( const Bliss::Todo &group )
   emit todoRemoved( group );
 }
 
+void MainModel::addList( const Bliss::TodoList &list,
+  const Bliss::Todo &group )
+{
+  Bliss::GroupView v = m_bliss.findGroupView( group.id(),
+    Bliss::Bliss::AutoCreate );
+
+  v.insert( list );
+  m_bliss.insert( v );
+  writeData( i18n("Inserted list %1 into group %2").arg( list.name() )
+    .arg( group.summary().value() ) );
+}
+
 QPixmap MainModel::pixmap( const Bliss::Todo &todo ) const
 {
   return defaultPixmap( todo );

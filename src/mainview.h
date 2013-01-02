@@ -53,6 +53,7 @@ class MainView : public QWidget
 
   public slots:
     void newTodo();
+    void newList();
     void newSubGroup();
 
     void cloneGroup( const Bliss::Todo &group );

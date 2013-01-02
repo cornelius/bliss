@@ -464,6 +464,7 @@ void GroupGraphicsView::createMenuItems()
   connect( m_mainMenu, SIGNAL( cloneGroup() ), SLOT( emitCloneGroup() ) );
   connect( m_mainMenu, SIGNAL( removeGroup() ), SLOT( emitRemoveGroup() ) );
   connect( m_mainMenu, SIGNAL( addGroup() ), SIGNAL( newGroup() ) );
+  connect( m_mainMenu, SIGNAL( addList() ), SIGNAL( newList() ) );
   connect( m_mainMenu, SIGNAL( addTodo() ), SIGNAL( newTodo() ) );
 
   m_groupAdderItem = new GroupAdderItem( model() );

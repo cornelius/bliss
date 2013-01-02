@@ -65,32 +65,30 @@
       <todo_id>jdjd</todo_id>
       <todo_id>jdjdxxx</todo_id>
     </todo_sequence>
-    <todo_lists>
-      <todo_list>
-        <id>123kdkdk</id>
-        <name>Today</name>
-        <list_position>
-          <x>123</x>
-          <y>64764</y>
-        </list_position>
-        <todo_sequence>
-          <todo_id>jdjd</todo_id>
-          <todo_id>jdjdxxx</todo_id>
-        </todo_sequence>
-      </todo_list>
-      <todo_list>
-        <id>4123kdkdk</id>
-        <name>Tommorow</name>
-        <list_position>
-          <x>123</x>
-          <y>64764</y>
-        </list_position>
-        <todo_sequence>
-          <todo_id>jdjdas</todo_id>
-          <todo_id>jdjdxxxas</todo_id>
-        </todo_sequence>
-      </todo_list>
-    </todo_lists>
+    <todo_list>
+      <id>123kdkdk</id>
+      <name>Today</name>
+      <list_position>
+        <x>123</x>
+        <y>64764</y>
+      </list_position>
+      <todo_sequence>
+        <todo_id>jdjd</todo_id>
+        <todo_id>jdjdxxx</todo_id>
+      </todo_sequence>
+    </todo_list>
+    <todo_list>
+      <id>4123kdkdk</id>
+      <name>Tommorow</name>
+      <list_position>
+        <x>123</x>
+        <y>64764</y>
+      </list_position>
+      <todo_sequence>
+        <todo_id>jdjdas</todo_id>
+        <todo_id>jdjdxxxas</todo_id>
+      </todo_sequence>
+    </todo_list>
   </group_view>
   <group_view>
     <id>shshx</id>

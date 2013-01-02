@@ -108,28 +108,6 @@ class BLISS_EXPORT TodoList
     TodoSequence mTodoSequence;
 };
 
-class BLISS_EXPORT TodoLists
-{
-  public:
-    enum Flags { None, AutoCreate };
-
-  public:
-    void addTodoList( const TodoList &v );
-    void setTodoListList( const TodoList::List &v );
-    TodoList::List todoListList() const;
-    TodoList findTodoList( const QString &id, Flags flags = None );
-    bool insert( const TodoList &v );
-    bool remove( const TodoList &v );
-    /**
-      Parse XML object from DOM element.
-     */
-    static TodoLists parseElement( const QDomElement &element, bool *ok );
-    void writeElement( QXmlStreamWriter &xml );
-
-  private:
-    TodoList::List mTodoListList;
-};
-
 class BLISS_EXPORT ViewLabel
 {
   public:
@@ -209,8 +187,12 @@ class BLISS_EXPORT GroupView
     bool remove( const ViewLabel &v );
     void setTodoSequence( const TodoSequence &v );
     TodoSequence todoSequence() const;
-    void setTodoLists( const TodoLists &v );
-    TodoLists todoLists() const;
+    void addTodoList( const TodoList &v );
+    void setTodoListList( const TodoList::List &v );
+    TodoList::List todoListList() const;
+    TodoList findTodoList( const QString &id, Flags flags = None );
+    bool insert( const TodoList &v );
+    bool remove( const TodoList &v );
     /**
       Parse XML object from DOM element.
      */
@@ -222,7 +204,7 @@ class BLISS_EXPORT GroupView
     TodoPosition::List mTodoPositionList;
     ViewLabel::List mViewLabelList;
     TodoSequence mTodoSequence;
-    TodoLists mTodoLists;
+    TodoList::List mTodoListList;
 };
 
 class BLISS_EXPORT Status

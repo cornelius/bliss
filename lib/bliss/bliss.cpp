@@ -266,97 +266,6 @@ void TodoList::writeElement( QXmlStreamWriter &xml )
 }
 
 
-void TodoLists::addTodoList( const TodoList &v )
-{
-  mTodoListList.append( v );
-}
-
-void TodoLists::setTodoListList( const TodoList::List &v )
-{
-  mTodoListList = v;
-}
-
-TodoList::List TodoLists::todoListList() const
-{
-  return mTodoListList;
-}
-
-TodoList TodoLists::findTodoList( const QString &id, Flags flags )
-{
-  foreach( TodoList v, mTodoListList ) {
-    if ( v.id() == id ) return v;
-  }
-  TodoList v;
-  if ( flags == AutoCreate ) {
-    v.setId( id );
-  }
-  return v;
-}
-
-bool TodoLists::insert( const TodoList &v )
-{
-  int i = 0;
-  for( ; i < mTodoListList.size(); ++i ) {
-    if ( mTodoListList[i].id() == v.id() ) {
-      mTodoListList[i] = v;
-      return true;
-    }
-  }
-  if ( i == mTodoListList.size() ) {
-    addTodoList( v );
-  }
-  return true;
-}
-
-bool TodoLists::remove( const TodoList &v )
-{
-  TodoList::List::Iterator it;
-  for( it = mTodoListList.begin(); it != mTodoListList.end(); ++it ) {
-    if ( (*it).id() == v.id() ) break;
-  }
-  if ( it != mTodoListList.end() ) {
-    mTodoListList.erase( it );
-  }
-  return true;
-}
-
-TodoLists TodoLists::parseElement( const QDomElement &element, bool *ok )
-{
-  if ( element.tagName() != "todo_lists" ) {
-    qCritical() << "Expected 'todo_lists', got '" << element.tagName() << "'.";
-    if ( ok ) *ok = false;
-    return TodoLists();
-  }
-
-  TodoLists result = TodoLists();
-
-  QDomNode n;
-  for( n = element.firstChild(); !n.isNull(); n = n.nextSibling() ) {
-    QDomElement e = n.toElement();
-    if ( e.tagName() == "todo_list" ) {
-      bool ok;
-      TodoList o = TodoList::parseElement( e, &ok );
-      if ( ok ) result.addTodoList( o );
-    }
-  }
-
-
-  if ( ok ) *ok = true;
-  return result;
-}
-
-void TodoLists::writeElement( QXmlStreamWriter &xml )
-{
-  if ( !todoListList().isEmpty() ) {
-    xml.writeStartElement( "todo_lists" );
-    foreach( TodoList e, todoListList() ) {
-      e.writeElement( xml );
-    }
-    xml.writeEndElement();
-  }
-}
-
-
 bool ViewLabel::isValid() const
 {
   return !mId.isEmpty();
@@ -658,14 +567,58 @@ TodoSequence GroupView::todoSequence() const
   return mTodoSequence;
 }
 
-void GroupView::setTodoLists( const TodoLists &v )
+void GroupView::addTodoList( const TodoList &v )
 {
-  mTodoLists = v;
+  mTodoListList.append( v );
 }
 
-TodoLists GroupView::todoLists() const
+void GroupView::setTodoListList( const TodoList::List &v )
 {
-  return mTodoLists;
+  mTodoListList = v;
+}
+
+TodoList::List GroupView::todoListList() const
+{
+  return mTodoListList;
+}
+
+TodoList GroupView::findTodoList( const QString &id, Flags flags )
+{
+  foreach( TodoList v, mTodoListList ) {
+    if ( v.id() == id ) return v;
+  }
+  TodoList v;
+  if ( flags == AutoCreate ) {
+    v.setId( id );
+  }
+  return v;
+}
+
+bool GroupView::insert( const TodoList &v )
+{
+  int i = 0;
+  for( ; i < mTodoListList.size(); ++i ) {
+    if ( mTodoListList[i].id() == v.id() ) {
+      mTodoListList[i] = v;
+      return true;
+    }
+  }
+  if ( i == mTodoListList.size() ) {
+    addTodoList( v );
+  }
+  return true;
+}
+
+bool GroupView::remove( const TodoList &v )
+{
+  TodoList::List::Iterator it;
+  for( it = mTodoListList.begin(); it != mTodoListList.end(); ++it ) {
+    if ( (*it).id() == v.id() ) break;
+  }
+  if ( it != mTodoListList.end() ) {
+    mTodoListList.erase( it );
+  }
+  return true;
 }
 
 GroupView GroupView::parseElement( const QDomElement &element, bool *ok )
@@ -699,10 +652,10 @@ GroupView GroupView::parseElement( const QDomElement &element, bool *ok )
       TodoSequence o = TodoSequence::parseElement( e, &ok );
       if ( ok ) result.setTodoSequence( o );
     }
-    else if ( e.tagName() == "todo_lists" ) {
+    else if ( e.tagName() == "todo_list" ) {
       bool ok;
-      TodoLists o = TodoLists::parseElement( e, &ok );
-      if ( ok ) result.setTodoLists( o );
+      TodoList o = TodoList::parseElement( e, &ok );
+      if ( ok ) result.addTodoList( o );
     }
   }
 
@@ -724,7 +677,9 @@ void GroupView::writeElement( QXmlStreamWriter &xml )
     e.writeElement( xml );
   }
   todoSequence().writeElement( xml );
-  todoLists().writeElement( xml );
+  foreach( TodoList e, todoListList() ) {
+    e.writeElement( xml );
+  }
   xml.writeEndElement();
 }
 

@@ -26,6 +26,7 @@
 #include "groupgraphicsview.h"
 #include "newtododialog.h"
 #include "newgroupdialog.h"
+#include "newlistdialog.h"
 #include "settings.h"
 #include "gitremote.h"
 #include "settingswidget.h"
@@ -97,6 +98,7 @@ MainView::MainView(QWidget *parent)
   m_listLayout->addWidget( m_groupGraphicsView );
   connectGroupView( m_groupGraphicsView );
   connect( m_groupGraphicsView, SIGNAL( newGroup() ), SLOT( newSubGroup() ) );
+  connect( m_groupGraphicsView, SIGNAL( newList() ), SLOT( newList() ) );
   connect( m_groupGraphicsView, SIGNAL( cloneGroup( const Bliss::Todo & ) ),
     SLOT( cloneGroup( const Bliss::Todo & ) ) );
   connect( m_groupGraphicsView, SIGNAL( removeGroup( const Bliss::Todo & ) ),
@@ -192,6 +194,16 @@ void MainView::newSubGroup()
   if ( dialog->exec() == QDialog::Accepted ) {
     Bliss::Todo group = dialog->todo();
     m_model->addTodo( group, m_group );
+  }
+  return;
+}
+
+void MainView::newList()
+{
+  NewListDialog *dialog = new NewListDialog( m_model, this );
+  if ( dialog->exec() == QDialog::Accepted ) {
+    Bliss::TodoList list = dialog->list();
+    m_model->addList( list, m_group );
   }
   return;
 }

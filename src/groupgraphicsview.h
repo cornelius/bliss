@@ -55,6 +55,7 @@ class GroupGraphicsView : public GroupView
 
   signals:
     void newGroup();
+    void newList();
     void removeTodo( const Bliss::Todo &person,
       const Bliss::Todo &group );
     void cloneGroup( const Bliss::Todo &group );
