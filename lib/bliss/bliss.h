@@ -20,31 +20,13 @@
 #define BLISS_BLISS_H
 
 #include <bliss/bliss_export.h>
-#include <QDomElement>
 #include <QString>
+#include <QDomElement>
 #include <QList>
 #include <QDateTime>
 #include <QtXml/QXmlStreamWriter>
 
 namespace Bliss {
-
-class BLISS_EXPORT ListPosition
-{
-  public:
-    void setX( int v );
-    int x() const;
-    void setY( int v );
-    int y() const;
-    /**
-      Parse XML object from DOM element.
-     */
-    static ListPosition parseElement( const QDomElement &element, bool *ok );
-    void writeElement( QXmlStreamWriter &xml );
-
-  private:
-    int mX;
-    int mY;
-};
 
 class BLISS_EXPORT TodoId
 {
@@ -91,8 +73,10 @@ class BLISS_EXPORT TodoList
     QString id() const;
     void setName( const QString &v );
     QString name() const;
-    void setListPosition( const ListPosition &v );
-    ListPosition listPosition() const;
+    void setX( int v );
+    int x() const;
+    void setY( int v );
+    int y() const;
     void setTodoSequence( const TodoSequence &v );
     TodoSequence todoSequence() const;
     /**
@@ -104,7 +88,8 @@ class BLISS_EXPORT TodoList
   private:
     QString mId;
     QString mName;
-    ListPosition mListPosition;
+    int mX;
+    int mY;
     TodoSequence mTodoSequence;
 };
 

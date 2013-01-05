@@ -42,6 +42,9 @@ class MainModel : public QObject
     Bliss::Todo findTodo( const QString &id );
     Bliss::Todo insert( Bliss::Todo, const QString &msg ); // create/update
 
+    Bliss::TodoList insert( const Bliss::TodoList &, const Bliss::Todo &,
+                            const QString &msg );
+    
     Bliss::Todo rootGroup();
 
     Bliss::Todo::List groups();
@@ -70,6 +73,11 @@ class MainModel : public QObject
     BlissItemModel *todoItemModel();
     BlissItemModel *groupItemModel();
     BlissItemModel *itemModel( const QString &id = QString() );
+
+    void saveViewList( const Bliss::Todo &group,
+      const Bliss::TodoList &list );
+    void removeViewList( const Bliss::Todo &group,
+      const Bliss::TodoList &list );
 
     void saveViewLabel( const Bliss::Todo &group,
       const Bliss::ViewLabel &label );

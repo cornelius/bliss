@@ -30,6 +30,8 @@
 #include "groupadderitem.h"
 #include "menuhandler.h"
 #include "todohandleitem.h"
+#include "listitem.h"
+#include "newlistdialog.h"
 
 #include <KLocale>
 #include <KInputDialog>
@@ -464,7 +466,7 @@ void GroupGraphicsView::createMenuItems()
   connect( m_mainMenu, SIGNAL( cloneGroup() ), SLOT( emitCloneGroup() ) );
   connect( m_mainMenu, SIGNAL( removeGroup() ), SLOT( emitRemoveGroup() ) );
   connect( m_mainMenu, SIGNAL( addGroup() ), SIGNAL( newGroup() ) );
-  connect( m_mainMenu, SIGNAL( addList() ), SIGNAL( newList() ) );
+  connect( m_mainMenu, SIGNAL( addList() ), SLOT( addList() ) );
   connect( m_mainMenu, SIGNAL( addTodo() ), SIGNAL( newTodo() ) );
 
   m_groupAdderItem = new GroupAdderItem( model() );
@@ -553,6 +555,24 @@ void GroupGraphicsView::saveLabel( const Bliss::ViewLabel &label,
 }
 
 
+void GroupGraphicsView::addList()
+{
+  NewListDialog *dialog = new NewListDialog( model(), this );
+  if ( dialog->exec() == QDialog::Accepted ) {
+    Bliss::TodoList list = dialog->list();
+    
+    QPointF pos = QPoint( 10, 10 );
+    list.setX( pos.x() );
+    list.setY( pos.y() );
+    
+    createListItem( list );
+    
+    model()->saveViewList( group(), list );
+  }
+  return;
+}
+
+
 void GroupGraphicsView::addLabel()
 {
   addLabel( m_view->mapToScene( QPoint( 10, 10 ) ) );
@@ -620,6 +640,23 @@ LabelItem *GroupGraphicsView::createLabelItem( const Bliss::ViewLabel &label )
   m_labelItems.append( item );
 
   return item;
+}
+
+ListItem *GroupGraphicsView::createListItem( const Bliss::TodoList &list )
+{
+  ListItem *item = new ListItem( model(), m_menuHandler, group(), list );
+  
+  connect( item, SIGNAL( itemMoved( const Bliss::TodoList &, const QPointF & ) ),
+    SLOT( saveList( const Bliss::TodoList &, const QPointF & ) ) );
+  connect( item, SIGNAL( removeLabel( ListItem * ) ),
+    SLOT( removeList( ListItem * ) ) );
+  connect( item, SIGNAL( menuShown() ), SLOT( hideGlobalMenu() ) );
+
+  m_scene->addItem( item );
+
+  item->setPos( list.x(), list.y() );
+
+  return item;  
 }
 
 void GroupGraphicsView::resetLayout()

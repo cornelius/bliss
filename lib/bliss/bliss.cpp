@@ -27,61 +27,6 @@
 
 namespace Bliss {
 
-void ListPosition::setX( int v )
-{
-  mX = v;
-}
-
-int ListPosition::x() const
-{
-  return mX;
-}
-
-void ListPosition::setY( int v )
-{
-  mY = v;
-}
-
-int ListPosition::y() const
-{
-  return mY;
-}
-
-ListPosition ListPosition::parseElement( const QDomElement &element, bool *ok )
-{
-  if ( element.tagName() != "list_position" ) {
-    qCritical() << "Expected 'list_position', got '" << element.tagName() << "'.";
-    if ( ok ) *ok = false;
-    return ListPosition();
-  }
-
-  ListPosition result = ListPosition();
-
-  QDomNode n;
-  for( n = element.firstChild(); !n.isNull(); n = n.nextSibling() ) {
-    QDomElement e = n.toElement();
-    if ( e.tagName() == "x" ) {
-      result.setX( e.text().toInt() );
-    }
-    else if ( e.tagName() == "y" ) {
-      result.setY( e.text().toInt() );
-    }
-  }
-
-
-  if ( ok ) *ok = true;
-  return result;
-}
-
-void ListPosition::writeElement( QXmlStreamWriter &xml )
-{
-  xml.writeStartElement( "list_position" );
-  xml.writeTextElement(  "x", QString::number( x() ) );
-  xml.writeTextElement(  "y", QString::number( y() ) );
-  xml.writeEndElement();
-}
-
-
 void TodoId::setValue( const QString &v )
 {
   mValue = v;
@@ -195,14 +140,24 @@ QString TodoList::name() const
   return mName;
 }
 
-void TodoList::setListPosition( const ListPosition &v )
+void TodoList::setX( int v )
 {
-  mListPosition = v;
+  mX = v;
 }
 
-ListPosition TodoList::listPosition() const
+int TodoList::x() const
 {
-  return mListPosition;
+  return mX;
+}
+
+void TodoList::setY( int v )
+{
+  mY = v;
+}
+
+int TodoList::y() const
+{
+  return mY;
 }
 
 void TodoList::setTodoSequence( const TodoSequence &v )
@@ -234,10 +189,11 @@ TodoList TodoList::parseElement( const QDomElement &element, bool *ok )
     else if ( e.tagName() == "name" ) {
       result.setName( e.text() );
     }
-    else if ( e.tagName() == "list_position" ) {
-      bool ok;
-      ListPosition o = ListPosition::parseElement( e, &ok );
-      if ( ok ) result.setListPosition( o );
+    else if ( e.tagName() == "x" ) {
+      result.setX( e.text().toInt() );
+    }
+    else if ( e.tagName() == "y" ) {
+      result.setY( e.text().toInt() );
     }
     else if ( e.tagName() == "todo_sequence" ) {
       bool ok;
@@ -260,7 +216,8 @@ void TodoList::writeElement( QXmlStreamWriter &xml )
   if ( !name().isEmpty() ) {
     xml.writeTextElement(  "name", name() );
   }
-  listPosition().writeElement( xml );
+  xml.writeTextElement(  "x", QString::number( x() ) );
+  xml.writeTextElement(  "y", QString::number( y() ) );
   todoSequence().writeElement( xml );
   xml.writeEndElement();
 }

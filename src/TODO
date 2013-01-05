@@ -9,4 +9,4 @@
   * Make ordered lists one positional item
   * Trigger between ordered and positional
 
- 
+* Rename Bliss::TodoList to Bliss::ViewList

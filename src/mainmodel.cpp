@@ -423,6 +423,26 @@ QPixmap MainModel::defaultPixmap( const Bliss::Todo &todo ) const
   else return m_defaultPersonPixmap;
 }
 
+void MainModel::saveViewList( const Bliss::Todo &group,
+  const Bliss::TodoList &list )
+{
+  Bliss::GroupView v = m_bliss.findGroupView( group.id(),
+    Bliss::Bliss::AutoCreate );
+  v.insert( list );
+  m_bliss.insert( v );
+  writeData( i18n("Inserted list %1").arg( list.name() ) );
+}
+
+void MainModel::removeViewList( const Bliss::Todo &group,
+  const Bliss::TodoList &list )
+{
+  Bliss::GroupView v = m_bliss.findGroupView( group.id(),
+    Bliss::Bliss::AutoCreate );
+  v.remove( list );
+  m_bliss.insert( v );
+  writeData( i18n("Removed list %1").arg( list.name() ) );
+}
+
 void MainModel::saveViewLabel( const Bliss::Todo &group,
   const Bliss::ViewLabel &label )
 {

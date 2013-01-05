@@ -26,6 +26,7 @@
 
 class MainModel;
 class TodoItem;
+class ListItem;
 class LabelItem;
 class QAnimationGroup;
 class MainMenuItem;
@@ -70,6 +71,7 @@ class GroupGraphicsView : public GroupView
     void createMenuItems();
     void createLabelItems();
   
+    ListItem *createListItem( const Bliss::TodoList &list );
     LabelItem *createLabelItem( const Bliss::ViewLabel &label );
 
     TodoItem *item( const Bliss::Todo & ) const;
@@ -98,6 +100,8 @@ class GroupGraphicsView : public GroupView
     void slotRemoveTodo( const Bliss::Todo & );
     void slotDone( const Bliss::Todo & );
 
+    void addList();
+    
     void addLabel();
     void addLabel( const QPointF & );
     void removeLabel( LabelItem * );
