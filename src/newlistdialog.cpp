@@ -18,6 +18,7 @@
 */
 
 #include "newlistdialog.h"
+#include "krandom.h"
 
 #include <KConfig>
 #include <KMessageBox>
@@ -61,6 +62,7 @@ NewListDialog::~NewListDialog()
 Bliss::TodoList NewListDialog::list()
 {
   Bliss::TodoList list;
+  list.setId( KRandom::randomString( 10 ) );
   list.setName( m_nameInput->text() );
   return list;
 }
