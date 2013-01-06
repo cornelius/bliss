@@ -22,14 +22,14 @@
 #include "bliss/bliss.h"
 #include "fanmenu.h"
 #include "hidinglineedit.h"
+#include "roundedrectitem.h"
 
 #include <QtGui>
 
 class MainModel;
-class RoundedRectItem;
 class MenuHandler;
 
-class ListItem : public QObject, public QGraphicsItemGroup
+class ListItem : public QObject, public RoundedRectItem
 {
     Q_OBJECT
 

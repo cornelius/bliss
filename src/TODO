@@ -12,3 +12,6 @@
 * Rename Bliss::TodoList to Bliss::ViewList
 
 * Rename ListItem::editTodo etc. to editList
+
+* Give lists a darker brown background with rounded corners
+* Implement adding items to lists

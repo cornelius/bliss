@@ -43,6 +43,8 @@ void ListItem::init()
 
   setFlags( ItemIsMovable );
 
+  setBrush( QColor( 210, 210, 190 ) );
+
   updateItem( m_list );
 }
 
@@ -76,6 +78,9 @@ void ListItem::updateItem( const Bliss::TodoList &list )
   m_textCenterX = textWidth / 2;
  
   m_nameItem->setPos( itemSize / 2 + 16, - textHeight / 2 + 2 );
+
+  setRect( -itemSize/2 - 5, -itemSize/2 -5,
+           textWidth + 10 + 16 + itemSize, itemSize + 10 + 10 );
   
   if ( m_menuHandler ) {
     m_fanMenu = m_menuHandler->createMenu();
@@ -136,22 +141,20 @@ void ListItem::hidePopups()
 
 void ListItem::hoverEnterEvent( QGraphicsSceneHoverEvent *event )
 {
-  qDebug() << "ListItem::hoverEnterEvent";
-  
   QLineF distance = QLineF( QPointF( 0, 0 ), event->pos() );
 
   if ( distance.length() <= m_handleItem->boundingRect().width() / 2 + 2 ) {
     showPopups();
   }
 
-  QGraphicsItemGroup::hoverEnterEvent( event );
+  RoundedRectItem::hoverEnterEvent( event );
 
   m_isHovered = true;
 }
 
 void ListItem::hoverLeaveEvent( QGraphicsSceneHoverEvent *event )
 {
-  QGraphicsItemGroup::hoverLeaveEvent( event );
+  RoundedRectItem::hoverLeaveEvent( event );
 
   QTimer::singleShot( 0, this, SLOT( checkMenuVisibility() ) );
 
@@ -169,7 +172,7 @@ void ListItem::mousePressEvent( QGraphicsSceneMouseEvent *event )
 {
   m_movePos = pos();
 
-  QGraphicsItemGroup::mousePressEvent( event );
+  RoundedRectItem::mousePressEvent( event );
 
   hidePopups();
 
@@ -178,7 +181,7 @@ void ListItem::mousePressEvent( QGraphicsSceneMouseEvent *event )
 
 void ListItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
 {
-  QGraphicsItemGroup::mouseReleaseEvent( event );
+  RoundedRectItem::mouseReleaseEvent( event );
 
   if ( pos() != m_movePos ) {
     emit itemMoved( m_list, pos() );
