@@ -34,9 +34,3 @@ FanMenu *MenuHandler::createMenu()
   menu->hide();
   return menu;
 }
-
-void MenuHandler::showMenu( FanMenu *menu, const QPointF &pos )
-{
-  menu->setPos( pos );
-  menu->show();
-}

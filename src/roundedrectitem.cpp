@@ -36,6 +36,7 @@ void RoundedRectItem::paint( QPainter *painter,
   Q_UNUSED( option )
   Q_UNUSED( widget )
 
+  painter->setPen( pen() );
   painter->setBrush( brush() );
   painter->drawRoundedRect( rect(), 5, 5);
 }

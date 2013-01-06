@@ -142,7 +142,7 @@ QPointF TodoItem::rememberedPos() const
 void TodoItem::showPopups()
 {
   if ( m_menusEnabled ) {
-    m_menuHandler->showMenu( m_fanMenu, scenePos() );
+    m_fanMenu->showMenu( scenePos() );
     emit menuShown();
   }
 }

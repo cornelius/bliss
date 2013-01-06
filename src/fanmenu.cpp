@@ -89,3 +89,15 @@ bool FanMenu::isHovered() const
 {
   return m_isHovered;
 }
+
+void FanMenu::showMenu( const QPointF &pos )
+{
+  setPos( pos );
+  show();
+  emit menuShown();
+}
+
+void FanMenu::hideMenu()
+{
+  hide();
+}

@@ -23,7 +23,7 @@
 #include "fanmenu.h"
 #include "roundedrectitem.h"
 #include "menuhandler.h"
-
+#include "menuhandleitem.h"
 
 #include <KLocale>
 
@@ -39,9 +39,11 @@ void ListItem::init()
 {
   m_menusEnabled = true;
 
-  m_isHovered = false;
-
   setFlags( ItemIsMovable );
+
+  QPen pen;
+  pen.setBrush( Qt::NoBrush );
+  setPen( pen );
 
   setBrush( QColor( 210, 210, 190 ) );
 
@@ -52,7 +54,7 @@ void ListItem::enableMenus( bool enabled )
 {
   m_menusEnabled = enabled;
 
-  if ( !m_menusEnabled ) hidePopups();
+  if ( !m_fanMenu ) m_fanMenu->hideMenu();
 }
 
 void ListItem::updateItem( const Bliss::TodoList &list )
@@ -63,11 +65,23 @@ void ListItem::updateItem( const Bliss::TodoList &list )
     delete child;
   }
 
-  m_handleItem = new QGraphicsEllipseItem( this );
-  m_handleItem->setAcceptHoverEvents( true );
+  m_fanMenu = m_menuHandler->createMenu();
+  connect( m_fanMenu, SIGNAL( menuShown() ), SIGNAL( menuShown() ) );
+
+  FanMenuItem *menuItem = m_fanMenu->addItem( i18n("Remove") );
+  connect( menuItem, SIGNAL( clicked() ), SLOT( emitRemoveList() ) );
+  
+  menuItem = m_fanMenu->addItem( i18n("Edit") );
+  connect( menuItem, SIGNAL( clicked() ), SLOT( editTodo() ) );
+
+  m_fanMenu->setupItems();
+
+  m_fanMenu->hideMenu();
 
   int itemSize = 40;
-  m_handleItem->setRect( -itemSize/2, -itemSize/2, itemSize, itemSize );
+
+  m_handleItem = new MenuHandleItem( m_fanMenu, this );
+  m_handleItem->setItemSize( itemSize );
   
   m_nameItem = new QGraphicsTextItem( list.name(), this );
   m_nameItem->setAcceptHoverEvents( false );
@@ -76,27 +90,17 @@ void ListItem::updateItem( const Bliss::TodoList &list )
   int textHeight = m_nameItem->boundingRect().height();
 
   m_textCenterX = textWidth / 2;
- 
-  m_nameItem->setPos( itemSize / 2 + 16, - textHeight / 2 + 2 );
 
-  setRect( -itemSize/2 - 5, -itemSize/2 -5,
-           textWidth + 10 + 16 + itemSize, itemSize + 10 + 10 );
+  int textLeft = 16;
   
-  if ( m_menuHandler ) {
-    m_fanMenu = m_menuHandler->createMenu();
-    connect( m_fanMenu, SIGNAL( hoverStateChanged( bool ) ),
-      SLOT( checkMenuVisibility() ) );
+  m_nameItem->setPos( itemSize / 2 + textLeft, - textHeight / 2 + 2 );
 
-    FanMenuItem *menuItem = m_fanMenu->addItem( i18n("Remove") );
-    connect( menuItem, SIGNAL( clicked() ), SLOT( emitRemoveList() ) );
-    
-    menuItem = m_fanMenu->addItem( i18n("Edit") );
-    connect( menuItem, SIGNAL( clicked() ), SLOT( editTodo() ) );
-
-    m_fanMenu->setupItems();
-
-    hidePopups();
-  }
+  int listBorder = 10;
+  int extraBottom = 10;
+  
+  setRect( -itemSize/2 - listBorder, -itemSize/2 - listBorder,
+           textWidth + 2*listBorder + textLeft + itemSize,
+           itemSize + 2*listBorder + extraBottom );  
 }
 
 Bliss::TodoList ListItem::list() const
@@ -124,48 +128,14 @@ QPointF ListItem::rememberedPos() const
   return m_rememberedPos;
 }
 
-void ListItem::showPopups()
-{
-  if ( m_menusEnabled ) {
-    m_menuHandler->showMenu( m_fanMenu, scenePos() );
-    emit menuShown();
-  }
-}
-
-void ListItem::hidePopups()
-{
-  if ( m_menuHandler ) {
-    m_fanMenu->hide();
-  }
-}
-
 void ListItem::hoverEnterEvent( QGraphicsSceneHoverEvent *event )
 {
-  QLineF distance = QLineF( QPointF( 0, 0 ), event->pos() );
-
-  if ( distance.length() <= m_handleItem->boundingRect().width() / 2 + 2 ) {
-    showPopups();
-  }
-
   RoundedRectItem::hoverEnterEvent( event );
-
-  m_isHovered = true;
 }
 
 void ListItem::hoverLeaveEvent( QGraphicsSceneHoverEvent *event )
 {
   RoundedRectItem::hoverLeaveEvent( event );
-
-  QTimer::singleShot( 0, this, SLOT( checkMenuVisibility() ) );
-
-  m_isHovered = false;
-}
-
-void ListItem::checkMenuVisibility()
-{
-  if ( m_fanMenu && !m_fanMenu->isHovered() && !m_isHovered ) {
-    hidePopups();
-  }
 }
 
 void ListItem::mousePressEvent( QGraphicsSceneMouseEvent *event )
@@ -174,7 +144,7 @@ void ListItem::mousePressEvent( QGraphicsSceneMouseEvent *event )
 
   RoundedRectItem::mousePressEvent( event );
 
-  hidePopups();
+  m_fanMenu->hideMenu();
 
   emit itemPressed();
 }

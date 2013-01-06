@@ -28,6 +28,7 @@
 
 class MainModel;
 class MenuHandler;
+class MenuHandleItem;
 
 class ListItem : public QObject, public RoundedRectItem
 {
@@ -59,9 +60,6 @@ class ListItem : public QObject, public RoundedRectItem
 
     int textCenterX();
 
-    void showPopups();
-    void hidePopups();
-    
   signals:
     void removeList( ListItem * );
 
@@ -87,8 +85,6 @@ class ListItem : public QObject, public RoundedRectItem
   protected slots:
     void emitRemoveList();
 
-    void checkMenuVisibility();
-
     void editTodo();
     void editTodoDone();
     
@@ -100,7 +96,7 @@ class ListItem : public QObject, public RoundedRectItem
     QPointF m_defaultPos;
     QPointF m_rememberedPos;
 
-    QGraphicsEllipseItem *m_handleItem;
+    MenuHandleItem *m_handleItem;
 
     QGraphicsTextItem *m_nameItem;
 
@@ -113,8 +109,6 @@ class ListItem : public QObject, public RoundedRectItem
     FanMenu *m_fanMenu;
     
     MenuHandler *m_menuHandler;
-    
-    bool m_isHovered;
     
     HidingLineEdit *m_edit;
     QGraphicsProxyWidget *m_editProxy;

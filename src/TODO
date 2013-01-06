@@ -15,3 +15,5 @@
 
 * Give lists a darker brown background with rounded corners
 * Implement adding items to lists
+
+* Move global menu handling to MenuHandler, to save sending signals around

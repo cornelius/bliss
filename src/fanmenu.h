@@ -51,7 +51,12 @@ class FanMenu : public QObject, public QGraphicsLineItem
     void setIsHovered( bool );
     bool isHovered() const;
 
+    void showMenu( const QPointF &pos );
+    void hideMenu();
+    
   signals:
+    void menuShown();
+    
     void hoverStateChanged( bool );
 
   private:

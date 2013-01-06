@@ -29,7 +29,6 @@ class MenuHandler
     MenuHandler( QGraphicsScene * );
 
     FanMenu *createMenu();
-    void showMenu( FanMenu *, const QPointF &pos );
 
   private:
     QGraphicsScene *m_scene;
