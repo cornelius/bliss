@@ -189,6 +189,11 @@ void GroupGraphicsView::clearItems()
   }
   m_labelItems.clear();
 
+  foreach( ListItem *item, m_listItems ) {
+    delete item;
+  }
+  m_listItems.clear();
+
   if ( m_globalMenu ) delete m_globalMenu;
   m_globalMenu = 0;
 }
@@ -237,6 +242,7 @@ void GroupGraphicsView::placeItems()
     
     m_placeItemsAnimation->start();
   } else {
+    createListItems();
     createLabelItems();
   }
 
@@ -247,6 +253,7 @@ void GroupGraphicsView::placeItems()
 
 void GroupGraphicsView::finishPlaceItems()
 {
+  createListItems();
   createLabelItems();
 }
 
@@ -256,6 +263,10 @@ void GroupGraphicsView::unplaceItems()
     delete item;
   }
   m_labelItems.clear();
+  foreach( ListItem *item, m_listItems ) {
+    delete item;
+  }
+  m_listItems.clear();
 
   if ( !m_unplaceItemsAnimation ) {
     m_unplaceItemsAnimation = new QParallelAnimationGroup( this );
@@ -303,6 +314,7 @@ void GroupGraphicsView::unhideItems()
     m_scene->addItem( item );
   }
 
+  createListItems();
   createLabelItems();
 
   m_view->centerOn( m_newItems.center );
@@ -438,6 +450,15 @@ void GroupGraphicsView::preparePos( TodoItem *item, qreal itemX, qreal itemY,
     animation->setEasingCurve( QEasingCurve::OutCubic );
   } else {
     item->setPos( itemX, itemY );
+  }
+}
+
+void GroupGraphicsView::createListItems()
+{
+  Bliss::GroupView view = model()->groupView( group() );
+
+  foreach( Bliss::TodoList list, view.todoListList() ) {
+    createListItem( list );
   }
 }
 
@@ -656,6 +677,8 @@ ListItem *GroupGraphicsView::createListItem( const Bliss::TodoList &list )
 
   item->setPos( list.x(), list.y() );
 
+  m_listItems.append( item );
+  
   return item;  
 }
 

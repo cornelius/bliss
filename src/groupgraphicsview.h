@@ -70,6 +70,7 @@ class GroupGraphicsView : public GroupView
     TodoItemGroup prepareTodoItems( bool doAnimation );
     void createMenuItems();
     void createLabelItems();
+    void createListItems();
   
     ListItem *createListItem( const Bliss::TodoList &list );
     LabelItem *createLabelItem( const Bliss::ViewLabel &label );
@@ -130,6 +131,7 @@ class GroupGraphicsView : public GroupView
   private:
     QList<TodoItem *> m_items;
     QList<LabelItem *> m_labelItems;
+    QList<ListItem *> m_listItems;
 
     TodoItem *m_previousItem;
 
