@@ -10,3 +10,5 @@
   * Trigger between ordered and positional
 
 * Rename Bliss::TodoList to Bliss::ViewList
+
+* Rename ListItem::editTodo etc. to editList

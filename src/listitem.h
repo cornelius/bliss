@@ -64,9 +64,9 @@ class ListItem : public QObject, public QGraphicsItemGroup
     void hidePopups();
     
   signals:
-    void removeList( const Bliss::TodoList & );
+    void removeList( ListItem * );
 
-    void itemMoved( ListItem *, const QPointF & );
+    void itemMoved( const Bliss::TodoList &, const QPointF & );
     
     void itemChecked( const Bliss::Todo &, bool );
 

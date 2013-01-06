@@ -575,6 +575,14 @@ void GroupGraphicsView::saveLabel( const Bliss::ViewLabel &label,
   model()->saveViewLabel( group(), l );
 }
 
+void GroupGraphicsView::saveList( const Bliss::TodoList &list,
+  const QPointF &pos )
+{
+  Bliss::TodoList l = list;
+  l.setX( pos.x() );
+  l.setY( pos.y() );
+  model()->saveViewList( group(), l );
+}
 
 void GroupGraphicsView::addList()
 {
@@ -627,6 +635,14 @@ void GroupGraphicsView::removeLabel( LabelItem *item )
   model()->removeViewLabel( group(), item->label() );
 }
 
+void GroupGraphicsView::removeList( ListItem *item )
+{
+  m_listItems.removeAll( item );
+
+  delete item;
+  model()->removeViewList( group(), item->list() );
+}
+
 void GroupGraphicsView::renameLabel( LabelItem *item )
 {
   Bliss::ViewLabel label = item->label();
@@ -669,7 +685,7 @@ ListItem *GroupGraphicsView::createListItem( const Bliss::TodoList &list )
   
   connect( item, SIGNAL( itemMoved( const Bliss::TodoList &, const QPointF & ) ),
     SLOT( saveList( const Bliss::TodoList &, const QPointF & ) ) );
-  connect( item, SIGNAL( removeLabel( ListItem * ) ),
+  connect( item, SIGNAL( removeList( ListItem * ) ),
     SLOT( removeList( ListItem * ) ) );
   connect( item, SIGNAL( menuShown() ), SLOT( hideGlobalMenu() ) );
 

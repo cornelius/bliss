@@ -92,7 +92,7 @@ void ListItem::updateItem( const Bliss::TodoList &list )
       SLOT( checkMenuVisibility() ) );
 
     FanMenuItem *menuItem = m_fanMenu->addItem( i18n("Remove") );
-    connect( menuItem, SIGNAL( clicked() ), SLOT( emitRemoveTodo() ) );
+    connect( menuItem, SIGNAL( clicked() ), SLOT( emitRemoveList() ) );
     
     menuItem = m_fanMenu->addItem( i18n("Edit") );
     connect( menuItem, SIGNAL( clicked() ), SLOT( editTodo() ) );
@@ -185,16 +185,17 @@ void ListItem::mousePressEvent( QGraphicsSceneMouseEvent *event )
 
 void ListItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
 {
+  qDebug() << "ListItem::mouseReleaseEvent()";
   QGraphicsItemGroup::mouseReleaseEvent( event );
 
   if ( pos() != m_movePos ) {
-    emit itemMoved( this, pos() );
+    emit itemMoved( m_list, pos() );
   }
 }
 
 void ListItem::emitRemoveList()
 {
-  emit removeList( m_list );
+  emit removeList( this );
 }
 
 void ListItem::editTodo()
