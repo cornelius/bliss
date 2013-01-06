@@ -40,7 +40,6 @@ class ListItem : public QObject, public QGraphicsItemGroup
   public:
     ListItem( MainModel *, MenuHandler *, const Bliss::Todo &group,
               const Bliss::TodoList & );
-    ListItem( MainModel * );
 
     Bliss::TodoList list() const;
 

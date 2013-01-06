@@ -35,16 +35,6 @@ ListItem::ListItem( MainModel *model, MenuHandler *menuHandler,
   init();
 }
 
-ListItem::ListItem( MainModel *model )
-  : QObject( model ), m_model( model ),
-    m_textCenterX( 0 ), m_fanMenu( 0 ),
-    m_menuHandler( 0 ), m_edit( 0 ), m_editProxy( 0 )
-{
-  m_menusEnabled = false;
-
-  m_handleItem = new QGraphicsEllipseItem( this );
-}
-
 void ListItem::init()
 {
   m_menusEnabled = true;
@@ -72,6 +62,7 @@ void ListItem::updateItem( const Bliss::TodoList &list )
   }
 
   m_handleItem = new QGraphicsEllipseItem( this );
+  m_handleItem->setAcceptHoverEvents( true );
 
   int itemSize = 40;
   m_handleItem->setRect( -itemSize/2, -itemSize/2, itemSize, itemSize );
@@ -145,6 +136,8 @@ void ListItem::hidePopups()
 
 void ListItem::hoverEnterEvent( QGraphicsSceneHoverEvent *event )
 {
+  qDebug() << "ListItem::hoverEnterEvent";
+  
   QLineF distance = QLineF( QPointF( 0, 0 ), event->pos() );
 
   if ( distance.length() <= m_handleItem->boundingRect().width() / 2 + 2 ) {
@@ -185,7 +178,6 @@ void ListItem::mousePressEvent( QGraphicsSceneMouseEvent *event )
 
 void ListItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
 {
-  qDebug() << "ListItem::mouseReleaseEvent()";
   QGraphicsItemGroup::mouseReleaseEvent( event );
 
   if ( pos() != m_movePos ) {
@@ -229,6 +221,8 @@ void ListItem::editTodoDone()
   }
 
   m_editProxy->hide();
+  
+  updateItem( m_list );
 }
 
 void ListItem::undoMove()
