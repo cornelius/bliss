@@ -24,6 +24,8 @@
 #include "roundedrectitem.h"
 #include "menuhandler.h"
 #include "menuhandleitem.h"
+#include "todoitem.h"
+#include "newtododialog.h"
 
 #include <KLocale>
 
@@ -78,10 +80,10 @@ void ListItem::updateItem( const Bliss::TodoList &list )
 
   m_fanMenu->hideMenu();
 
-  int itemSize = 40;
+  int handleItemSize = 40;
 
   m_handleItem = new MenuHandleItem( m_fanMenu, this );
-  m_handleItem->setItemSize( itemSize );
+  m_handleItem->setItemSize( handleItemSize );
   
   m_nameItem = new QGraphicsTextItem( list.name(), this );
   m_nameItem->setAcceptHoverEvents( false );
@@ -93,14 +95,20 @@ void ListItem::updateItem( const Bliss::TodoList &list )
 
   int textLeft = 16;
   
-  m_nameItem->setPos( itemSize / 2 + textLeft, - textHeight / 2 + 2 );
+  m_nameItem->setPos( handleItemSize / 2 + textLeft, - textHeight / 2 + 2 );
+
+  int itemSize = 30;
+  
+  TodoItem *item = new TodoItem( m_model );
+  connect( item, SIGNAL( itemPressed() ), SLOT( newTodo() ) );
+  item->setParentItem( this );
+  item->setPos( 0, + handleItemSize/2 + itemSize );
 
   int listBorder = 10;
-  int extraBottom = 10;
   
-  setRect( -itemSize/2 - listBorder, -itemSize/2 - listBorder,
-           textWidth + 2*listBorder + textLeft + itemSize,
-           itemSize + 2*listBorder + extraBottom );  
+  setRect( -handleItemSize/2 - listBorder, -handleItemSize/2 - listBorder,
+           textWidth + 2*listBorder + textLeft + handleItemSize,
+           handleItemSize*1.5 + itemSize + 2*listBorder );  
 }
 
 Bliss::TodoList ListItem::list() const
@@ -211,4 +219,16 @@ int ListItem::textCenterX()
 QGraphicsEllipseItem *ListItem::handleItem() const
 {
   return m_handleItem;
+}
+
+void ListItem::newTodo()
+{
+  NewTodoDialog *dialog = new NewTodoDialog( m_model );
+  if ( dialog->exec() == QDialog::Accepted ) {
+    Bliss::Todo todo = dialog->todo();
+
+// FIXME: Actually create todo
+//    m_model->addTodo( todo, m_group );
+  }
+  return;
 }

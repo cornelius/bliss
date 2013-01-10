@@ -87,6 +87,8 @@ class ListItem : public QObject, public RoundedRectItem
 
     void editTodo();
     void editTodoDone();
+
+    void newTodo();
     
   private:
     MainModel *m_model;
