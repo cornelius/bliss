@@ -24,6 +24,7 @@
 #include "settings.h"
 #include "blissallitemmodel.h"
 #include "blisstodoitemmodel.h"
+#include "delayedsignal.h"
 
 #include <KRandom>
 #include <KLocale>
@@ -302,8 +303,8 @@ Bliss::Todo MainModel::insert( Bliss::Todo todo,
 
   writeData( msg );
 
-  if ( added ) emit todoAdded( todo );
-  else emit todoChanged( todo );
+  if ( added ) (new DelayedSignal( this, todo ))->emitTodoAdded();
+  else (new DelayedSignal( this, todo ))->emitTodoChanged();
 
   return todo;
 }
@@ -383,7 +384,7 @@ void MainModel::deleteTodo( const Bliss::Todo &todo )
 
   writeData( i18n("Deleted %1").arg( todo.summary().value() ) );
   
-  emit todoRemoved( todo );
+  (new DelayedSignal( this, todo ))->emitTodoRemoved();
 }
 
 void MainModel::removeGroup( const Bliss::Todo &group )
@@ -397,7 +398,7 @@ void MainModel::removeGroup( const Bliss::Todo &group )
 
   setupGroups();
   
-  emit todoRemoved( group );
+  (new DelayedSignal( this, group ))->emitTodoRemoved();
 }
 
 void MainModel::addList( const Bliss::TodoList &list,

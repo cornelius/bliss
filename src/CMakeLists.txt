@@ -1,4 +1,5 @@
 set(bliss_bin_SRCS
+  delayedsignal.cpp
   menuhandleitem.cpp
   listitem.cpp
   newlistdialog.cpp

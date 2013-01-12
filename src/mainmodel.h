@@ -122,7 +122,7 @@ class MainModel : public QObject
     void setupGroups();
 
     QPixmap defaultPixmap( const Bliss::Todo &identity ) const;
-
+    
   private:
     StorageGit *m_storageGit;
     StorageFile *m_storageFile;

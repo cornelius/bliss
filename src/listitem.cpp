@@ -227,8 +227,7 @@ void ListItem::newTodo()
   if ( dialog->exec() == QDialog::Accepted ) {
     Bliss::Todo todo = dialog->todo();
 
-// FIXME: Actually create todo
-//    m_model->addTodo( todo, m_group );
+    m_model->addTodo( todo, m_group );
   }
   return;
 }
