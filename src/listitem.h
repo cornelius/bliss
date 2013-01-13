@@ -40,13 +40,13 @@ class ListItem : public QObject, public RoundedRectItem
 
   public:
     ListItem( MainModel *, MenuHandler *, const Bliss::Todo &group,
-              const Bliss::TodoList & );
+              const Bliss::ViewList & );
 
-    Bliss::TodoList list() const;
+    Bliss::ViewList list() const;
 
     QGraphicsEllipseItem *handleItem() const;
     
-    void updateItem( const Bliss::TodoList & );
+    void updateItem( const Bliss::ViewList & );
 
     void setDefaultPos( const QPointF & );
     QPointF defaultPos() const;
@@ -63,7 +63,7 @@ class ListItem : public QObject, public RoundedRectItem
   signals:
     void removeList( ListItem * );
 
-    void itemMoved( const Bliss::TodoList &, const QPointF & );
+    void itemMoved( const Bliss::ViewList &, const QPointF & );
     
     void itemChecked( const Bliss::Todo &, bool );
 
@@ -93,7 +93,7 @@ class ListItem : public QObject, public RoundedRectItem
   private:
     MainModel *m_model;
     Bliss::Todo m_group;
-    Bliss::TodoList m_list;
+    Bliss::ViewList m_list;
 
     QPointF m_defaultPos;
     QPointF m_rememberedPos;

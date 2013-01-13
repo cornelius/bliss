@@ -59,9 +59,9 @@ NewListDialog::~NewListDialog()
   saveDialogSize( cg );
 }
 
-Bliss::TodoList NewListDialog::list()
+Bliss::ViewList NewListDialog::list()
 {
-  Bliss::TodoList list;
+  Bliss::ViewList list;
   list.setId( KRandom::randomString( 10 ) );
   list.setName( m_nameInput->text() );
   return list;

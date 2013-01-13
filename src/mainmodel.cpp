@@ -328,7 +328,7 @@ void MainModel::moveTodo( const Bliss::Todo &t, const Bliss::Todo &fromGroup,
 }
 
 Bliss::Todo MainModel::addTodo( const Bliss::Todo &t,
-  const Bliss::Todo &group, const Bliss::TodoList &list )
+  const Bliss::Todo &group, const Bliss::ViewList &list )
 {
   Bliss::Todo todo = t;
   
@@ -413,7 +413,7 @@ void MainModel::removeGroup( const Bliss::Todo &group )
   (new DelayedSignal( this, group ))->emitTodoRemoved();
 }
 
-void MainModel::addList( const Bliss::TodoList &list,
+void MainModel::addList( const Bliss::ViewList &list,
   const Bliss::Todo &group )
 {
   Bliss::GroupView v = m_bliss.findGroupView( group.id(),
@@ -437,14 +437,14 @@ QPixmap MainModel::defaultPixmap( const Bliss::Todo &todo ) const
 }
 
 void MainModel::saveViewList( const Bliss::Todo &group,
-  const Bliss::TodoList &list )
+  const Bliss::ViewList &list )
 {
   doSaveViewList( group, list );
   writeData( i18n("Inserted list %1").arg( list.name() ) );
 }
 
 void MainModel::doSaveViewList( const Bliss::Todo &group,
-  const Bliss::TodoList &list )
+  const Bliss::ViewList &list )
 {
   Bliss::GroupView v = m_bliss.findGroupView( group.id(),
     Bliss::Bliss::AutoCreate );
@@ -453,7 +453,7 @@ void MainModel::doSaveViewList( const Bliss::Todo &group,
 }
 
 void MainModel::removeViewList( const Bliss::Todo &group,
-  const Bliss::TodoList &list )
+  const Bliss::ViewList &list )
 {
   Bliss::GroupView v = m_bliss.findGroupView( group.id(),
     Bliss::Bliss::AutoCreate );

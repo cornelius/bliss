@@ -65,7 +65,7 @@
       <todo_id>jdjd</todo_id>
       <todo_id>jdjdxxx</todo_id>
     </todo_sequence>
-    <todo_list>
+    <view_list>
       <id>123kdkdk</id>
       <name>Today</name>
       <x>123</x>
@@ -74,8 +74,8 @@
         <todo_id>jdjd</todo_id>
         <todo_id>jdjdxxx</todo_id>
       </todo_sequence>
-    </todo_list>
-    <todo_list>
+    </view_list>
+    <view_list>
       <id>4123kdkdk</id>
       <name>Tommorow</name>
       <x>123</x>
@@ -84,7 +84,7 @@
         <todo_id>jdjdas</todo_id>
         <todo_id>jdjdxxxas</todo_id>
       </todo_sequence>
-    </todo_list>
+    </view_list>
   </group_view>
   <group_view>
     <id>shshx</id>

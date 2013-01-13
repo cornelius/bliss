@@ -62,10 +62,10 @@ class BLISS_EXPORT TodoSequence
     TodoId::List mTodoIdList;
 };
 
-class BLISS_EXPORT TodoList
+class BLISS_EXPORT ViewList
 {
   public:
-    typedef QList<TodoList> List;
+    typedef QList<ViewList> List;
 
   public:
     bool isValid() const;
@@ -82,7 +82,7 @@ class BLISS_EXPORT TodoList
     /**
       Parse XML object from DOM element.
      */
-    static TodoList parseElement( const QDomElement &element, bool *ok );
+    static ViewList parseElement( const QDomElement &element, bool *ok );
     void writeElement( QXmlStreamWriter &xml );
 
   private:
@@ -172,12 +172,12 @@ class BLISS_EXPORT GroupView
     bool remove( const ViewLabel &v );
     void setTodoSequence( const TodoSequence &v );
     TodoSequence todoSequence() const;
-    void addTodoList( const TodoList &v );
-    void setTodoListList( const TodoList::List &v );
-    TodoList::List todoListList() const;
-    TodoList findTodoList( const QString &id, Flags flags = None );
-    bool insert( const TodoList &v );
-    bool remove( const TodoList &v );
+    void addViewList( const ViewList &v );
+    void setViewListList( const ViewList::List &v );
+    ViewList::List viewListList() const;
+    ViewList findViewList( const QString &id, Flags flags = None );
+    bool insert( const ViewList &v );
+    bool remove( const ViewList &v );
     /**
       Parse XML object from DOM element.
      */
@@ -189,7 +189,7 @@ class BLISS_EXPORT GroupView
     TodoPosition::List mTodoPositionList;
     ViewLabel::List mViewLabelList;
     TodoSequence mTodoSequence;
-    TodoList::List mTodoListList;
+    ViewList::List mViewListList;
 };
 
 class BLISS_EXPORT Status

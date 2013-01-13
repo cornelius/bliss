@@ -72,7 +72,7 @@ class GroupGraphicsView : public GroupView
     void createLabelItems();
     void createListItems();
   
-    ListItem *createListItem( const Bliss::TodoList &list );
+    ListItem *createListItem( const Bliss::ViewList &list );
     LabelItem *createLabelItem( const Bliss::ViewLabel &label );
 
     TodoItem *item( const Bliss::Todo & ) const;
@@ -111,7 +111,7 @@ class GroupGraphicsView : public GroupView
 
     void slotItemMoved( TodoItem *item, const QPointF &pos );
     void saveLabel( const Bliss::ViewLabel &, const QPointF & );
-    void saveList( const Bliss::TodoList &, const QPointF & );
+    void saveList( const Bliss::ViewList &, const QPointF & );
  
     void emitCloneGroup();
     void emitRemoveGroup();

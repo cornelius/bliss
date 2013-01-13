@@ -115,70 +115,70 @@ void TodoSequence::writeElement( QXmlStreamWriter &xml )
 }
 
 
-bool TodoList::isValid() const
+bool ViewList::isValid() const
 {
   return !mId.isEmpty();
 }
 
-void TodoList::setId( const QString &v )
+void ViewList::setId( const QString &v )
 {
   mId = v;
 }
 
-QString TodoList::id() const
+QString ViewList::id() const
 {
   return mId;
 }
 
-void TodoList::setName( const QString &v )
+void ViewList::setName( const QString &v )
 {
   mName = v;
 }
 
-QString TodoList::name() const
+QString ViewList::name() const
 {
   return mName;
 }
 
-void TodoList::setX( int v )
+void ViewList::setX( int v )
 {
   mX = v;
 }
 
-int TodoList::x() const
+int ViewList::x() const
 {
   return mX;
 }
 
-void TodoList::setY( int v )
+void ViewList::setY( int v )
 {
   mY = v;
 }
 
-int TodoList::y() const
+int ViewList::y() const
 {
   return mY;
 }
 
-void TodoList::setTodoSequence( const TodoSequence &v )
+void ViewList::setTodoSequence( const TodoSequence &v )
 {
   mTodoSequence = v;
 }
 
-TodoSequence TodoList::todoSequence() const
+TodoSequence ViewList::todoSequence() const
 {
   return mTodoSequence;
 }
 
-TodoList TodoList::parseElement( const QDomElement &element, bool *ok )
+ViewList ViewList::parseElement( const QDomElement &element, bool *ok )
 {
-  if ( element.tagName() != "todo_list" ) {
-    qCritical() << "Expected 'todo_list', got '" << element.tagName() << "'.";
+  if ( element.tagName() != "view_list" ) {
+    qCritical() << "Expected 'view_list', got '" << element.tagName() << "'.";
     if ( ok ) *ok = false;
-    return TodoList();
+    return ViewList();
   }
 
-  TodoList result = TodoList();
+  ViewList result = ViewList();
 
   QDomNode n;
   for( n = element.firstChild(); !n.isNull(); n = n.nextSibling() ) {
@@ -207,9 +207,9 @@ TodoList TodoList::parseElement( const QDomElement &element, bool *ok )
   return result;
 }
 
-void TodoList::writeElement( QXmlStreamWriter &xml )
+void ViewList::writeElement( QXmlStreamWriter &xml )
 {
-  xml.writeStartElement( "todo_list" );
+  xml.writeStartElement( "view_list" );
   if ( !id().isEmpty() ) {
     xml.writeTextElement(  "id", id() );
   }
@@ -524,56 +524,56 @@ TodoSequence GroupView::todoSequence() const
   return mTodoSequence;
 }
 
-void GroupView::addTodoList( const TodoList &v )
+void GroupView::addViewList( const ViewList &v )
 {
-  mTodoListList.append( v );
+  mViewListList.append( v );
 }
 
-void GroupView::setTodoListList( const TodoList::List &v )
+void GroupView::setViewListList( const ViewList::List &v )
 {
-  mTodoListList = v;
+  mViewListList = v;
 }
 
-TodoList::List GroupView::todoListList() const
+ViewList::List GroupView::viewListList() const
 {
-  return mTodoListList;
+  return mViewListList;
 }
 
-TodoList GroupView::findTodoList( const QString &id, Flags flags )
+ViewList GroupView::findViewList( const QString &id, Flags flags )
 {
-  foreach( TodoList v, mTodoListList ) {
+  foreach( ViewList v, mViewListList ) {
     if ( v.id() == id ) return v;
   }
-  TodoList v;
+  ViewList v;
   if ( flags == AutoCreate ) {
     v.setId( id );
   }
   return v;
 }
 
-bool GroupView::insert( const TodoList &v )
+bool GroupView::insert( const ViewList &v )
 {
   int i = 0;
-  for( ; i < mTodoListList.size(); ++i ) {
-    if ( mTodoListList[i].id() == v.id() ) {
-      mTodoListList[i] = v;
+  for( ; i < mViewListList.size(); ++i ) {
+    if ( mViewListList[i].id() == v.id() ) {
+      mViewListList[i] = v;
       return true;
     }
   }
-  if ( i == mTodoListList.size() ) {
-    addTodoList( v );
+  if ( i == mViewListList.size() ) {
+    addViewList( v );
   }
   return true;
 }
 
-bool GroupView::remove( const TodoList &v )
+bool GroupView::remove( const ViewList &v )
 {
-  TodoList::List::Iterator it;
-  for( it = mTodoListList.begin(); it != mTodoListList.end(); ++it ) {
+  ViewList::List::Iterator it;
+  for( it = mViewListList.begin(); it != mViewListList.end(); ++it ) {
     if ( (*it).id() == v.id() ) break;
   }
-  if ( it != mTodoListList.end() ) {
-    mTodoListList.erase( it );
+  if ( it != mViewListList.end() ) {
+    mViewListList.erase( it );
   }
   return true;
 }
@@ -609,10 +609,10 @@ GroupView GroupView::parseElement( const QDomElement &element, bool *ok )
       TodoSequence o = TodoSequence::parseElement( e, &ok );
       if ( ok ) result.setTodoSequence( o );
     }
-    else if ( e.tagName() == "todo_list" ) {
+    else if ( e.tagName() == "view_list" ) {
       bool ok;
-      TodoList o = TodoList::parseElement( e, &ok );
-      if ( ok ) result.addTodoList( o );
+      ViewList o = ViewList::parseElement( e, &ok );
+      if ( ok ) result.addViewList( o );
     }
   }
 
@@ -634,7 +634,7 @@ void GroupView::writeElement( QXmlStreamWriter &xml )
     e.writeElement( xml );
   }
   todoSequence().writeElement( xml );
-  foreach( TodoList e, todoListList() ) {
+  foreach( ViewList e, viewListList() ) {
     e.writeElement( xml );
   }
   xml.writeEndElement();

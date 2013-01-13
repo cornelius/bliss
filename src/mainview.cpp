@@ -202,7 +202,7 @@ void MainView::newList()
 {
   NewListDialog *dialog = new NewListDialog( m_model, this );
   if ( dialog->exec() == QDialog::Accepted ) {
-    Bliss::TodoList list = dialog->list();
+    Bliss::ViewList list = dialog->list();
     m_model->addList( list, m_group );
   }
   return;

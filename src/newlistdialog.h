@@ -33,7 +33,7 @@ class NewListDialog : public KDialog
     NewListDialog( MainModel *, QWidget *parent = 0 );
     ~NewListDialog();
 
-    Bliss::TodoList list();
+    Bliss::ViewList list();
 
   protected slots:
     void checkOkButton();

@@ -30,7 +30,7 @@
 #include <KLocale>
 
 ListItem::ListItem( MainModel *model, MenuHandler *menuHandler,
-  const Bliss::Todo &group, const Bliss::TodoList &list )
+  const Bliss::Todo &group, const Bliss::ViewList &list )
   : QObject( model ), m_model( model ), m_group( group ), m_list( list ),
     m_fanMenu( 0 ), m_menuHandler( menuHandler ), m_edit( 0 ), m_editProxy( 0 )
 {
@@ -59,7 +59,7 @@ void ListItem::enableMenus( bool enabled )
   if ( !m_fanMenu ) m_fanMenu->hideMenu();
 }
 
-void ListItem::updateItem( const Bliss::TodoList &list )
+void ListItem::updateItem( const Bliss::ViewList &list )
 {
   m_list = list;
   
@@ -111,7 +111,7 @@ void ListItem::updateItem( const Bliss::TodoList &list )
            handleItemSize*1.5 + itemSize + 2*listBorder );  
 }
 
-Bliss::TodoList ListItem::list() const
+Bliss::ViewList ListItem::list() const
 {
   return m_list;
 }
