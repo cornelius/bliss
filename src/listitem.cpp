@@ -227,7 +227,18 @@ void ListItem::newTodo()
   if ( dialog->exec() == QDialog::Accepted ) {
     Bliss::Todo todo = dialog->todo();
 
-    m_model->addTodo( todo, m_group );
+    Bliss::TodoSequence sequence = m_list.todoSequence();
+    Bliss::TodoId id;
+    id.setValue( todo.id() );
+    sequence.addTodoId( id );
+
+    foreach( Bliss::TodoId t, sequence.todoIdList() ) {
+      qDebug() << "ID" << t.value();
+    }
+    
+    m_list.setTodoSequence( sequence );
+
+    m_model->addTodo( todo, m_group, m_list );
   }
   return;
 }

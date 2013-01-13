@@ -25,6 +25,7 @@
 #include <KMessageBox>
 #include <KPushButton>
 #include <KGlobal>
+#include <KRandom>
 
 NewTodoDialog::NewTodoDialog( MainModel *model, QWidget *parent )
   : KDialog( parent ), m_model( model ), m_proxyModel( 0 ), m_matchList( 0 )
@@ -71,6 +72,7 @@ Bliss::Todo NewTodoDialog::todo()
 {
   if ( !m_matchList || !m_matchList->todo().isValid() ) {
     Bliss::Todo todo;
+    todo.setId( KRandom::randomString( 10 ) );
     Bliss::Summary name;
     name.setValue( m_nameInput->text() );
     todo.setSummary( name );
