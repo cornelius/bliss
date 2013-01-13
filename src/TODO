@@ -1,19 +1,19 @@
+* Lists
+    * Rename Bliss::TodoList to Bliss::ViewList
+    * Rename ListItem::editTodo etc. to editList
+    * Show todos in correct list on startup
+    * Show todos in correct list on creation of new todo
+    * Make moving of todos in list work
+    * Make moving of todos between lists work
+    * Make todos on canvas positional todos without list, but an individual
+      position
+
+* Clarify remove and done
+
+* Read file as list
 * History dependent on file
 * Use common storage base class and switch via instances rather than ifs
 * Make kxml_compiler generate const writeFile function.
 * Implement StorageFile for file-based todo lists.
-* Clarify remove and done
-
-* Positional UI
-  * Multiple lists per group
-  * Make ordered lists one positional item
-  * Trigger between ordered and positional
-
-* Rename Bliss::TodoList to Bliss::ViewList
-
-* Rename ListItem::editTodo etc. to editList
-
-* Give lists a darker brown background with rounded corners
-* Implement adding items to lists
 
 * Move global menu handling to MenuHandler, to save sending signals around
