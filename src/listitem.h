@@ -85,8 +85,8 @@ class ListItem : public QObject, public RoundedRectItem
   protected slots:
     void emitRemoveList();
 
-    void editTodo();
-    void editTodoDone();
+    void editList();
+    void editListDone();
 
     void newTodo();
     

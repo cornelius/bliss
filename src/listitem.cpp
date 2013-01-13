@@ -74,7 +74,7 @@ void ListItem::updateItem( const Bliss::ViewList &list )
   connect( menuItem, SIGNAL( clicked() ), SLOT( emitRemoveList() ) );
   
   menuItem = m_fanMenu->addItem( i18n("Edit") );
-  connect( menuItem, SIGNAL( clicked() ), SLOT( editTodo() ) );
+  connect( menuItem, SIGNAL( clicked() ), SLOT( editList() ) );
 
   m_fanMenu->setupItems();
 
@@ -171,12 +171,12 @@ void ListItem::emitRemoveList()
   emit removeList( this );
 }
 
-void ListItem::editTodo()
+void ListItem::editList()
 {
   if ( !m_edit ) {
     m_edit = new HidingLineEdit;
-    connect( m_edit, SIGNAL( returnPressed() ), SLOT( editTodoDone() ) );
-    connect( m_edit, SIGNAL( lostFocus() ), SLOT( editTodoDone() ) );
+    connect( m_edit, SIGNAL( returnPressed() ), SLOT( editListDone() ) );
+    connect( m_edit, SIGNAL( lostFocus() ), SLOT( editListDone() ) );
     m_editProxy = scene()->addWidget( m_edit );
   }
 
@@ -192,7 +192,7 @@ void ListItem::editTodo()
   m_editProxy->setPos( mapToScene( m_nameItem->pos() ) );
 }
 
-void ListItem::editTodoDone()
+void ListItem::editListDone()
 {
   QString newText = m_edit->text();
 

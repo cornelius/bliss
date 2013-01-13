@@ -1,5 +1,4 @@
 * Lists
-    * Rename ListItem::editTodo etc. to editList
     * Show todos in correct list on startup
     * Show todos in correct list on creation of new todo
     * Make moving of todos in list work
