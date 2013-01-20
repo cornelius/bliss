@@ -94,19 +94,13 @@ void GroupGraphicsView::writeConfig()
 
 void GroupGraphicsView::slotTodoChanged( const Bliss::Todo &todo )
 {
-  qDebug() << "SLOT TODO CHANGED 1";
-  
   TodoItem *i = item( todo );
-  qDebug() << "SLOT TODO CHANGED 2";
     
   if ( todo.groups().findGroup( group().id() ).isValid() && i ) {
-    qDebug() << "SLOT TODO CHANGED 3";
     i->updateItem( todo );
   } else {
-    qDebug() << "SLOT TODO CHANGED 4";
     slotTodoRemoved( todo);
   }
-  qDebug() << "SLOT TODO CHANGED 5";
 
   foreach ( ListItem *listItem, m_listItems ) {
     listItem->updateTodoItem( todo );
@@ -126,7 +120,6 @@ void GroupGraphicsView::slotTodoRemoved( const Bliss::Todo &todo )
   if ( todoItem ) {
     delete todoItem;
     m_items.removeAll( todoItem );
-    clearListItems();
   }
   
   preparePlaceItemsAnimation();
@@ -471,7 +464,7 @@ void GroupGraphicsView::preparePos( TodoItem *item, qreal itemX, qreal itemY,
 
 void GroupGraphicsView::createListItems()
 {
-  qDebug() << "CREATE LIST ITEMS";
+  clearListItems();
   
   Bliss::GroupView view = model()->groupView( group() );
 
