@@ -572,24 +572,6 @@ void GroupGraphicsView::slotItemMoved( TodoItem *todoItem,
   }
 }
 
-void GroupGraphicsView::saveLabel( const Bliss::ViewLabel &label,
-  const QPointF &pos )
-{
-  Bliss::ViewLabel l = label;
-  l.setX( pos.x() );
-  l.setY( pos.y() );
-  model()->saveViewLabel( group(), l );
-}
-
-void GroupGraphicsView::saveList( const Bliss::ViewList &list,
-  const QPointF &pos )
-{
-  Bliss::ViewList l = list;
-  l.setX( pos.x() );
-  l.setY( pos.y() );
-  model()->saveViewList( group(), l );
-}
-
 void GroupGraphicsView::addList()
 {
   NewListDialog *dialog = new NewListDialog( model(), this );
@@ -666,10 +648,8 @@ void GroupGraphicsView::renameLabel( LabelItem *item )
 
 LabelItem *GroupGraphicsView::createLabelItem( const Bliss::ViewLabel &label )
 {
-  LabelItem *item = new LabelItem( model(), label );
+  LabelItem *item = new LabelItem( model(), group(), label );
 
-  connect( item, SIGNAL( itemMoved( const Bliss::ViewLabel &, const QPointF & ) ),
-    SLOT( saveLabel( const Bliss::ViewLabel &, const QPointF & ) ) );
   connect( item, SIGNAL( removeLabel( LabelItem * ) ),
     SLOT( removeLabel( LabelItem * ) ) );
   connect( item, SIGNAL( renameLabel( LabelItem * ) ),
@@ -689,8 +669,6 @@ ListItem *GroupGraphicsView::createListItem( const Bliss::ViewList &list )
 {
   ListItem *item = new ListItem( model(), m_menuHandler, group(), list );
   
-  connect( item, SIGNAL( itemMoved( const Bliss::ViewList &, const QPointF & ) ),
-    SLOT( saveList( const Bliss::ViewList &, const QPointF & ) ) );
   connect( item, SIGNAL( removeList( ListItem * ) ),
     SLOT( removeList( ListItem * ) ) );
   connect( item, SIGNAL( menuShown() ), SLOT( hideGlobalMenu() ) );
@@ -699,6 +677,8 @@ ListItem *GroupGraphicsView::createListItem( const Bliss::ViewList &list )
 
   item->setPos( list.x(), list.y() );
 
+  qDebug() << "createListItem()" << list.x() << list.y();
+  
   m_listItems.append( item );
   
   return item;  

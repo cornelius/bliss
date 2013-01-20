@@ -34,13 +34,13 @@ class LabelItem : public QObject, public RoundedRectItem
     Q_PROPERTY(QPointF pos READ pos WRITE setPos)
 
   public:
-    LabelItem( MainModel *, const Bliss::ViewLabel & );
+    LabelItem( MainModel *, const Bliss::Todo &group,
+               const Bliss::ViewLabel & );
 
     Bliss::ViewLabel label() const;
     void setLabel( const Bliss::ViewLabel & );
 
   signals:
-    void itemMoved( const Bliss::ViewLabel &, const QPointF & );
     void removeLabel( LabelItem * );
     void renameLabel( LabelItem * );
 
@@ -61,6 +61,7 @@ class LabelItem : public QObject, public RoundedRectItem
 
   private:
     MainModel *m_model;
+    Bliss::Todo m_group;
     Bliss::ViewLabel m_label;
 
     QGraphicsTextItem *m_textItem;

@@ -8,6 +8,9 @@
 
 * Clarify remove and done
 
+* Remove obsolete ids from lists
+* Prevent lists from disappearing, while todo is removed
+
 * Read file as list
 * History dependent on file
 * Use common storage base class and switch via instances rather than ifs

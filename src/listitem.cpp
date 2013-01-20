@@ -175,7 +175,9 @@ void ListItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
   RoundedRectItem::mouseReleaseEvent( event );
 
   if ( pos() != m_movePos ) {
-    emit itemMoved( m_list, pos() );
+    m_list.setX( pos().x() );
+    m_list.setY( pos().y() );
+    m_model->saveViewList( m_group, m_list );
   }
 }
 
@@ -245,10 +247,6 @@ void ListItem::newTodo()
     id.setValue( todo.id() );
     sequence.addTodoId( id );
 
-    foreach( Bliss::TodoId t, sequence.todoIdList() ) {
-      qDebug() << "ID" << t.value();
-    }
-    
     m_list.setTodoSequence( sequence );
 
     m_model->addTodo( todo, m_group, m_list );

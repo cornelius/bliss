@@ -63,8 +63,6 @@ class ListItem : public QObject, public RoundedRectItem
   signals:
     void removeList( ListItem * );
 
-    void itemMoved( const Bliss::ViewList &, const QPointF & );
-    
     void itemChecked( const Bliss::Todo &, bool );
 
     void itemPressed();

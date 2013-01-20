@@ -23,8 +23,9 @@
 
 #include <KLocale>
 
-LabelItem::LabelItem( MainModel *model, const Bliss::ViewLabel &label )
-  : QObject( model ), m_model( model ), m_label( label )
+LabelItem::LabelItem( MainModel *model, const Bliss::Todo &group,
+                      const Bliss::ViewLabel &label )
+  : QObject( model ), m_model( model ), m_group( group ), m_label( label )
 {
   setBrush( QColor( 255,255,230 ) );
 
@@ -94,7 +95,9 @@ void LabelItem::mousePressEvent( QGraphicsSceneMouseEvent *event )
 void LabelItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
 {
   if ( pos() != m_movePos ) {
-    emit itemMoved( m_label, pos() );
+    m_label.setX( pos().x() );
+    m_label.setY( pos().y() );
+    m_model->saveViewLabel( m_group, m_label );
   }
 
   QGraphicsRectItem::mouseReleaseEvent( event );
