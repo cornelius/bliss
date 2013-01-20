@@ -98,17 +98,30 @@ void ListItem::updateItem( const Bliss::ViewList &list )
   m_nameItem->setPos( handleItemSize / 2 + textLeft, - textHeight / 2 + 2 );
 
   int itemSize = 30;
+
+  int spacing = 50;
+  int y = handleItemSize / 2 + itemSize;
+  
+  Bliss::Todo::List todos = m_model->todosOfList( m_list );
+  foreach( Bliss::Todo todo, todos ) {
+    TodoItem *item = new TodoItem( m_model, m_menuHandler, todo );
+    item->setParentItem( this );
+    item->setPos( 0, y );
+
+    y += spacing;
+  }
   
   TodoItem *item = new TodoItem( m_model );
   connect( item, SIGNAL( itemPressed() ), SLOT( newTodo() ) );
   item->setParentItem( this );
-  item->setPos( 0, + handleItemSize/2 + itemSize );
+  item->setPos( 0, y );
 
   int listBorder = 10;
   
   setRect( -handleItemSize/2 - listBorder, -handleItemSize/2 - listBorder,
            textWidth + 2*listBorder + textLeft + handleItemSize,
-           handleItemSize*1.5 + itemSize + 2*listBorder );  
+           handleItemSize*1.5 + itemSize + 2*listBorder +
+           todos.size() * spacing );
 }
 
 Bliss::ViewList ListItem::list() const

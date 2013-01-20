@@ -153,6 +153,18 @@ Bliss::Todo::List MainModel::todosOfGroup( const QString &id )
   return sortedTodos;
 }
 
+Bliss::Todo::List MainModel::todosOfList( const Bliss::ViewList &list )
+{
+  Bliss::Todo::List todos;
+
+  foreach( Bliss::TodoId id, list.todoSequence().todoIdList() ) {
+    Bliss::Todo todo = m_bliss.findTodo( id.value() );
+    if ( todo.isValid() ) todos.append( todo );
+  }
+
+  return todos;
+}
+
 BlissItemModel *MainModel::allItemModel()
 {
   if ( !m_allItemModel ) {
