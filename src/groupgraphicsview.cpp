@@ -428,7 +428,7 @@ QPointF GroupGraphicsView::preparePositions( const QList<TodoItem *> &todoItems,
       if ( itemY > maxY ) maxY = itemY;
     }
 
-    y++;    
+    y++;
   }
 
   qreal centerY = ( minY + maxY ) / 2;
