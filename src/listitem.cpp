@@ -105,6 +105,12 @@ void ListItem::updateItem( const Bliss::ViewList &list )
   Bliss::Todo::List todos = m_model->todosOfList( m_list );
   foreach( Bliss::Todo todo, todos ) {
     TodoItem *item = new TodoItem( m_model, m_menuHandler, todo );
+
+    connect( item, SIGNAL( removeTodo( const Bliss::Todo & ) ),
+             SIGNAL( removeTodo( const Bliss::Todo & ) ) );
+    connect( item, SIGNAL( done( const Bliss::Todo & ) ),
+             SIGNAL( done( const Bliss::Todo & ) ) );
+
     item->setParentItem( this );
     item->setPos( 0, y );
 

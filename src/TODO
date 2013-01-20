@@ -1,6 +1,4 @@
 * Lists
-    * Show todos in correct list on startup
-    * Show todos in correct list on creation of new todo
     * Make moving of todos in list work
     * Make moving of todos between lists work
     * Make todos on canvas positional todos without list, but an individual

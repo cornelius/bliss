@@ -672,13 +672,15 @@ ListItem *GroupGraphicsView::createListItem( const Bliss::ViewList &list )
   connect( item, SIGNAL( removeList( ListItem * ) ),
     SLOT( removeList( ListItem * ) ) );
   connect( item, SIGNAL( menuShown() ), SLOT( hideGlobalMenu() ) );
+  connect( item, SIGNAL( removeTodo( const Bliss::Todo & ) ),
+    SLOT( slotRemoveTodo( const Bliss::Todo & ) ) );
+  connect( item, SIGNAL( done( const Bliss::Todo & ) ),
+    SLOT( slotDone( const Bliss::Todo & ) ) );
 
   m_scene->addItem( item );
 
   item->setPos( list.x(), list.y() );
 
-  qDebug() << "createListItem()" << list.x() << list.y();
-  
   m_listItems.append( item );
   
   return item;  
