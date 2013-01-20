@@ -29,6 +29,7 @@
 class MainModel;
 class MenuHandler;
 class MenuHandleItem;
+class TodoItem;
 
 class ListItem : public QObject, public RoundedRectItem
 {
@@ -47,6 +48,7 @@ class ListItem : public QObject, public RoundedRectItem
     QGraphicsEllipseItem *handleItem() const;
     
     void updateItem( const Bliss::ViewList & );
+    void updateTodoItem( const Bliss::Todo &todo );
 
     void setDefaultPos( const QPointF & );
     QPointF defaultPos() const;
@@ -96,6 +98,8 @@ class ListItem : public QObject, public RoundedRectItem
     Bliss::Todo m_group;
     Bliss::ViewList m_list;
 
+    QList<TodoItem *> m_todoItems;
+    
     QPointF m_defaultPos;
     QPointF m_rememberedPos;
 

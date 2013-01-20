@@ -62,6 +62,8 @@ void ListItem::enableMenus( bool enabled )
 void ListItem::updateItem( const Bliss::ViewList &list )
 {
   m_list = list;
+
+  m_todoItems.clear();
   
   foreach( QGraphicsItem *child, childItems() ) {
     delete child;
@@ -105,7 +107,8 @@ void ListItem::updateItem( const Bliss::ViewList &list )
   Bliss::Todo::List todos = m_model->todosOfList( m_list );
   foreach( Bliss::Todo todo, todos ) {
     TodoItem *item = new TodoItem( m_model, m_menuHandler, todo );
-
+    m_todoItems.append( item );
+    
     connect( item, SIGNAL( removeTodo( const Bliss::Todo & ) ),
              SIGNAL( removeTodo( const Bliss::Todo & ) ) );
     connect( item, SIGNAL( done( const Bliss::Todo & ) ),
@@ -128,6 +131,15 @@ void ListItem::updateItem( const Bliss::ViewList &list )
            textWidth + 2*listBorder + textLeft + handleItemSize,
            handleItemSize*1.5 + itemSize + 2*listBorder +
            todos.size() * spacing );
+}
+
+void ListItem::updateTodoItem( const Bliss::Todo &todo )
+{
+  foreach( TodoItem *item, m_todoItems ) {
+    if ( item->todo().id() == todo.id() ) {
+      item->updateItem( todo );
+    }
+  }
 }
 
 Bliss::ViewList ListItem::list() const
