@@ -80,6 +80,7 @@ class GroupGraphicsView : public GroupView
     void positionMenuItems();
 
     void clearItems();
+    void clearListItems();
 
     void preparePlaceItemsAnimation();
 

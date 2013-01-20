@@ -116,6 +116,7 @@ void GroupGraphicsView::slotTodoRemoved( const Bliss::Todo &todo )
   if ( todoItem ) {
     delete todoItem;
     m_items.removeAll( todoItem );
+    clearListItems();
   }
   
   preparePlaceItemsAnimation();
@@ -189,13 +190,18 @@ void GroupGraphicsView::clearItems()
   }
   m_labelItems.clear();
 
+  clearListItems();
+  
+  if ( m_globalMenu ) delete m_globalMenu;
+  m_globalMenu = 0;
+}
+
+void GroupGraphicsView::clearListItems()
+{
   foreach( ListItem *item, m_listItems ) {
     delete item;
   }
   m_listItems.clear();
-
-  if ( m_globalMenu ) delete m_globalMenu;
-  m_globalMenu = 0;
 }
 
 void GroupGraphicsView::preparePlaceItemsAnimation()
