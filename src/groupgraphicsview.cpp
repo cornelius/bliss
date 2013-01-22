@@ -354,7 +354,7 @@ TodoItemGroup GroupGraphicsView::prepareTodoItems( bool doAnimation )
 {
   TodoItemGroup result;
   
-  Bliss::Todo::List todos = model()->todosOfGroup( group() );
+  Bliss::Todo::List todos = model()->unlistedTodosOfGroup( group() );
 
   foreach( Bliss::Todo todo, todos ) {
     TodoItem *item = new TodoItem( model(), m_menuHandler, todo );

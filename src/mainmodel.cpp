@@ -110,6 +110,32 @@ Bliss::Todo::List MainModel::todos()
   return todos;
 }
 
+Bliss::Todo::List MainModel::unlistedTodosOfGroup( const Bliss::Todo &group )
+{
+  Bliss::Todo::List unlistedTodos;
+  
+  Bliss::Todo::List todos = todosOfGroup( group );
+  Bliss::GroupView view = groupView( group.id() );
+  
+  foreach( Bliss::Todo todo, todos ) {
+    bool found = false;
+    foreach( Bliss::ViewList list, view.viewListList() ) {
+      foreach( Bliss::TodoId id, list.todoSequence().todoIdList() ) {
+        if ( todo.id() == id.value() ) {
+          found = true;
+          break;
+        }
+      }
+      if ( found ) break;
+    }
+    if ( !found ) {
+      unlistedTodos.append( todo );
+    }
+  }
+  
+  return unlistedTodos;
+}
+
 Bliss::Todo::List MainModel::todosOfGroup( const Bliss::Todo &group )
 {
   return todosOfGroup( group.id() );

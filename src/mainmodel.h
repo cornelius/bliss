@@ -56,6 +56,7 @@ class MainModel : public QObject
     // FIXME: maybe replace by read-only Bliss access
     Bliss::Todo::List allTodos();
 
+    Bliss::Todo::List unlistedTodosOfGroup( const Bliss::Todo &group );
     Bliss::Todo::List todosOfList( const Bliss::ViewList &list );
 
     Bliss::Todo addTodo( const Bliss::Todo &todo,
