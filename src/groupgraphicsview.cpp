@@ -32,6 +32,7 @@
 #include "todohandleitem.h"
 #include "listitem.h"
 #include "newlistdialog.h"
+#include "itemplacer.h"
 
 #include <KLocale>
 #include <KInputDialog>
@@ -45,14 +46,17 @@ GroupGraphicsView::GroupGraphicsView( MainModel *model, QWidget *parent )
   : GroupView( model, parent ), m_mainMenu( 0 ), m_magicMenu( 0 ),
     m_groupAdderItem( 0 ),
     m_morphToAnimation( 0 ), m_morphFromAnimation( 0 ),
-    m_removeItemsAnimation( 0 ), m_placeItemsAnimation( 0 ), 
-    m_unplaceItemsAnimation( 0 ), m_unhideItemsAnimation( 0 ), m_globalMenu( 0 )
+    m_removeItemsAnimation( 0 ),
+    m_unplaceItemsAnimation( 0 ), m_unhideItemsAnimation( 0 ),
+    m_itemPlacer( 0 ), m_globalMenu( 0 )
 {
   QBoxLayout *topLayout = new QVBoxLayout( this );
 
   m_scene = new QGraphicsScene;
   m_scene->setBackgroundBrush( QColor( 231,228,211 ) );
   m_scene->setSceneRect( -1000, -2000, 2000, 4000 );
+
+  connect( &m_itemPlacer, SIGNAL( finished() ), SLOT( finishPlaceItems() ) );
 
   m_menuHandler = new MenuHandler( m_scene );
 
@@ -121,12 +125,12 @@ void GroupGraphicsView::slotTodoRemoved( const Bliss::Todo &todo )
     delete todoItem;
     m_items.removeAll( todoItem );
   }
-  
-  preparePlaceItemsAnimation();
+
+  m_itemPlacer.prepare();
   
   preparePositions( m_items, true );
 
-  m_placeItemsAnimation->start();
+  m_itemPlacer.start();
 }
 
 void GroupGraphicsView::recreateItems()
@@ -140,9 +144,10 @@ void GroupGraphicsView::doShowGroup()
   m_previousItem = 0;
 
   if ( m_removeItemsAnimation ) m_removeItemsAnimation->stop();
-  if ( m_placeItemsAnimation ) m_placeItemsAnimation->stop();
   if ( m_unplaceItemsAnimation ) m_unplaceItemsAnimation->stop();
   if ( m_unhideItemsAnimation ) m_unhideItemsAnimation->stop();
+
+  m_itemPlacer.stop();
 
   if ( group().isValid() ) {
     m_previousItem = item( group() );
@@ -207,19 +212,6 @@ void GroupGraphicsView::clearListItems()
   m_listItems.clear();
 }
 
-void GroupGraphicsView::preparePlaceItemsAnimation()
-{
-  if ( !m_placeItemsAnimation ) {
-    m_placeItemsAnimation = new QParallelAnimationGroup( this );
-    connect( m_placeItemsAnimation, SIGNAL( finished() ),
-      SLOT( finishPlaceItems() ) );
-  } else {
-    m_placeItemsAnimation->stop();
-  }
-  m_placeItemsAnimation->clear();
-  m_placeItemsAnimations.clear();
-}
-
 void GroupGraphicsView::placeItems()
 {
   bool doAnimation = false;
@@ -228,7 +220,7 @@ void GroupGraphicsView::placeItems()
   if ( m_previousItem ) {
     doAnimation = true;
 
-    preparePlaceItemsAnimation();
+    m_itemPlacer.prepare();
 
     previousItemPos = m_view->mapFromScene( m_previousItem->pos() );
   }
@@ -245,11 +237,9 @@ void GroupGraphicsView::placeItems()
   m_view->centerOn( items.center );
 
   if ( doAnimation ) {
-    foreach( QPropertyAnimation *animation, m_placeItemsAnimations ) {
-      animation->setStartValue( m_view->mapToScene( previousItemPos ) );
-    }
+    m_itemPlacer.setStartValue( m_view->mapToScene( previousItemPos ) );
     
-    m_placeItemsAnimation->start();
+    m_itemPlacer.start();
   } else {
     createListItems();
     createLabelItems();
@@ -423,7 +413,11 @@ QPointF GroupGraphicsView::preparePositions( const QList<TodoItem *> &todoItems,
       itemY = posY;
     }
 
-    preparePos( item, itemX, itemY, doAnimation );
+    if ( doAnimation ) {
+      m_itemPlacer.addItem( item, itemX, itemY );
+    } else {
+      item->setPos( itemX, itemY );
+    }
 
     if ( firstItem ) {
       firstItem = false;
@@ -443,23 +437,6 @@ QPointF GroupGraphicsView::preparePositions( const QList<TodoItem *> &todoItems,
   qreal centerY = ( minY + maxY ) / 2;
 
   return QPointF( centerX, centerY );
-}
-  
-void GroupGraphicsView::preparePos( TodoItem *item, qreal itemX, qreal itemY,
-  bool doAnimation )
-{
-  if ( doAnimation ) {
-    QPropertyAnimation *animation = new QPropertyAnimation(item, "pos", this);
-    m_placeItemsAnimation->insertAnimation( 0, animation );
-    m_placeItemsAnimations.append( animation );
-
-    animation->setDuration( 300 );
-    QPointF target( itemX, itemY );
-    animation->setEndValue( target );
-    animation->setEasingCurve( QEasingCurve::OutCubic );
-  } else {
-    item->setPos( itemX, itemY );
-  }
 }
 
 void GroupGraphicsView::createListItems()
@@ -552,7 +529,7 @@ void GroupGraphicsView::slotItemMoved( TodoItem *todoItem,
   if ( target.isValid() ) {
     model()->moveTodo( todoItem->todo(), group(), target );
   } else {
-    preparePlaceItemsAnimation();
+    m_itemPlacer.prepare();
     
     QMap <qreal, QString> map;
     foreach( TodoItem *i, m_items ) {
@@ -573,7 +550,7 @@ void GroupGraphicsView::slotItemMoved( TodoItem *todoItem,
 
     preparePositions( m_items, true );
 
-    m_placeItemsAnimation->start();
+    m_itemPlacer.start();
   }
 }
 

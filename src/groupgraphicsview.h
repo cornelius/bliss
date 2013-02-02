@@ -21,6 +21,7 @@
 
 #include "fanmenu.h"
 #include "groupview.h"
+#include "itemplacer.h"
 
 #include <QtGui>
 
@@ -82,12 +83,7 @@ class GroupGraphicsView : public GroupView
     void clearItems();
     void clearListItems();
 
-    void preparePlaceItemsAnimation();
-
     QPointF preparePositions(const QList<TodoItem *> &todoItems,
-      bool doAnimation );
-
-    void preparePos( TodoItem *item, qreal itemX, qreal itemY,
       bool doAnimation );
 
   protected slots:
@@ -149,10 +145,10 @@ class GroupGraphicsView : public GroupView
     QAnimationGroup *m_morphFromAnimation;
 
     QAnimationGroup *m_removeItemsAnimation;
-    QAnimationGroup *m_placeItemsAnimation;
-    QList<QPropertyAnimation *> m_placeItemsAnimations;
     QAnimationGroup *m_unplaceItemsAnimation;
     QAnimationGroup *m_unhideItemsAnimation;
+
+    ItemPlacer m_itemPlacer;
 
     FanMenu *m_globalMenu;
     FanMenuItem *m_addLabelItem;
