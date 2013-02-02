@@ -38,10 +38,6 @@
 #include <KInputDialog>
 #include <KRandom>
 
-#if QT_VERSION >= 0x040600
-#include <QPropertyAnimation>
-#endif
-
 GroupGraphicsView::GroupGraphicsView( MainModel *model, QWidget *parent )
   : GroupView( model, parent ), m_mainMenu( 0 ), m_magicMenu( 0 ),
     m_groupAdderItem( 0 ),
@@ -674,7 +670,6 @@ void GroupGraphicsView::resetLayout()
 
   foreach( TodoItem *item, m_items ) {
     if ( item->pos() != item->defaultPos() ) {
-#if QT_VERSION >= 0x040600
       QPropertyAnimation *animation = new QPropertyAnimation(item, "pos", this);
 
       animation->setDuration(500);
@@ -683,9 +678,6 @@ void GroupGraphicsView::resetLayout()
       animation->setEasingCurve( QEasingCurve::OutCubic );
 
       animation->start();
-#else
-      item->setPos( item->defaultPos() );
-#endif
     }
   }
 }
