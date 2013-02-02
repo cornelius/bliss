@@ -562,7 +562,7 @@ void GroupGraphicsView::slotItemMoved( TodoItem *todoItem,
   
     QList<TodoItem *> sortedItems;
     
-    Bliss::Todo::List todos = model()->todosOfGroup( group() );
+    Bliss::Todo::List todos = model()->unlistedTodosOfGroup( group() );
     foreach( Bliss::Todo todo, todos ) {
       sortedItems.append( item( todo ) );
     }
