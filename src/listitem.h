@@ -30,6 +30,7 @@ class MainModel;
 class MenuHandler;
 class MenuHandleItem;
 class TodoItem;
+class ItemPlacer;
 
 class ListItem : public QObject, public RoundedRectItem
 {
@@ -78,7 +79,9 @@ class ListItem : public QObject, public RoundedRectItem
 
   protected:
     void init();
-  
+
+    void preparePositions();
+    
     void hoverEnterEvent( QGraphicsSceneHoverEvent *event );
     void hoverLeaveEvent( QGraphicsSceneHoverEvent *event );
 
@@ -92,7 +95,9 @@ class ListItem : public QObject, public RoundedRectItem
     void editListDone();
 
     void newTodo();
-    
+
+    void slotItemMoved( TodoItem *todoItem, const QPointF &pos );
+
   private:
     MainModel *m_model;
     Bliss::Todo m_group;
@@ -119,6 +124,12 @@ class ListItem : public QObject, public RoundedRectItem
     
     HidingLineEdit *m_edit;
     QGraphicsProxyWidget *m_editProxy;
+
+    int m_itemSize;
+    int m_handleItemSize;
+    int m_spacing;
+    
+    ItemPlacer *m_itemPlacer;
 };
 
 #endif

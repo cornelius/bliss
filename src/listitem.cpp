@@ -26,6 +26,7 @@
 #include "menuhandleitem.h"
 #include "todoitem.h"
 #include "newtododialog.h"
+#include "itemplacer.h"
 
 #include <KLocale>
 
@@ -39,6 +40,12 @@ ListItem::ListItem( MainModel *model, MenuHandler *menuHandler,
 
 void ListItem::init()
 {
+  m_itemSize = 30;
+  m_handleItemSize = 40;
+  m_spacing = 50;
+  
+  m_itemPlacer = new ItemPlacer( this );
+  
   m_menusEnabled = true;
 
   setFlags( ItemIsMovable );
@@ -82,10 +89,8 @@ void ListItem::updateItem( const Bliss::ViewList &list )
 
   m_fanMenu->hideMenu();
 
-  int handleItemSize = 40;
-
   m_handleItem = new MenuHandleItem( m_fanMenu, this );
-  m_handleItem->setItemSize( handleItemSize );
+  m_handleItem->setItemSize( m_handleItemSize );
   
   m_nameItem = new QGraphicsTextItem( list.name(), this );
   m_nameItem->setAcceptHoverEvents( false );
@@ -97,13 +102,8 @@ void ListItem::updateItem( const Bliss::ViewList &list )
 
   int textLeft = 16;
   
-  m_nameItem->setPos( handleItemSize / 2 + textLeft, - textHeight / 2 + 2 );
+  m_nameItem->setPos( m_handleItemSize / 2 + textLeft, - textHeight / 2 + 2 );
 
-  int itemSize = 30;
-
-  int spacing = 50;
-  int y = handleItemSize / 2 + itemSize;
-  
   Bliss::Todo::List todos = m_model->todosOfList( m_list );
   foreach( Bliss::Todo todo, todos ) {
     TodoItem *item = new TodoItem( m_model, m_menuHandler, todo );
@@ -113,24 +113,27 @@ void ListItem::updateItem( const Bliss::ViewList &list )
              SIGNAL( removeTodo( const Bliss::Todo & ) ) );
     connect( item, SIGNAL( done( const Bliss::Todo & ) ),
              SIGNAL( done( const Bliss::Todo & ) ) );
+    connect( item, SIGNAL( itemMoved( TodoItem *, const QPointF & ) ),
+             SLOT( slotItemMoved( TodoItem *, const QPointF & ) ) );
 
     item->setParentItem( this );
-    item->setPos( 0, y );
-
-    y += spacing;
   }
   
   TodoItem *item = new TodoItem( m_model );
   connect( item, SIGNAL( itemPressed() ), SLOT( newTodo() ) );
   item->setParentItem( this );
-  item->setPos( 0, y );
+  m_todoItems.append( item );
+
+  m_itemPlacer->prepare( false );
+  preparePositions();
+  m_itemPlacer->start();
 
   int listBorder = 10;
   
-  setRect( -handleItemSize/2 - listBorder, -handleItemSize/2 - listBorder,
-           textWidth + 2*listBorder + textLeft + handleItemSize,
-           handleItemSize*1.5 + itemSize + 2*listBorder +
-           todos.size() * spacing );
+  setRect( -m_handleItemSize/2 - listBorder, -m_handleItemSize/2 - listBorder,
+           textWidth + 2*listBorder + textLeft + m_handleItemSize,
+           m_handleItemSize*1.5 + m_itemSize + 2*listBorder +
+           todos.size() * m_spacing );
 }
 
 void ListItem::updateTodoItem( const Bliss::Todo &todo )
@@ -139,6 +142,16 @@ void ListItem::updateTodoItem( const Bliss::Todo &todo )
     if ( item->todo().id() == todo.id() ) {
       item->updateItem( todo );
     }
+  }
+}
+
+void ListItem::preparePositions()
+{
+  int y = m_handleItemSize / 2 + m_itemSize;
+
+  foreach( TodoItem *item, m_todoItems ) {
+    m_itemPlacer->addItem( item, 0, y );
+    y += m_spacing;
   }
 }
 
@@ -270,4 +283,34 @@ void ListItem::newTodo()
     m_model->addTodo( todo, m_group, m_list );
   }
   return;
+}
+
+void ListItem::slotItemMoved( TodoItem *todoItem, const QPointF &pos )
+{
+  m_itemPlacer->prepare();
+
+#ifdef false
+  if ( this->contains( pos ) ) {
+    QMap <qreal, QString> map;
+    foreach( TodoItem *i, m_items ) {
+      map.insert( i->pos().y(), i->todo().id() );
+    }
+    model()->saveViewSequence( group(), map.values() );
+
+    QList<TodoItem *> sortedItems;
+
+    Bliss::Todo::List todos = model()->unlistedTodosOfGroup( group() );
+    foreach( Bliss::Todo todo, todos ) {
+      sortedItems.append( item( todo ) );
+    }
+
+    TodoItem *addNewItem = m_items.last();
+    m_items = sortedItems;
+    m_items.append( addNewItem );
+  }
+#endif
+
+  preparePositions();
+
+  m_itemPlacer->start();
 }
