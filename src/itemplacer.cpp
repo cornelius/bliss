@@ -24,16 +24,18 @@
 #include <QParallelAnimationGroup>
 
 ItemPlacer::ItemPlacer( QObject *parent )
-  : QObject( parent ), m_placeItemsAnimation( 0 )
+  : QObject( parent ), m_placeItemsAnimation( 0 ), m_animate( true )
 {
 }
 
-void ItemPlacer::prepare()
+void ItemPlacer::prepare( bool animate )
 {
+  m_animate = animate;
+  
   if ( !m_placeItemsAnimation ) {
     m_placeItemsAnimation = new QParallelAnimationGroup( this );
     connect( m_placeItemsAnimation, SIGNAL( finished() ),
-      SLOT( finished() ) );
+      SIGNAL( finished() ) );
   } else {
     m_placeItemsAnimation->stop();
   }
@@ -43,14 +45,22 @@ void ItemPlacer::prepare()
 
 void ItemPlacer::addItem( TodoItem *item, qreal itemX, qreal itemY )
 {
-  QPropertyAnimation *animation = new QPropertyAnimation( item, "pos", this );
-  m_placeItemsAnimation->insertAnimation( 0, animation );
-  m_placeItemsAnimations.append( animation );
+  addItem( item, QPointF( itemX, itemY ) );  
+}
 
-  animation->setDuration( 300 );
-  QPointF target( itemX, itemY );
-  animation->setEndValue( target );
-  animation->setEasingCurve( QEasingCurve::OutCubic );
+void ItemPlacer::addItem( TodoItem *item, const QPointF &target )
+{
+  if ( m_animate ) {
+    QPropertyAnimation *animation = new QPropertyAnimation( item, "pos", this );
+    m_placeItemsAnimation->insertAnimation( 0, animation );
+    m_placeItemsAnimations.append( animation );
+
+    animation->setDuration( 300 );
+    animation->setEndValue( target );
+    animation->setEasingCurve( QEasingCurve::OutCubic );
+  } else {
+    item->setPos( target.x(), target.y() );
+  }
 }
 
 void ItemPlacer::setStartValue( const QPointF &pos )

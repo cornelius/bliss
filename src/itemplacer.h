@@ -31,8 +31,9 @@ class ItemPlacer : public QObject
   public:
     ItemPlacer( QObject *parent = 0 );
 
-    void prepare();
+    void prepare( bool animate = true );
 
+    void addItem( TodoItem *item, const QPointF & );
     void addItem( TodoItem *item, qreal itemX, qreal itemY );
 
     void setStartValue( const QPointF & );
@@ -46,6 +47,8 @@ class ItemPlacer : public QObject
   private:
     QAnimationGroup *m_placeItemsAnimation;
     QList<QPropertyAnimation *> m_placeItemsAnimations;
+
+    bool m_animate;    
 };
 
 #endif

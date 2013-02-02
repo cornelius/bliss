@@ -21,7 +21,6 @@
 
 #include "fanmenu.h"
 #include "groupview.h"
-#include "itemplacer.h"
 
 #include <QtGui>
 
@@ -34,6 +33,7 @@ class MainMenuItem;
 class MagicMenuItem;
 class GroupAdderItem;
 class MenuHandler;
+class ItemPlacer;
 
 struct TodoItemGroup {
 
@@ -68,7 +68,7 @@ class GroupGraphicsView : public GroupView
   protected:
     void doShowGroup();
 
-    TodoItemGroup prepareTodoItems( bool doAnimation );
+    TodoItemGroup prepareTodoItems( ItemPlacer * );
     void createMenuItems();
     void createLabelItems();
     void createListItems();
@@ -83,9 +83,9 @@ class GroupGraphicsView : public GroupView
     void clearItems();
     void clearListItems();
 
-    QPointF preparePositions(const QList<TodoItem *> &todoItems,
-      bool doAnimation );
-
+    QPointF preparePositions( const QList<TodoItem *> &todoItems,
+      ItemPlacer * );
+    
   protected slots:
     void resetLayout();
   
@@ -145,10 +145,10 @@ class GroupGraphicsView : public GroupView
     QAnimationGroup *m_morphFromAnimation;
 
     QAnimationGroup *m_removeItemsAnimation;
-    QAnimationGroup *m_unplaceItemsAnimation;
     QAnimationGroup *m_unhideItemsAnimation;
 
-    ItemPlacer m_itemPlacer;
+    ItemPlacer *m_itemPlacer;
+    ItemPlacer *m_itemUnplacer;
 
     FanMenu *m_globalMenu;
     FanMenuItem *m_addLabelItem;
