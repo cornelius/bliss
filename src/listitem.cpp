@@ -119,10 +119,10 @@ void ListItem::updateItem( const Bliss::ViewList &list )
     item->setParentItem( this );
   }
   
-  TodoItem *item = new TodoItem( m_model );
-  connect( item, SIGNAL( itemPressed() ), SLOT( newTodo() ) );
-  item->setParentItem( this );
-  m_todoItems.append( item );
+  m_adderItem = new TodoItem( m_model );
+  connect( m_adderItem, SIGNAL( itemPressed() ), SLOT( newTodo() ) );
+  m_adderItem->setParentItem( this );
+  m_todoItems.append( m_adderItem );
 
   m_itemPlacer->prepare( false );
   preparePositions();
@@ -285,31 +285,28 @@ void ListItem::newTodo()
   return;
 }
 
-void ListItem::slotItemMoved( TodoItem *todoItem, const QPointF &pos )
+void ListItem::slotItemMoved( TodoItem *, const QPointF & )
 {
   m_itemPlacer->prepare();
 
-#ifdef false
-  if ( this->contains( pos ) ) {
-    QMap <qreal, QString> map;
-    foreach( TodoItem *i, m_items ) {
-      map.insert( i->pos().y(), i->todo().id() );
-    }
-    model()->saveViewSequence( group(), map.values() );
-
-    QList<TodoItem *> sortedItems;
-
-    Bliss::Todo::List todos = model()->unlistedTodosOfGroup( group() );
-    foreach( Bliss::Todo todo, todos ) {
-      sortedItems.append( item( todo ) );
-    }
-
-    TodoItem *addNewItem = m_items.last();
-    m_items = sortedItems;
-    m_items.append( addNewItem );
+  QMap <qreal, TodoItem *> map;
+  foreach( TodoItem *i, m_todoItems ) {
+    if ( i != m_adderItem ) map.insert( i->pos().y(), i );
   }
-#endif
 
+  Bliss::TodoSequence sequence;
+  foreach( TodoItem *i, map.values() ) {
+    Bliss::TodoId todoId;
+    todoId.setValue( i->todo().id() );
+    sequence.addTodoId( todoId );
+  }
+
+  m_list.setTodoSequence( sequence );
+  m_model->saveViewList( m_group, m_list );
+
+  m_todoItems = map.values();
+  m_todoItems.append( m_adderItem );
+  
   preparePositions();
 
   m_itemPlacer->start();

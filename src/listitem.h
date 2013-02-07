@@ -130,6 +130,8 @@ class ListItem : public QObject, public RoundedRectItem
     int m_spacing;
     
     ItemPlacer *m_itemPlacer;
+
+    TodoItem *m_adderItem;
 };
 
 #endif
