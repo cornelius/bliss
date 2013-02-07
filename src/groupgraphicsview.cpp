@@ -506,35 +506,53 @@ void GroupGraphicsView::slotDone( const Bliss::Todo &todo )
 void GroupGraphicsView::slotItemMoved( TodoItem *todoItem,
   const QPointF &pos )
 {
-  Q_UNUSED( pos )
-
   Bliss::Todo target =
     m_groupAdderItem->collidedGroup( todoItem->handleItem() );
   if ( target.isValid() ) {
     model()->moveTodo( todoItem->todo(), group(), target );
   } else {
-    m_itemPlacer->prepare();
-    
-    QMap <qreal, QString> map;
-    foreach( TodoItem *i, m_items ) {
-      map.insert( i->pos().y(), i->todo().id() );
+    ListItem *listTarget = 0;
+    ListItem *listSource = 0;
+    foreach( ListItem *listItem, m_listItems ) {
+      if ( listItem->hasItem( todoItem ) ) listSource = listItem;
+      QPointF relativePos = listItem->mapFromScene( pos );
+      if ( listItem->contains( relativePos ) ) {
+        listTarget = listItem;
+      }
     }
-    model()->saveViewSequence( group(), map.values() );
-  
-    QList<TodoItem *> sortedItems;
-    
-    Bliss::Todo::List todos = model()->unlistedTodosOfGroup( group() );
-    foreach( Bliss::Todo todo, todos ) {
-      sortedItems.append( item( todo ) );
+    if ( listTarget ) {
+      if ( listSource == listTarget ) {
+        listTarget->repositionItems();
+      } else {
+        todoItem->setPos( listTarget->mapFromItem( listSource, todoItem->pos() ) );
+        todoItem->setParentItem( listTarget );
+        listSource->removeItem( todoItem );
+        listTarget->addItem( todoItem );
+      }
+    } else {
+      m_itemPlacer->prepare();
+
+      QMap <qreal, QString> map;
+      foreach( TodoItem *i, m_items ) {
+        map.insert( i->pos().y(), i->todo().id() );
+      }
+      model()->saveViewSequence( group(), map.values() );
+
+      QList<TodoItem *> sortedItems;
+
+      Bliss::Todo::List todos = model()->unlistedTodosOfGroup( group() );
+      foreach( Bliss::Todo todo, todos ) {
+        sortedItems.append( item( todo ) );
+      }
+
+      TodoItem *addNewItem = m_items.last();
+      m_items = sortedItems;
+      m_items.append( addNewItem );
+
+      preparePositions( m_items, m_itemPlacer );
+
+      m_itemPlacer->start();
     }
-    
-    TodoItem *addNewItem = m_items.last();
-    m_items = sortedItems;
-    m_items.append( addNewItem );
-
-    preparePositions( m_items, m_itemPlacer );
-
-    m_itemPlacer->start();
   }
 }
 
@@ -642,6 +660,8 @@ ListItem *GroupGraphicsView::createListItem( const Bliss::ViewList &list )
     SLOT( slotRemoveTodo( const Bliss::Todo & ) ) );
   connect( item, SIGNAL( done( const Bliss::Todo & ) ),
     SLOT( slotDone( const Bliss::Todo & ) ) );
+  connect( item, SIGNAL( itemMoved( TodoItem *, const QPointF & ) ),
+    SLOT( slotItemMoved( TodoItem *, const QPointF & ) ) );
 
   m_scene->addItem( item );
 

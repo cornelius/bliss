@@ -285,7 +285,7 @@ void ListItem::newTodo()
   return;
 }
 
-void ListItem::slotItemMoved( TodoItem *, const QPointF & )
+void ListItem::repositionItems()
 {
   m_itemPlacer->prepare();
 
@@ -310,4 +310,26 @@ void ListItem::slotItemMoved( TodoItem *, const QPointF & )
   preparePositions();
 
   m_itemPlacer->start();
+}
+
+bool ListItem::hasItem( TodoItem *item ) const
+{
+  return m_todoItems.contains( item );
+}
+
+void ListItem::slotItemMoved( TodoItem *item, const QPointF &pos )
+{
+  emit itemMoved( item, mapToScene( pos ) );
+}
+
+void ListItem::addItem( TodoItem *item )
+{
+  m_todoItems.append( item );
+  repositionItems();
+}
+
+void ListItem::removeItem( TodoItem *item )
+{
+  m_todoItems.removeOne( item );
+  repositionItems();
 }

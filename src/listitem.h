@@ -63,6 +63,13 @@ class ListItem : public QObject, public RoundedRectItem
 
     int textCenterX();
 
+    void repositionItems();
+
+    bool hasItem( TodoItem * ) const;
+
+    void addItem( TodoItem * );
+    void removeItem( TodoItem * );
+    
   signals:
     void removeList( ListItem * );
 
@@ -73,6 +80,12 @@ class ListItem : public QObject, public RoundedRectItem
 
     void itemPressed();
 
+    /*
+      The signal is emitted, when an item is moved by the user. The position
+      is in scene coordinates.
+    */
+    void itemMoved( TodoItem *, const QPointF & );
+    
     void menuShown();
 
     void itemDropped( ListItem * );
@@ -96,8 +109,8 @@ class ListItem : public QObject, public RoundedRectItem
 
     void newTodo();
 
-    void slotItemMoved( TodoItem *todoItem, const QPointF &pos );
-
+    void slotItemMoved( TodoItem *, const QPointF & );
+    
   private:
     MainModel *m_model;
     Bliss::Todo m_group;
