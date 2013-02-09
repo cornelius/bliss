@@ -325,10 +325,16 @@ void ListItem::addItem( TodoItem *item )
 {
   m_todoItems.append( item );
   repositionItems();
+
+  setRect( rect().x(), rect().y(),
+           rect().width(), rect().height() + m_spacing );
 }
 
 void ListItem::removeItem( TodoItem *item )
 {
   m_todoItems.removeOne( item );
   repositionItems();
+
+  setRect( rect().x(), rect().y(),
+           rect().width(), rect().height() - m_spacing );
 }
