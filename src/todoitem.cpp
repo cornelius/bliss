@@ -191,12 +191,16 @@ void TodoItem::mousePressEvent( QGraphicsSceneMouseEvent *event )
 
   hidePopups();
 
+  if ( parentItem() ) parentItem()->setZValue( 100 );
+  
   emit itemPressed();
 }
 
 void TodoItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
 {
   QGraphicsItemGroup::mouseReleaseEvent( event );
+
+  if ( parentItem() ) parentItem()->setZValue( 0 );
 
   if ( pos() != m_movePos ) {
     emit itemMoved( this, pos() );
