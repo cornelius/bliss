@@ -523,11 +523,14 @@ void GroupGraphicsView::slotItemMoved( TodoItem *todoItem,
     if ( listTarget ) {
       if ( listSource == listTarget ) {
         listTarget->repositionItems();
+        model()->saveViewList( group(), listTarget->list() );
       } else {
         todoItem->setPos( listTarget->mapFromItem( listSource, todoItem->pos() ) );
         todoItem->setParentItem( listTarget );
         listSource->removeItem( todoItem );
         listTarget->addItem( todoItem );
+        model()->saveItemMove( group(), todoItem->todo(), listSource->list(),
+                               listTarget->list() );
       }
     } else {
       m_itemPlacer->prepare();

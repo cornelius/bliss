@@ -302,7 +302,6 @@ void ListItem::repositionItems()
   }
 
   m_list.setTodoSequence( sequence );
-  m_model->saveViewList( m_group, m_list );
 
   m_todoItems = map.values();
   m_todoItems.append( m_adderItem );

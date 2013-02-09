@@ -1,5 +1,5 @@
 * Lists
-    * Make moving of todos between lists work
+    * Adapt frame of list when moving items between lists
     * Fix moving from lists to other groups
     * Make todos on canvas positional todos without list, but an individual
       position

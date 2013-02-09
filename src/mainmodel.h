@@ -95,7 +95,11 @@ class MainModel : public QObject
     void clearViewPositions( const Bliss::Todo &group );
 
     void saveViewSequence( const Bliss::Todo &group, const QStringList &ids );
-    
+
+    void saveItemMove( const Bliss::Todo &group,
+       const Bliss::Todo &todo, const Bliss::ViewList &fromList,
+       const Bliss::ViewList &toList );
+
     Bliss::GroupView groupView( const Bliss::Todo &group );
     Bliss::GroupView groupView( const QString &groupId );
 
