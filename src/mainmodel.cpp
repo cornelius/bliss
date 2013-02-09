@@ -355,10 +355,30 @@ void MainModel::moveTodo( const Bliss::Todo &t, const Bliss::Todo &fromGroup,
   if ( todo.groups().findGroup( toGroup.id() ).isValid() ) {
     return;
   }
-  
+
   doAddTodo( todo, toGroup );
   doRemoveTodo( todo, fromGroup );
-  
+
+  insert( todo, i18n("Moved %1 from group %2 to group %3")
+    .arg( todo.summary().value() )
+    .arg( fromGroup.summary().value() )
+    .arg( toGroup.summary().value() ) );
+}
+
+void MainModel::moveTodo( const Bliss::Todo &t, const Bliss::Todo &fromGroup,
+                          const Bliss::ViewList &list,
+                          const Bliss::Todo &toGroup )
+{
+  Bliss::Todo todo = t;
+
+  if ( todo.groups().findGroup( toGroup.id() ).isValid() ) {
+    return;
+  }
+
+  doAddTodo( todo, toGroup );
+  doRemoveTodo( todo, fromGroup );
+  doSaveViewList( fromGroup, list );
+
   insert( todo, i18n("Moved %1 from group %2 to group %3")
     .arg( todo.summary().value() )
     .arg( fromGroup.summary().value() )

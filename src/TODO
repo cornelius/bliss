@@ -1,8 +1,8 @@
 * Lists
-    * Fix moving from lists to other groups
     * Make todos on canvas positional todos without list, but an individual
       position
 
+* Removing items should not leave around orphaned data
 * Clarify remove and done
 
 * Remove obsolete ids from lists

@@ -506,25 +506,36 @@ void GroupGraphicsView::slotDone( const Bliss::Todo &todo )
 void GroupGraphicsView::slotItemMoved( TodoItem *todoItem,
   const QPointF &pos )
 {
-  Bliss::Todo target =
-    m_groupAdderItem->collidedGroup( todoItem->handleItem() );
-  if ( target.isValid() ) {
-    model()->moveTodo( todoItem->todo(), group(), target );
-  } else {
-    ListItem *listTarget = 0;
-    ListItem *listSource = 0;
-    foreach( ListItem *listItem, m_listItems ) {
-      if ( listItem->hasItem( todoItem ) ) listSource = listItem;
-      QPointF relativePos = listItem->mapFromScene( pos );
-      if ( listItem->contains( relativePos ) ) {
-        listTarget = listItem;
-      }
+  ListItem *listTarget = 0;
+  ListItem *listSource = 0;
+  foreach( ListItem *listItem, m_listItems ) {
+    if ( listItem->hasItem( todoItem ) ) listSource = listItem;
+    QPointF relativePos = listItem->mapFromScene( pos );
+    if ( listItem->contains( relativePos ) ) {
+      listTarget = listItem;
     }
+  }
+
+  Bliss::Todo groupTarget =
+    m_groupAdderItem->collidedGroup( todoItem->handleItem() );
+
+  if ( groupTarget.isValid() ) {
+    // Move to other group
+    if ( listSource ) {
+      listSource->removeItem( todoItem );
+      model()->moveTodo( todoItem->todo(), group(), listSource->list(),
+                         groupTarget );
+    } else {
+      model()->moveTodo( todoItem->todo(), group(), groupTarget );
+    }
+  } else {
     if ( listTarget ) {
       if ( listSource == listTarget ) {
+        // Move on same list
         listTarget->repositionItems();
         model()->saveViewList( group(), listTarget->list() );
       } else {
+        // Move to other list
         todoItem->setPos( listTarget->mapFromItem( listSource, todoItem->pos() ) );
         todoItem->setParentItem( listTarget );
         listSource->removeItem( todoItem );
@@ -533,6 +544,7 @@ void GroupGraphicsView::slotItemMoved( TodoItem *todoItem,
                                listTarget->list() );
       }
     } else {
+      // Move on canvas
       m_itemPlacer->prepare();
 
       QMap <qreal, QString> map;
