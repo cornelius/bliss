@@ -111,11 +111,36 @@ void GroupGraphicsView::slotTodoChanged( const Bliss::Todo &todo )
   }
 }
 
-void GroupGraphicsView::slotTodoAdded( const Bliss::Todo &identity )
+void GroupGraphicsView::slotTodoAdded( const Bliss::Todo &todo )
 {
-  Q_UNUSED( identity )
-
-  recreateItems();
+  Bliss::ViewList list;
+  Bliss::ViewList::List lists = model()->lists( group() );
+  foreach( Bliss::ViewList l, lists ) {
+    foreach( Bliss::TodoId id, l.todoSequence().todoIdList() ) {
+      if ( id.value() == todo.id() ) {
+        list = l;
+        break;
+      }
+    }
+    if ( list.isValid() ) break;
+  }
+  
+  if ( list.isValid() ) {
+    foreach( ListItem *listItem, m_listItems ) {
+      if ( listItem->list().id() == list.id() ) {
+        listItem->addTodo( todo );
+        break;
+      }
+    }
+  } else {
+    TodoItem *item = createTodoItem( todo );
+    m_items.insert( m_items.size() - 1, item );
+    m_scene->addItem( item );
+    
+    m_itemPlacer->prepare();
+    preparePositions( m_items, m_itemPlacer );
+    m_itemPlacer->start();
+  }
 }
 
 void GroupGraphicsView::slotTodoRemoved( const Bliss::Todo &todo )
@@ -335,21 +360,9 @@ TodoItemGroup GroupGraphicsView::prepareTodoItems( ItemPlacer *placer )
   Bliss::Todo::List todos = model()->unlistedTodosOfGroup( group() );
 
   foreach( Bliss::Todo todo, todos ) {
-    TodoItem *item = new TodoItem( model(), m_menuHandler, todo );
+    TodoItem *item = createTodoItem( todo );
     result.items.append( item );
-
-    connect( item, SIGNAL( showGroup( const Bliss::Todo & ) ),
-      SIGNAL( requestShowGroup( const Bliss::Todo & ) ) );
-    connect( item, SIGNAL( removeTodo( const Bliss::Todo & ) ),
-      SLOT( slotRemoveTodo( const Bliss::Todo & ) ) );
-    connect( item, SIGNAL( done( const Bliss::Todo & ) ),
-      SLOT( slotDone( const Bliss::Todo & ) ) );
-      
-    connect( item, SIGNAL( itemMoved( TodoItem *, const QPointF & ) ),
-      SLOT( slotItemMoved( TodoItem *, const QPointF & ) ) );
-
-    connect( item, SIGNAL( menuShown() ), SLOT( hideGlobalMenu() ) );
-
+    
     if ( previousGroup().isValid() &&
          item->todo().id() == previousGroup().id() ) {
       result.previousGroup = item;
@@ -364,6 +377,25 @@ TodoItemGroup GroupGraphicsView::prepareTodoItems( ItemPlacer *placer )
   result.center = preparePositions( result.items, placer );
 
   return result;
+}
+
+TodoItem *GroupGraphicsView::createTodoItem( const Bliss::Todo &todo )
+{
+  TodoItem *item = new TodoItem( model(), m_menuHandler, todo );
+
+  connect( item, SIGNAL( showGroup( const Bliss::Todo & ) ),
+    SIGNAL( requestShowGroup( const Bliss::Todo & ) ) );
+  connect( item, SIGNAL( removeTodo( const Bliss::Todo & ) ),
+    SLOT( slotRemoveTodo( const Bliss::Todo & ) ) );
+  connect( item, SIGNAL( done( const Bliss::Todo & ) ),
+    SLOT( slotDone( const Bliss::Todo & ) ) );
+    
+  connect( item, SIGNAL( itemMoved( TodoItem *, const QPointF & ) ),
+    SLOT( slotItemMoved( TodoItem *, const QPointF & ) ) );
+
+  connect( item, SIGNAL( menuShown() ), SLOT( hideGlobalMenu() ) );
+
+  return item;
 }
 
 QPointF GroupGraphicsView::preparePositions( const QList<TodoItem *> &todoItems,
@@ -506,10 +538,10 @@ void GroupGraphicsView::slotDone( const Bliss::Todo &todo )
 void GroupGraphicsView::slotItemMoved( TodoItem *todoItem,
   const QPointF &pos )
 {
+  ListItem *listSource = listItem( todoItem );
+
   ListItem *listTarget = 0;
-  ListItem *listSource = 0;
   foreach( ListItem *listItem, m_listItems ) {
-    if ( listItem->hasItem( todoItem ) ) listSource = listItem;
     QPointF relativePos = listItem->mapFromScene( pos );
     if ( listItem->contains( relativePos ) ) {
       listTarget = listItem;
@@ -719,6 +751,14 @@ TodoItem *GroupGraphicsView::item( const Bliss::Todo &identity ) const
 {
   foreach( TodoItem *item, m_items ) {
     if ( item->todo().id() == identity.id() ) return item;
+  }
+  return 0;
+}
+
+ListItem *GroupGraphicsView::listItem( TodoItem *item ) const
+{
+  foreach( ListItem *list, m_listItems ) {
+    if ( list->hasItem( item ) ) return list;
   }
   return 0;
 }

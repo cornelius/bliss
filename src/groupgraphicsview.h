@@ -72,12 +72,15 @@ class GroupGraphicsView : public GroupView
     void createMenuItems();
     void createLabelItems();
     void createListItems();
-  
+
+    TodoItem *createTodoItem( const Bliss::Todo & );
+    
     ListItem *createListItem( const Bliss::ViewList &list );
     LabelItem *createLabelItem( const Bliss::ViewLabel &label );
 
     TodoItem *item( const Bliss::Todo & ) const;
-
+    ListItem *listItem( TodoItem * ) const;
+    
     void positionMenuItems();
 
     void clearItems();

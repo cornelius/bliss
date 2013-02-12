@@ -70,6 +70,8 @@ class ListItem : public QObject, public RoundedRectItem
     void addItem( TodoItem * );
     void removeItem( TodoItem * );
     
+    void addTodo( const Bliss::Todo & );
+    
   signals:
     void removeList( ListItem * );
 
@@ -93,6 +95,8 @@ class ListItem : public QObject, public RoundedRectItem
   protected:
     void init();
 
+    TodoItem *createItem( const Bliss::Todo & );
+    
     void preparePositions();
     
     void hoverEnterEvent( QGraphicsSceneHoverEvent *event );

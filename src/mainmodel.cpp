@@ -471,6 +471,12 @@ void MainModel::removeGroup( const Bliss::Todo &group )
   (new DelayedSignal( this, group ))->emitTodoRemoved();
 }
 
+Bliss::ViewList::List MainModel::lists( const Bliss::Todo &group )
+{
+  Bliss::GroupView v = m_bliss.findGroupView( group.id() );
+  return v.viewListList();  
+}
+
 void MainModel::addList( const Bliss::ViewList &list,
   const Bliss::Todo &group )
 {

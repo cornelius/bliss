@@ -106,17 +106,8 @@ void ListItem::updateItem( const Bliss::ViewList &list )
 
   Bliss::Todo::List todos = m_model->todosOfList( m_list );
   foreach( Bliss::Todo todo, todos ) {
-    TodoItem *item = new TodoItem( m_model, m_menuHandler, todo );
+    TodoItem *item = createItem( todo );
     m_todoItems.append( item );
-    
-    connect( item, SIGNAL( removeTodo( const Bliss::Todo & ) ),
-             SIGNAL( removeTodo( const Bliss::Todo & ) ) );
-    connect( item, SIGNAL( done( const Bliss::Todo & ) ),
-             SIGNAL( done( const Bliss::Todo & ) ) );
-    connect( item, SIGNAL( itemMoved( TodoItem *, const QPointF & ) ),
-             SLOT( slotItemMoved( TodoItem *, const QPointF & ) ) );
-
-    item->setParentItem( this );
   }
   
   m_adderItem = new TodoItem( m_model );
@@ -134,6 +125,22 @@ void ListItem::updateItem( const Bliss::ViewList &list )
            textWidth + 2*listBorder + textLeft + m_handleItemSize,
            m_handleItemSize*1.5 + m_itemSize + 2*listBorder +
            todos.size() * m_spacing );
+}
+
+TodoItem *ListItem::createItem( const Bliss::Todo &todo )
+{
+  TodoItem *item = new TodoItem( m_model, m_menuHandler, todo );
+
+  connect( item, SIGNAL( removeTodo( const Bliss::Todo & ) ),
+            SIGNAL( removeTodo( const Bliss::Todo & ) ) );
+  connect( item, SIGNAL( done( const Bliss::Todo & ) ),
+            SIGNAL( done( const Bliss::Todo & ) ) );
+  connect( item, SIGNAL( itemMoved( TodoItem *, const QPointF & ) ),
+            SLOT( slotItemMoved( TodoItem *, const QPointF & ) ) );
+
+  item->setParentItem( this );
+  
+  return item;
 }
 
 void ListItem::updateTodoItem( const Bliss::Todo &todo )
@@ -321,10 +328,19 @@ void ListItem::slotItemMoved( TodoItem *item, const QPointF &pos )
   emit itemMoved( item, mapToScene( pos ) );
 }
 
+void ListItem::addTodo( const Bliss::Todo &todo )
+{
+  TodoItem *item = createItem( todo );
+  addItem( item );
+}
+
 void ListItem::addItem( TodoItem *item )
 {
-  m_todoItems.append( item );
-  repositionItems();
+  m_todoItems.insert( m_todoItems.size() - 1, item );
+
+  m_itemPlacer->prepare();
+  preparePositions();
+  m_itemPlacer->start();
 
   setRect( rect().x(), rect().y(),
            rect().width(), rect().height() + m_spacing );
