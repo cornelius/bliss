@@ -43,6 +43,9 @@ void ListItem::init()
   m_itemSize = 30;
   m_handleItemSize = 40;
   m_spacing = 50;
+  m_listBorder = 10;
+  m_textLeft = 16;
+  
   
   m_itemPlacer = new ItemPlacer( this );
   
@@ -100,9 +103,7 @@ void ListItem::updateItem( const Bliss::ViewList &list )
 
   m_textCenterX = textWidth / 2;
 
-  int textLeft = 16;
-  
-  m_nameItem->setPos( m_handleItemSize / 2 + textLeft, - textHeight / 2 + 2 );
+  m_nameItem->setPos( m_handleItemSize / 2 + m_textLeft, - textHeight / 2 + 2 );
 
   Bliss::Todo::List todos = m_model->todosOfList( m_list );
   foreach( Bliss::Todo todo, todos ) {
@@ -118,13 +119,27 @@ void ListItem::updateItem( const Bliss::ViewList &list )
   m_itemPlacer->prepare( false );
   preparePositions();
   m_itemPlacer->start();
-
-  int listBorder = 10;
   
-  setRect( -m_handleItemSize/2 - listBorder, -m_handleItemSize/2 - listBorder,
-           textWidth + 2*listBorder + textLeft + m_handleItemSize,
-           m_handleItemSize*1.5 + m_itemSize + 2*listBorder +
-           todos.size() * m_spacing );
+  setListBox();
+}
+
+void ListItem::setListBox()
+{
+  int listWidth = m_nameItem->boundingRect().width() + m_textLeft +
+    m_handleItemSize;
+  foreach( TodoItem *item, m_todoItems ) {
+    int itemWidth = item->itemWidth();
+    qDebug() << item->todo().summary().value() << itemWidth;
+    if ( itemWidth > listWidth ) {
+      listWidth = itemWidth;
+    }
+  }
+
+  setRect( -m_handleItemSize/2 - m_listBorder,
+           -m_handleItemSize/2 - m_listBorder,
+           listWidth + 2*m_listBorder,
+           m_handleItemSize*1.5 + m_itemSize + 2*m_listBorder +
+           ( m_todoItems.size() -1 ) * m_spacing );
 }
 
 TodoItem *ListItem::createItem( const Bliss::Todo &todo )
@@ -342,8 +357,7 @@ void ListItem::addItem( TodoItem *item )
   preparePositions();
   m_itemPlacer->start();
 
-  setRect( rect().x(), rect().y(),
-           rect().width(), rect().height() + m_spacing );
+  setListBox();
 }
 
 void ListItem::removeItem( TodoItem *item )
@@ -351,6 +365,5 @@ void ListItem::removeItem( TodoItem *item )
   m_todoItems.removeOne( item );
   repositionItems();
 
-  setRect( rect().x(), rect().y(),
-           rect().width(), rect().height() - m_spacing );
+  setListBox();
 }

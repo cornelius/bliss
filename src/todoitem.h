@@ -59,7 +59,8 @@ class TodoItem : public QObject, public QGraphicsItemGroup
     void undoMove();
 
     int textCenterX();
-
+    int itemWidth();
+    
     void showPopups();
     void hidePopups();
     

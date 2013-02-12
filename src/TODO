@@ -3,7 +3,6 @@
       position
 
 * Animation when setting items in lists to done
-* Make list box wide enough for item texts
 
 * Removing items should not leave around orphaned data
 * Clarify remove and done

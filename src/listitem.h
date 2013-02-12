@@ -99,6 +99,8 @@ class ListItem : public QObject, public RoundedRectItem
     
     void preparePositions();
     
+    void setListBox();
+    
     void hoverEnterEvent( QGraphicsSceneHoverEvent *event );
     void hoverLeaveEvent( QGraphicsSceneHoverEvent *event );
 
@@ -145,6 +147,8 @@ class ListItem : public QObject, public RoundedRectItem
     int m_itemSize;
     int m_handleItemSize;
     int m_spacing;
+    int m_listBorder;
+    int m_textLeft;
     
     ItemPlacer *m_itemPlacer;
 
