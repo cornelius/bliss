@@ -30,7 +30,7 @@
 #include <QDebug>
 
 StorageGit::StorageGit( QObject *parent )
-  : QObject( parent ), m_gitDir( 0 ), m_gitRemote( 0 ),m_commitCommand( 0 ),
+  : Storage( parent ), m_gitDir( 0 ), m_gitRemote( 0 ),m_commitCommand( 0 ),
     m_logCommand( -1 )
 {
 }

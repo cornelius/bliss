@@ -26,8 +26,7 @@
 #include <QObject>
 #include <QPixmap>
 
-class StorageGit;
-class StorageFile;
+class Storage;
 
 class MainModel : public QObject
 {
@@ -141,10 +140,7 @@ class MainModel : public QObject
     QPixmap defaultPixmap( const Bliss::Todo &identity ) const;
     
   private:
-    StorageGit *m_storageGit;
-    StorageFile *m_storageFile;
-  
-    QString m_dataFile;
+    Storage *m_storage;
   
     QString m_locationId;
     

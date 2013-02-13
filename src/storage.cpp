@@ -16,25 +16,34 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
     USA.
 */
-#ifndef STORAGEFILE_H
-#define STORAGEFILE_H
 
 #include "storage.h"
 
-class StorageFile : public Storage
+#include <KLocale>
+
+#include <QtCore>
+
+Storage::Storage( QObject *parent )
+  : QObject( parent )
 {
-    Q_OBJECT
-  public:
-    StorageFile( QObject *parent = 0 );
-    ~StorageFile();
+}
 
-    void setLocation( const QString & );
+Storage::~Storage()
+{
+}
 
-    Bliss::Bliss readData();
-    void writeData( const Bliss::Bliss &, const QString &msg );
+void Storage::retrieveLog()
+{
+  QStringList log;
+  log.append( i18n("No log available") );
 
-  private:
-    QString m_fileName;
-};
+  emit logRetrieved( log );
+}
 
-#endif
+void Storage::pushData()
+{
+}
+
+void Storage::pullData()
+{
+}

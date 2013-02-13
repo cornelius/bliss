@@ -19,16 +19,14 @@
 #ifndef STORAGEGIT_H
 #define STORAGEGIT_H
 
-#include "bliss/bliss.h"
+#include "storage.h"
 
 #include "gitcommand.h"
-
-#include <QObject>
 
 class GitDir;
 class GitRemote;
 
-class StorageGit : public QObject
+class StorageGit : public Storage
 {
     Q_OBJECT
   public:
@@ -37,22 +35,13 @@ class StorageGit : public QObject
 
     void setLocation( const QString & );
     
-    void writeData( const Bliss::Bliss &, const QString &msg );
-
     Bliss::Bliss readData();
+    void writeData( const Bliss::Bliss &, const QString &msg );
 
     void retrieveLog();
 
     void pushData();
     void pullData();
-
-  signals:
-    void syncingStatusChanged( const QString & );
-  
-    void dataWritten();
-    void dataRead( const Bliss::Bliss & );
-    
-    void logRetrieved( const QStringList & );
 
   protected slots:
     void slotCommandExecuted( const GitCommand & );

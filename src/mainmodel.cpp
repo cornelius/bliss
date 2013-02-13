@@ -34,8 +34,8 @@
 #include <QDebug>
 
 MainModel::MainModel( QObject *parent )
-  : QObject( parent ), m_allItemModel( 0 ), m_personsItemModel( 0 ),
-    m_groupItemModel( 0 )
+  : QObject( parent ), m_storage( 0 ), m_allItemModel( 0 ),
+    m_personsItemModel( 0 ), m_groupItemModel( 0 )
 {
   m_defaultGroupPixmapPath = KStandardDirs::locate( "appdata",
     "bliss_group.png" );
@@ -43,15 +43,6 @@ MainModel::MainModel( QObject *parent )
   m_defaultPersonPixmapPath = KStandardDirs::locate( "appdata",
     "bliss_todo.png" );
   m_defaultPersonPixmap = QPixmap( m_defaultPersonPixmapPath );
-
-  m_storageGit = new StorageGit( this );
-  connect( m_storageGit, SIGNAL( dataWritten() ), SIGNAL( dataWritten() ) );
-  connect( m_storageGit, SIGNAL( logRetrieved( const QStringList & ) ),
-    SIGNAL( logRetrieved( const QStringList & ) ) );
-  connect( m_storageGit, SIGNAL( syncingStatusChanged( const QString & ) ),
-    SIGNAL( syncingStatusChanged( const QString & ) ) );
-
-  m_storageFile = new StorageFile( this );
 }
 
 MainModel::~MainModel()
@@ -66,19 +57,17 @@ QString MainModel::locationId() const
 
 void MainModel::retrieveLog()
 {
-  if ( m_dataFile.isEmpty() ) {
-    m_storageGit->retrieveLog();
-  }
+  m_storage->retrieveLog();
 }
 
 void MainModel::pullData()
 {
-  m_storageGit->pullData();
+  m_storage->pullData();
 }
 
 void MainModel::pushData()
 {
-  m_storageGit->pushData();
+  m_storage->pushData();
 }
 
 Bliss::Todo MainModel::findTodo( const QString &id )
@@ -233,23 +222,31 @@ BlissItemModel *MainModel::groupItemModel()
 bool MainModel::readData( const QString &location )
 {
   QFileInfo fi( location );
-  
+
   if ( location.isEmpty() || fi.isDir() ) {
+    m_storage = new StorageGit( this );
+
     if ( location.isEmpty() ) {
-      m_storageGit->setLocation( QDir::homePath() + "/.bliss" );
+      m_storage->setLocation( QDir::homePath() + "/.bliss" );
       m_locationId = "std:";
     } else {
-      m_storageGit->setLocation( location );
+      m_storage->setLocation( location );
       m_locationId = "git:" + fi.absoluteFilePath();
     }
-    m_bliss = m_storageGit->readData();
   } else {
-    m_dataFile = location;
-    qDebug() << "READ FROM" << location;
-    m_storageFile->setFileName( m_dataFile );
+    m_storage = new StorageFile( this );
+
+    m_storage->setLocation( location );
     m_locationId = "file:" + fi.absoluteFilePath();
-    m_bliss = m_storageFile->readData();
   }
+
+  connect( m_storage, SIGNAL( dataWritten() ), SIGNAL( dataWritten() ) );
+  connect( m_storage, SIGNAL( logRetrieved( const QStringList & ) ),
+    SIGNAL( logRetrieved( const QStringList & ) ) );
+  connect( m_storage, SIGNAL( syncingStatusChanged( const QString & ) ),
+    SIGNAL( syncingStatusChanged( const QString & ) ) );
+
+  m_bliss = m_storage->readData();
 
   foreach( Bliss::Todo todo, m_bliss.todoList() ) {
     if ( todo.id().isEmpty() ) {
@@ -312,12 +309,7 @@ void MainModel::setupGroups()
 
 void MainModel::writeData( const QString &msg )
 {
-  if ( m_dataFile.isEmpty() ) {
-    m_storageGit->writeData( m_bliss, msg );
-  } else {
-    qDebug() << "WRITE FILE" << msg;
-    emit dataWritten();
-  }
+  m_storage->writeData( m_bliss, msg );
 }
 
 Bliss::Todo MainModel::insert( Bliss::Todo todo,

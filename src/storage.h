@@ -16,25 +16,37 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
     USA.
 */
-#ifndef STORAGEFILE_H
-#define STORAGEFILE_H
+#ifndef STORAGE_H
+#define STORAGE_H
 
-#include "storage.h"
+#include "bliss/bliss.h"
 
-class StorageFile : public Storage
+#include <QObject>
+
+class Storage : public QObject
 {
     Q_OBJECT
   public:
-    StorageFile( QObject *parent = 0 );
-    ~StorageFile();
+    Storage( QObject *parent = 0 );
+    ~Storage();
 
-    void setLocation( const QString & );
+    virtual void setLocation( const QString & ) = 0;
+    
+    virtual Bliss::Bliss readData() = 0;
+    virtual void writeData( const Bliss::Bliss &, const QString &msg ) = 0;
 
-    Bliss::Bliss readData();
-    void writeData( const Bliss::Bliss &, const QString &msg );
+    virtual void retrieveLog();
 
-  private:
-    QString m_fileName;
+    virtual void pushData();
+    virtual void pullData();
+    
+  signals:
+    void syncingStatusChanged( const QString & );
+
+    void dataWritten();
+    void dataRead( const Bliss::Bliss & );
+    
+    void logRetrieved( const QStringList & );
 };
 
 #endif

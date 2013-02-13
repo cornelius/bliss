@@ -1,4 +1,5 @@
 set(bliss_bin_SRCS
+  storage.cpp
   history.cpp
   itemplacer.cpp
   delayedsignal.cpp

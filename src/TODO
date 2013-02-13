@@ -1,6 +1,7 @@
-* Use common storage base class and switch via instances rather than ifs
+* Get rid of completion in createtodo dialog.
+
 * Make kxml_compiler generate const writeFile function.
-* Implement StorageFile for file-based todo lists.
+* Implement StorageFile::write for file-based todo lists.
 
 * Move global menu handling to MenuHandler, to save sending signals around
 

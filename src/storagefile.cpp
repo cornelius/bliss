@@ -28,7 +28,7 @@
 #include <QtCore>
 
 StorageFile::StorageFile( QObject *parent )
-  : QObject( parent )
+  : Storage( parent )
 {
 }
 
@@ -36,13 +36,15 @@ StorageFile::~StorageFile()
 {
 }
 
-void StorageFile::setFileName( const QString &fileName )
+void StorageFile::setLocation( const QString &fileName )
 {
   m_fileName = fileName;
 }
 
 Bliss::Bliss StorageFile::readData()
 {
+  qDebug() << "READ FROM FILE" << m_fileName;
+
   Bliss::Bliss bliss;
 
   QFile file( m_fileName );
@@ -103,12 +105,6 @@ void StorageFile::writeData( const Bliss::Bliss &b, const QString &msg )
   Bliss::Bliss bliss = b;
 
   qDebug() << "TODO: write data to file";
-}
 
-void StorageFile::retrieveLog()
-{
-  QStringList log;
-  log.append( i18n("No log available") );
-
-  emit logRetrieved( log );
+  emit dataWritten();  
 }
