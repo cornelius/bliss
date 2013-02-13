@@ -23,6 +23,8 @@
 
 #include "bliss/bliss.h"
 
+#include "history.h"
+
 #include <QtGui>
 
 class QPainter;
@@ -88,7 +90,7 @@ class MainView : public QWidget
 
     Bliss::Todo m_group;
 
-    QStringList m_history;
+    History m_history;
 
     QPushButton *m_backButton;
     QLabel *m_groupNameLabel;

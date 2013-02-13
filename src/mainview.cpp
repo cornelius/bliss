@@ -146,7 +146,7 @@ void MainView::writeConfig()
   m_settingsWidget->writeConfig();
   m_groupGraphicsView->writeConfig();
 
-  Settings::setHistory( m_history );
+  Settings::setHistory( m_history.get() );
 
   Settings::self()->writeConfig();
 }
@@ -160,8 +160,9 @@ void MainView::readData( const QString &file )
 
   m_groupListView->setItemModel( m_model->itemModel() );
 
-  m_history = Settings::history();
-
+  m_history.setLocationId( m_model->locationId() );
+  m_history.set( Settings::history() );
+  
   if ( m_history.isEmpty() ) {
     showRoot();
   } else {

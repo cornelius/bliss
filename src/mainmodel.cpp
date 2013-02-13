@@ -58,6 +58,12 @@ MainModel::~MainModel()
 {
 }
 
+
+QString MainModel::locationId() const
+{
+  return m_locationId;
+}
+
 void MainModel::retrieveLog()
 {
   if ( m_dataFile.isEmpty() ) {
@@ -231,14 +237,17 @@ bool MainModel::readData( const QString &location )
   if ( location.isEmpty() || fi.isDir() ) {
     if ( location.isEmpty() ) {
       m_storageGit->setLocation( QDir::homePath() + "/.bliss" );
+      m_locationId = "std:";
     } else {
       m_storageGit->setLocation( location );
+      m_locationId = "git:" + fi.absoluteFilePath();
     }
     m_bliss = m_storageGit->readData();
   } else {
     m_dataFile = location;
     qDebug() << "READ FROM" << location;
     m_storageFile->setFileName( m_dataFile );
+    m_locationId = "file:" + fi.absoluteFilePath();
     m_bliss = m_storageFile->readData();
   }
 

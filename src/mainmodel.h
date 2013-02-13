@@ -38,6 +38,8 @@ class MainModel : public QObject
 
     void writeData( const QString &msg );
 
+    QString locationId() const;
+    
     // FIXME: create create,read,update,delete identity functions
     Bliss::Todo findTodo( const QString &id );
     Bliss::Todo insert( Bliss::Todo, const QString &msg ); // create/update
@@ -144,6 +146,8 @@ class MainModel : public QObject
   
     QString m_dataFile;
   
+    QString m_locationId;
+    
     Bliss::Bliss m_bliss;
 
     Bliss::Todo m_rootGroup;
