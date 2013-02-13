@@ -129,7 +129,6 @@ void ListItem::setListBox()
     m_handleItemSize;
   foreach( TodoItem *item, m_todoItems ) {
     int itemWidth = item->itemWidth();
-    qDebug() << item->todo().summary().value() << itemWidth;
     if ( itemWidth > listWidth ) {
       listWidth = itemWidth;
     }
