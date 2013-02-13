@@ -51,7 +51,7 @@ Bliss::Bliss StorageFile::readData()
   } else {
     Bliss::Todo rootGroup;
     rootGroup.setType( "group" );
-    rootGroup.setId( KRandom::randomString( 10 ) );
+    rootGroup.setId( "root" );
     Bliss::Summary rootTitle;
     rootTitle.setValue( QFileInfo( file ).baseName() );
     rootGroup.setSummary( rootTitle );
