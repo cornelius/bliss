@@ -406,8 +406,6 @@ TodoItem *GroupGraphicsView::createTodoItem( const Bliss::Todo &todo )
 
   connect( item, SIGNAL( showGroup( const Bliss::Todo & ) ),
     SIGNAL( requestShowGroup( const Bliss::Todo & ) ) );
-  connect( item, SIGNAL( removeTodo( const Bliss::Todo & ) ),
-    SLOT( slotRemoveTodo( const Bliss::Todo & ) ) );
   connect( item, SIGNAL( done( const Bliss::Todo & ) ),
     SLOT( slotDone( const Bliss::Todo & ) ) );
     
@@ -546,14 +544,9 @@ void GroupGraphicsView::positionAbsoluteItems()
   positionMenuItems();
 }
 
-void GroupGraphicsView::slotRemoveTodo( const Bliss::Todo &identity )
-{
-  model()->removeTodo( identity, group() );
-}
-
 void GroupGraphicsView::slotDone( const Bliss::Todo &todo )
 {
-  model()->deleteTodo( todo );
+  model()->deleteTodo( todo, group() );
 }
 
 void GroupGraphicsView::slotItemMoved( TodoItem *todoItem,
@@ -725,8 +718,6 @@ ListItem *GroupGraphicsView::createListItem( const Bliss::ViewList &list )
   connect( item, SIGNAL( removeList( ListItem * ) ),
     SLOT( removeList( ListItem * ) ) );
   connect( item, SIGNAL( menuShown() ), SLOT( hideGlobalMenu() ) );
-  connect( item, SIGNAL( removeTodo( const Bliss::Todo & ) ),
-    SLOT( slotRemoveTodo( const Bliss::Todo & ) ) );
   connect( item, SIGNAL( done( const Bliss::Todo & ) ),
     SLOT( slotDone( const Bliss::Todo & ) ) );
   connect( item, SIGNAL( itemMoved( TodoItem *, const QPointF & ) ),

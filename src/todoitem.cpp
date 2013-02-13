@@ -93,8 +93,7 @@ void TodoItem::updateItem( const Bliss::Todo &todo )
     connect( m_fanMenu, SIGNAL( hoverStateChanged( bool ) ),
       SLOT( checkMenuVisibility() ) );
 
-    FanMenuItem *menuItem = m_fanMenu->addItem( i18n("Remove") );
-    connect( menuItem, SIGNAL( clicked() ), SLOT( emitRemoveTodo() ) );
+    FanMenuItem *menuItem;
     
     if ( todo.type() == "group" ) {
       menuItem = m_fanMenu->addItem( i18n("Go to") );
@@ -211,11 +210,6 @@ void TodoItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
 void TodoItem::emitShowGroup()
 {
   emit showGroup( m_todo );
-}
-
-void TodoItem::emitRemoveTodo()
-{
-  emit removeTodo( m_todo );
 }
 
 void TodoItem::editTodo()

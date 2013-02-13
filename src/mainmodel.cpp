@@ -357,7 +357,7 @@ void MainModel::moveTodo( const Bliss::Todo &t, const Bliss::Todo &fromGroup,
   }
 
   doAddTodo( todo, toGroup );
-  doRemoveTodo( todo, fromGroup );
+  doDeleteTodo( todo, fromGroup );
 
   insert( todo, i18n("Moved %1 from group %2 to group %3")
     .arg( todo.summary().value() )
@@ -376,7 +376,7 @@ void MainModel::moveTodo( const Bliss::Todo &t, const Bliss::Todo &fromGroup,
   }
 
   doAddTodo( todo, toGroup );
-  doRemoveTodo( todo, fromGroup );
+  doDeleteTodo( todo, fromGroup );
   doSaveViewList( fromGroup, list );
 
   insert( todo, i18n("Moved %1 from group %2 to group %3")
@@ -420,53 +420,62 @@ void MainModel::doAddTodo( Bliss::Todo &todo, const Bliss::Todo &group )
   todo.setGroups( groups );
 }
 
-void MainModel::removeTodo( const Bliss::Todo &t,
-  const Bliss::Todo &group )
+void MainModel::deleteTodo( const Bliss::Todo &todo, const Bliss::Todo &group )
 {
-  Bliss::Todo todo = t;
-  
-  doRemoveTodo( todo, group );
-  
-  insert( todo, i18n("Remove %1 from group %2").arg( todo.summary().value() )
+  doDeleteTodo( todo, group );
+
+  writeData( i18n("Deleted %1 from group %2").arg( todo.summary().value() )
     .arg( group.summary().value() ) );
-}
-
-void MainModel::doRemoveTodo( Bliss::Todo &todo, const Bliss::Todo &group )
-{
-  Bliss::Group::List groups = todo.groups().groupList();
-  Bliss::Group::List newGroups;
-  
-  foreach( Bliss::Group g, groups ) {
-    if ( g.id() != group.id() ) {
-      newGroups.append( g );
-    }
-  }
-
-  Bliss::Groups gg;
-  gg.setGroupList( newGroups );
-  todo.setGroups( gg );
-}
-
-void MainModel::deleteTodo( const Bliss::Todo &todo )
-{
-  m_bliss.remove( todo );
-  setupGroups();
-
-  writeData( i18n("Deleted %1").arg( todo.summary().value() ) );
   
   (new DelayedSignal( this, todo ))->emitTodoRemoved();
+}
+
+void MainModel::doDeleteTodo( const Bliss::Todo &todo,
+                              const Bliss::Todo &group )
+{
+  m_bliss.remove( todo );
+  
+  Bliss::GroupView view = groupView( group );
+  
+  Bliss::TodoId::List newIdList;
+  foreach( Bliss::TodoId id, view.todoSequence().todoIdList() ) {
+    if ( id.value() != todo.id() ) newIdList.append( id ); 
+  }
+  Bliss::TodoSequence sequence = view.todoSequence();
+  sequence.setTodoIdList( newIdList );
+  view.setTodoSequence( sequence );
+  
+  Bliss::ViewList::List lists;
+  foreach( Bliss::ViewList list, view.viewListList() ) {
+    Bliss::TodoId::List newIdList;
+    foreach( Bliss::TodoId id, list.todoSequence().todoIdList() ) {
+      if ( id.value() != todo.id() ) newIdList.append( id ); 
+    }
+    Bliss::TodoSequence sequence = list.todoSequence();
+    sequence.setTodoIdList( newIdList );
+    list.setTodoSequence( sequence );
+    
+    lists.append( list );
+  }
+  view.setViewListList( lists );
+  
+  m_bliss.insert( view );
+  
+  setupGroups();
 }
 
 void MainModel::removeGroup( const Bliss::Todo &group )
 {
   Bliss::Todo::List members = m_groupMap.value( group.id() );
   foreach( Bliss::Todo member, members ) {
-    removeTodo( member, group );
+    doDeleteTodo( member, group );
   }
   m_bliss.remove( group );
   m_bliss.remove( m_bliss.findGroupView( group.id() ) );
 
   setupGroups();
+
+  writeData( i18n("Deleted group %1").arg( group.summary().value() ) );
   
   (new DelayedSignal( this, group ))->emitTodoRemoved();
 }

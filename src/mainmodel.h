@@ -63,14 +63,12 @@ class MainModel : public QObject
       const Bliss::Todo &group );
     Bliss::Todo addTodo( const Bliss::Todo &todo,
       const Bliss::Todo &group, const Bliss::ViewList &list );
-    void removeTodo( const Bliss::Todo &todo,
-      const Bliss::Todo &group );
     void moveTodo( const Bliss::Todo &todo, const Bliss::Todo &fromGroup,
                    const Bliss::Todo &toGroup );
     void moveTodo( const Bliss::Todo &todo, const Bliss::Todo &fromGroup,
                    const Bliss::ViewList &fromList,
                    const Bliss::Todo &toGroup );
-    void deleteTodo( const Bliss::Todo &todo );
+    void deleteTodo( const Bliss::Todo &todo, const Bliss::Todo &group );
       
     void removeGroup( const Bliss::Todo &group );
 
@@ -131,7 +129,7 @@ class MainModel : public QObject
 
   protected:
     void doAddTodo( Bliss::Todo &todo, const Bliss::Todo &group );
-    void doRemoveTodo( Bliss::Todo &todo, const Bliss::Todo &group );
+    void doDeleteTodo( const Bliss::Todo &todo, const Bliss::Todo &group );
 
     void doSaveViewList( const Bliss::Todo &group,
       const Bliss::ViewList &list );
