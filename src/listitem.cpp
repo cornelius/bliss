@@ -177,6 +177,12 @@ void ListItem::preparePositions()
   }
 }
 
+
+void ListItem::setList( const Bliss::ViewList &list )
+{
+  m_list = list;
+}
+
 Bliss::ViewList ListItem::list() const
 {
   return m_list;
@@ -366,4 +372,12 @@ void ListItem::removeItem( TodoItem *item )
   repositionItems();
 
   setListBox();
+}
+
+TodoItem *ListItem::item( const Bliss::Todo &todo )
+{
+  foreach( TodoItem *i, m_todoItems ) {
+    if ( i->todo().id() == todo.id() ) return i;
+  }
+  return 0;
 }

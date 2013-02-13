@@ -44,6 +44,7 @@ class ListItem : public QObject, public RoundedRectItem
     ListItem( MainModel *, MenuHandler *, const Bliss::Todo &group,
               const Bliss::ViewList & );
 
+    void setList( const Bliss::ViewList & );
     Bliss::ViewList list() const;
 
     QGraphicsEllipseItem *handleItem() const;
@@ -67,6 +68,8 @@ class ListItem : public QObject, public RoundedRectItem
 
     bool hasItem( TodoItem * ) const;
 
+    TodoItem *item( const Bliss::Todo & );
+    
     void addItem( TodoItem * );
     void removeItem( TodoItem * );
     

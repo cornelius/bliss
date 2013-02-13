@@ -80,7 +80,9 @@ class GroupGraphicsView : public GroupView
 
     TodoItem *item( const Bliss::Todo & ) const;
     ListItem *listItem( TodoItem * ) const;
-    
+
+    Bliss::ViewList viewList( const Bliss::Todo &todo );
+
     void positionMenuItems();
 
     void clearItems();
@@ -152,6 +154,7 @@ class GroupGraphicsView : public GroupView
 
     ItemPlacer *m_itemPlacer;
     ItemPlacer *m_itemUnplacer;
+    ItemPlacer *m_removeItemPlacer;
 
     FanMenu *m_globalMenu;
     FanMenuItem *m_addLabelItem;

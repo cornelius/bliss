@@ -1,9 +1,3 @@
-* Lists
-    * Make todos on canvas positional todos without list, but an individual
-      position
-
-* Animation when setting items in lists to done
-
 * Removing items should not leave around orphaned data
 * Clarify remove and done
 
@@ -17,3 +11,6 @@
 * Implement StorageFile for file-based todo lists.
 
 * Move global menu handling to MenuHandler, to save sending signals around
+
+* Make todos on canvas positional todos without list, but an individual
+  position

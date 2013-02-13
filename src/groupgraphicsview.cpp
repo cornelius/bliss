@@ -58,6 +58,8 @@ GroupGraphicsView::GroupGraphicsView( MainModel *model, QWidget *parent )
   m_itemUnplacer = new ItemPlacer( this );
   connect( m_itemUnplacer, SIGNAL( finished() ), SLOT( unhideItems() ) );
 
+  m_removeItemPlacer = new ItemPlacer( this );
+  
   m_menuHandler = new MenuHandler( m_scene );
 
   m_view = new TrackingGraphicsView( m_scene );
@@ -111,7 +113,7 @@ void GroupGraphicsView::slotTodoChanged( const Bliss::Todo &todo )
   }
 }
 
-void GroupGraphicsView::slotTodoAdded( const Bliss::Todo &todo )
+Bliss::ViewList GroupGraphicsView::viewList( const Bliss::Todo &todo )
 {
   Bliss::ViewList list;
   Bliss::ViewList::List lists = model()->lists( group() );
@@ -124,11 +126,18 @@ void GroupGraphicsView::slotTodoAdded( const Bliss::Todo &todo )
     }
     if ( list.isValid() ) break;
   }
+  return list;
+}
+
+void GroupGraphicsView::slotTodoAdded( const Bliss::Todo &todo )
+{
+  Bliss::ViewList list = viewList( todo );
   
   if ( list.isValid() ) {
     foreach( ListItem *listItem, m_listItems ) {
       if ( listItem->list().id() == list.id() ) {
         listItem->addTodo( todo );
+        listItem->setList( list );
         break;
       }
     }
@@ -149,11 +158,23 @@ void GroupGraphicsView::slotTodoRemoved( const Bliss::Todo &todo )
   if ( todoItem ) {
     delete todoItem;
     m_items.removeAll( todoItem );
-  }
 
-  m_itemPlacer->prepare();
-  preparePositions( m_items, m_itemPlacer );
-  m_itemPlacer->start();
+    m_removeItemPlacer->prepare();
+    preparePositions( m_items, m_removeItemPlacer );
+    m_removeItemPlacer->start();
+  }
+  
+  foreach( ListItem *listItem, m_listItems ) {
+    todoItem = listItem->item( todo );
+    if ( todoItem ) {
+      listItem->removeItem( todoItem );
+      delete todoItem;
+
+      Bliss::ViewList list = model()->groupView( group() )
+        .findViewList( listItem->list().id() );
+      listItem->setList( list );
+    }    
+  }
 }
 
 void GroupGraphicsView::recreateItems()
@@ -555,6 +576,7 @@ void GroupGraphicsView::slotItemMoved( TodoItem *todoItem,
     // Move to other group
     if ( listSource ) {
       listSource->removeItem( todoItem );
+      delete todoItem;
       model()->moveTodo( todoItem->todo(), group(), listSource->list(),
                          groupTarget );
     } else {

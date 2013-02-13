@@ -56,9 +56,9 @@ void GitDir::slotProcessFinished( int exitCode,
 
   QString output = m_process->readAllStandardOutput();
 
-  qDebug() << "EXIT CODE:" << exitCode;
-  qDebug() << "STDOUT:" << output;
-  qDebug() << "STDERR:" << m_process->readAllStandardError();
+  qDebug() << "GIT EXIT CODE:" << exitCode;
+//  qDebug() << "STDOUT:" << output;
+//  qDebug() << "STDERR:" << m_process->readAllStandardError();
 
   GitCommand cmd = m_queue.first();
   cmd.setResult( output.split( "\n" ) );

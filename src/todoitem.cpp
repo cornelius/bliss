@@ -30,7 +30,8 @@
 
 TodoItem::TodoItem( MainModel *model, MenuHandler *menuHandler,
   const Bliss::Todo &todo )
-  : QObject( model ), m_model( model ), m_todo( todo ), m_nameItem( 0 ),
+  : QObject( model ), m_model( model ), m_todo( todo ), m_handleItem( 0 ),
+    m_nameItem( 0 ),
     m_fanMenu( 0 ), m_menuHandler( menuHandler ), m_edit( 0 ), m_editProxy( 0 )
 {
   init();
@@ -38,7 +39,7 @@ TodoItem::TodoItem( MainModel *model, MenuHandler *menuHandler,
 
 TodoItem::TodoItem( MainModel *model )
   : QObject( model ), m_model( model ),
-    m_textCenterX( 0 ), m_fanMenu( 0 ),
+    m_handleItem( 0 ), m_nameItem( 0 ), m_textCenterX( 0 ), m_fanMenu( 0 ),
     m_menuHandler( 0 ), m_edit( 0 ), m_editProxy( 0 )
 {
   m_menusEnabled = false;
@@ -266,6 +267,8 @@ void TodoItem::undoMove()
 
 int TodoItem::itemWidth()
 {
+  if ( !m_handleItem ) return 0;
+
   if ( m_nameItem ) {
     return m_handleItem->itemSize() + 16 + m_nameItem->boundingRect().width();
   } else {
