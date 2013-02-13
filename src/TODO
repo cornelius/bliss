@@ -1,4 +1,3 @@
-* Read file as list
 * History dependent on file
 * Use common storage base class and switch via instances rather than ifs
 * Make kxml_compiler generate const writeFile function.
