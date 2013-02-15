@@ -33,6 +33,10 @@ class StorageFile : public Storage
     Bliss::Bliss readData();
     void writeData( const Bliss::Bliss &, const QString &msg );
 
+  protected:
+    void createTodo( Bliss::Bliss &bliss, const Bliss::Todo &group,
+                     const QString &title );
+
   private:
     QString m_fileName;
 };

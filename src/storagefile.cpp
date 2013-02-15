@@ -51,6 +51,27 @@ Bliss::Bliss StorageFile::readData()
   if ( !file.open( QIODevice::ReadOnly ) ) {
     qDebug() << "ERROR READING FILE" << m_fileName;
   } else {
+    QStringList todoEntries;
+  
+    QTextStream ts( &file );
+    QString line;
+    do {
+      line = ts.readLine();
+      
+      if ( line.startsWith( "*" ) ) {
+        todoEntries << line.mid( 1 ).trimmed();
+      } else if ( line.trimmed().isEmpty() ) {
+        todoEntries << "";
+      }      
+    } while ( !line.isNull() );
+
+    while( !todoEntries.isEmpty() && todoEntries.first().isEmpty() ) {
+      todoEntries.removeFirst();
+    }
+    while( !todoEntries.isEmpty() && todoEntries.last().isEmpty() ) {
+      todoEntries.removeLast();
+    }
+    
     Bliss::Todo rootGroup;
     rootGroup.setType( "group" );
     rootGroup.setId( "root" );
@@ -64,30 +85,10 @@ Bliss::Bliss StorageFile::readData()
     Bliss::Root root;
     root.setGroup( group );
     bliss.setRoot( root );
-  
-    QTextStream ts( &file );
-    QString line;
-    do {
-      line = ts.readLine();
-      
-      if ( line.startsWith( "*" ) ) {
-        Bliss::Todo todo;
-        todo.setId( KRandom::randomString( 10 ) );
-        
-        Bliss::Summary title;
-        title.setValue( line.mid( 1 ).trimmed() );
-        todo.setSummary( title );
 
-        Bliss::Group group;
-        group.setId( rootGroup.id() );
-        Bliss::Groups groups;
-        groups.addGroup( group );
-        todo.setGroups( groups );
-        
-        bliss.addTodo( todo );
-      }
-      
-    } while ( !line.isNull() );
+    foreach( QString todoEntry, todoEntries ) {
+      createTodo( bliss, rootGroup, todoEntry );
+    }
   }
 
   if ( !bliss.writeFile( "out.bliss" ) ) {
@@ -95,6 +96,25 @@ Bliss::Bliss StorageFile::readData()
   }
 
   return bliss;
+}
+
+void StorageFile::createTodo( Bliss::Bliss &bliss, const Bliss::Todo &group,
+                              const QString &title )
+{
+  Bliss::Todo todo;
+  todo.setId( KRandom::randomString( 10 ) );
+  
+  Bliss::Summary summary;
+  summary.setValue( title );
+  todo.setSummary( summary );
+
+  Bliss::Group g;
+  g.setId( group.id() );
+  Bliss::Groups groups;
+  groups.addGroup( g );
+  todo.setGroups( groups );
+  
+  bliss.addTodo( todo );
 }
 
 void StorageFile::writeData( const Bliss::Bliss &b, const QString &msg )
