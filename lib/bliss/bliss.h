@@ -192,28 +192,6 @@ class BLISS_EXPORT GroupView
     ViewList::List mViewListList;
 };
 
-class BLISS_EXPORT Status
-{
-  public:
-    Status();
-    void setCreatedAt( const QDateTime &v );
-    QDateTime createdAt() const;
-    void setUpdatedAt( const QDateTime &v );
-    QDateTime updatedAt() const;
-    void setSequence( int v );
-    int sequence() const;
-    /**
-      Parse XML object from DOM element.
-     */
-    static Status parseElement( const QDomElement &element, bool *ok );
-    void writeElement( QXmlStreamWriter &xml );
-
-  private:
-    QDateTime mCreatedAt;
-    QDateTime mUpdatedAt;
-    int mSequence;
-};
-
 class BLISS_EXPORT Group
 {
   public:
@@ -340,8 +318,6 @@ class BLISS_EXPORT Todo
     Summary summary() const;
     void setPostpone( const Postpone &v );
     Postpone postpone() const;
-    void setStatus( const Status &v );
-    Status status() const;
     /**
       Parse XML object from DOM element.
      */
@@ -355,7 +331,6 @@ class BLISS_EXPORT Todo
     Title mTitle;
     Summary mSummary;
     Postpone mPostpone;
-    Status mStatus;
 };
 
 class BLISS_EXPORT Root

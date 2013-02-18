@@ -641,83 +641,6 @@ void GroupView::writeElement( QXmlStreamWriter &xml )
 }
 
 
-Status::Status()
-{
-  QDateTime now = QDateTime::currentDateTime();
-  setCreatedAt( now );
-  setUpdatedAt( now );
-}
-
-void Status::setCreatedAt( const QDateTime &v )
-{
-  mCreatedAt = v;
-}
-
-QDateTime Status::createdAt() const
-{
-  return mCreatedAt;
-}
-
-void Status::setUpdatedAt( const QDateTime &v )
-{
-  mUpdatedAt = v;
-}
-
-QDateTime Status::updatedAt() const
-{
-  return mUpdatedAt;
-}
-
-void Status::setSequence( int v )
-{
-  mSequence = v;
-  setUpdatedAt( QDateTime::currentDateTime() );
-}
-
-int Status::sequence() const
-{
-  return mSequence;
-}
-
-Status Status::parseElement( const QDomElement &element, bool *ok )
-{
-  if ( element.tagName() != "status" ) {
-    qCritical() << "Expected 'status', got '" << element.tagName() << "'.";
-    if ( ok ) *ok = false;
-    return Status();
-  }
-
-  Status result = Status();
-
-  QDomNode n;
-  for( n = element.firstChild(); !n.isNull(); n = n.nextSibling() ) {
-    QDomElement e = n.toElement();
-    if ( e.tagName() == "sequence" ) {
-      result.setSequence( e.text().toInt() );
-    }
-  }
-
-  result.setCreatedAt( QDateTime::fromString( element.attribute( "created_at" ), "yyyyMMddThhmmssZ" ) );
-  result.setUpdatedAt( QDateTime::fromString( element.attribute( "updated_at" ), "yyyyMMddThhmmssZ" ) );
-
-  if ( ok ) *ok = true;
-  return result;
-}
-
-void Status::writeElement( QXmlStreamWriter &xml )
-{
-  xml.writeStartElement( "status" );
-    if ( !createdAt().toString( "yyyyMMddThhmmssZ" ).isEmpty() ) {
-      xml.writeAttribute( "created_at", createdAt().toString( "yyyyMMddThhmmssZ" ) );
-    }
-    if ( !updatedAt().toString( "yyyyMMddThhmmssZ" ).isEmpty() ) {
-      xml.writeAttribute( "updated_at", updatedAt().toString( "yyyyMMddThhmmssZ" ) );
-    }
-  xml.writeTextElement(  "sequence", QString::number( sequence() ) );
-  xml.writeEndElement();
-}
-
-
 bool Group::isValid() const
 {
   return !mId.isEmpty();
@@ -1138,16 +1061,6 @@ Postpone Todo::postpone() const
   return mPostpone;
 }
 
-void Todo::setStatus( const Status &v )
-{
-  mStatus = v;
-}
-
-Status Todo::status() const
-{
-  return mStatus;
-}
-
 Todo Todo::parseElement( const QDomElement &element, bool *ok )
 {
   if ( element.tagName() != "todo" ) {
@@ -1184,11 +1097,6 @@ Todo Todo::parseElement( const QDomElement &element, bool *ok )
       Postpone o = Postpone::parseElement( e, &ok );
       if ( ok ) result.setPostpone( o );
     }
-    else if ( e.tagName() == "status" ) {
-      bool ok;
-      Status o = Status::parseElement( e, &ok );
-      if ( ok ) result.setStatus( o );
-    }
   }
 
   result.setType( element.attribute( "type" ) );
@@ -1210,7 +1118,6 @@ void Todo::writeElement( QXmlStreamWriter &xml )
   title().writeElement( xml );
   summary().writeElement( xml );
   postpone().writeElement( xml );
-  status().writeElement( xml );
   xml.writeEndElement();
 }
 
