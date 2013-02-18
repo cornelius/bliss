@@ -346,21 +346,15 @@ void ListItem::slotItemMoved( TodoItem *item, const QPointF &pos )
   emit itemMoved( item, mapToScene( pos ) );
 }
 
-void ListItem::addTodo( const Bliss::Todo &todo )
+TodoItem *ListItem::addTodo( const Bliss::Todo &todo )
 {
   TodoItem *item = createItem( todo );
-  addItem( item );
-}
 
-void ListItem::addItem( TodoItem *item )
-{
   m_todoItems.insert( m_todoItems.size() - 1, item );
 
-  m_itemPlacer->prepare();
-  preparePositions();
-  m_itemPlacer->start();
-
   setListBox();
+
+  return item;  
 }
 
 void ListItem::removeItem( TodoItem *item )

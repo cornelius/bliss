@@ -41,6 +41,8 @@ class TodoItem : public QObject, public QGraphicsItemGroup
   public:
     TodoItem( MainModel *, MenuHandler *, const Bliss::Todo & );
     TodoItem( MainModel * );
+    
+    ~TodoItem();
 
     Bliss::Todo todo() const;
 

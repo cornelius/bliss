@@ -70,10 +70,9 @@ class ListItem : public QObject, public RoundedRectItem
 
     TodoItem *item( const Bliss::Todo & );
     
-    void addItem( TodoItem * );
     void removeItem( TodoItem * );
     
-    void addTodo( const Bliss::Todo & );
+    TodoItem *addTodo( const Bliss::Todo & );
     
   signals:
     void removeList( ListItem * );

@@ -138,6 +138,7 @@ void GroupGraphicsView::slotTodoAdded( const Bliss::Todo &todo )
       if ( listItem->list().id() == list.id() ) {
         listItem->addTodo( todo );
         listItem->setList( list );
+        listItem->repositionItems();
         break;
       }
     }
@@ -559,6 +560,7 @@ void GroupGraphicsView::slotItemMoved( TodoItem *todoItem,
     QPointF relativePos = listItem->mapFromScene( pos );
     if ( listItem->contains( relativePos ) ) {
       listTarget = listItem;
+      break;
     }
   }
 
@@ -582,38 +584,98 @@ void GroupGraphicsView::slotItemMoved( TodoItem *todoItem,
         listTarget->repositionItems();
         model()->saveViewList( group(), listTarget->list() );
       } else {
-        // Move to other list
-        todoItem->setPos( listTarget->mapFromItem( listSource, todoItem->pos() ) );
-        todoItem->setParentItem( listTarget );
-        listSource->removeItem( todoItem );
-        listTarget->addItem( todoItem );
-        model()->saveItemMove( group(), todoItem->todo(), listSource->list(),
-                               listTarget->list() );
+        if ( listSource ) {
+          // Move to other list
+          TodoItem *newItem = listTarget->addTodo( todoItem->todo() );
+          newItem->setPos( listTarget->mapFromItem( listSource, todoItem->pos() ) );
+          listTarget->repositionItems();
+
+          listSource->removeItem( todoItem );
+          delete todoItem;
+
+          model()->saveMoveFromListToList( group(), newItem->todo(),
+            listSource->list(), listTarget->list() );
+        } else {
+          // Move from canvas to list
+          TodoItem *newItem = listTarget->addTodo( todoItem->todo() );
+          newItem->setPos( listTarget->mapFromScene( todoItem->pos() ) );
+          listTarget->repositionItems();
+
+          m_items.removeOne( todoItem );
+          delete todoItem;
+
+          QStringList sortedCanvasIds;
+          foreach( TodoItem *i, m_items ) {
+            sortedCanvasIds.append( i->todo().id() );
+          }
+          
+          model()->saveMoveFromCanvasToList( group(), newItem->todo(),
+            listTarget->list(), sortedCanvasIds );
+
+          m_itemPlacer->prepare();
+          preparePositions( m_items, m_itemPlacer );
+          m_itemPlacer->start();
+        }
       }
     } else {
-      // Move on canvas
-      m_itemPlacer->prepare();
+      if ( listSource ) {
+        // Move from list to canvas
+        TodoItem *newItem = createTodoItem( todoItem->todo() );
+        newItem->setPos( listSource->mapToScene( todoItem->pos() ) );
+        m_items.insert( m_items.size() - 1, newItem );
+        m_scene->addItem( newItem );
 
-      QMap <qreal, QString> map;
-      foreach( TodoItem *i, m_items ) {
-        map.insert( i->pos().y(), i->todo().id() );
+        listSource->removeItem( todoItem );
+        delete todoItem;
+        
+        QMap <qreal, QString> map;
+        foreach( TodoItem *i, m_items ) {
+          map.insert( i->pos().y(), i->todo().id() );
+        }
+
+        model()->saveMoveFromListToCanvas( group(), newItem->todo(),
+          listSource->list(), map.values() );
+
+        m_itemPlacer->prepare();
+        QList<TodoItem *> sortedItems;
+
+        Bliss::Todo::List todos = model()->unlistedTodosOfGroup( group() );
+        foreach( Bliss::Todo todo, todos ) {
+          sortedItems.append( item( todo ) );
+        }
+
+        TodoItem *addNewItem = m_items.last();
+        m_items = sortedItems;
+        m_items.append( addNewItem );
+
+        preparePositions( m_items, m_itemPlacer );
+
+        m_itemPlacer->start();
+      } else {
+        // Move on canvas
+        m_itemPlacer->prepare();
+
+        QMap <qreal, QString> map;
+        foreach( TodoItem *i, m_items ) {
+          map.insert( i->pos().y(), i->todo().id() );
+        }
+        model()->saveViewSequence( group(), map.values() );
+
+        QList<TodoItem *> sortedItems;
+
+        Bliss::Todo::List todos = model()->unlistedTodosOfGroup( group() );
+        foreach( Bliss::Todo todo, todos ) {
+          sortedItems.append( item( todo ) );
+        }
+
+        TodoItem *addNewItem = m_items.last();
+        m_items = sortedItems;
+        m_items.append( addNewItem );
+
+        preparePositions( m_items, m_itemPlacer );
+
+        m_itemPlacer->start();
       }
-      model()->saveViewSequence( group(), map.values() );
-
-      QList<TodoItem *> sortedItems;
-
-      Bliss::Todo::List todos = model()->unlistedTodosOfGroup( group() );
-      foreach( Bliss::Todo todo, todos ) {
-        sortedItems.append( item( todo ) );
-      }
-
-      TodoItem *addNewItem = m_items.last();
-      m_items = sortedItems;
-      m_items.append( addNewItem );
-
-      preparePositions( m_items, m_itemPlacer );
-
-      m_itemPlacer->start();
     }
   }
 }

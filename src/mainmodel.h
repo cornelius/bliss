@@ -100,9 +100,15 @@ class MainModel : public QObject
 
     void saveViewSequence( const Bliss::Todo &group, const QStringList &ids );
 
-    void saveItemMove( const Bliss::Todo &group,
+    void saveMoveFromListToList( const Bliss::Todo &group,
        const Bliss::Todo &todo, const Bliss::ViewList &fromList,
        const Bliss::ViewList &toList );
+    void saveMoveFromCanvasToList( const Bliss::Todo &group,
+       const Bliss::Todo &todo,
+       const Bliss::ViewList &toList, const QStringList &sortedIds );
+    void saveMoveFromListToCanvas( const Bliss::Todo &group,
+       const Bliss::Todo &todo,
+       const Bliss::ViewList &toList, const QStringList &sortedIds );
 
     Bliss::GroupView groupView( const Bliss::Todo &group );
     Bliss::GroupView groupView( const QString &groupId );
@@ -134,6 +140,8 @@ class MainModel : public QObject
 
     void doSaveViewList( const Bliss::Todo &group,
       const Bliss::ViewList &list );
+
+    void doSaveViewSequence( const Bliss::Todo &group, const QStringList &ids );
 
     void setupGroups();
 

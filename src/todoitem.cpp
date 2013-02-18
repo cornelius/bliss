@@ -47,6 +47,11 @@ TodoItem::TodoItem( MainModel *model )
   m_handleItem = new TodoHandleItem( this, m_model );
 }
 
+TodoItem::~TodoItem()
+{
+  delete m_fanMenu;
+}
+
 void TodoItem::init()
 {
   m_menusEnabled = true;
@@ -192,6 +197,7 @@ void TodoItem::mousePressEvent( QGraphicsSceneMouseEvent *event )
   hidePopups();
 
   if ( parentItem() ) parentItem()->setZValue( 100 );
+  else setZValue( 100 );
   
   emit itemPressed();
 }
@@ -201,6 +207,7 @@ void TodoItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
   QGraphicsItemGroup::mouseReleaseEvent( event );
 
   if ( parentItem() ) parentItem()->setZValue( 0 );
+  else setZValue( 0 );
 
   if ( pos() != m_movePos ) {
     emit itemMoved( this, pos() );

@@ -510,7 +510,7 @@ QPixmap MainModel::defaultPixmap( const Bliss::Todo &todo ) const
   else return m_defaultPersonPixmap;
 }
 
-void MainModel::saveItemMove( const Bliss::Todo &group,
+void MainModel::saveMoveFromListToList( const Bliss::Todo &group,
   const Bliss::Todo &todo, const Bliss::ViewList &fromList,
   const Bliss::ViewList &toList )
 {
@@ -518,6 +518,28 @@ void MainModel::saveItemMove( const Bliss::Todo &group,
   doSaveViewList( group, toList );
   writeData( i18n("Moved '%1' from '%2' to '%3'").arg( todo.summary().value() )
     .arg( fromList.name() ).arg( toList.name() ) );
+}
+
+void MainModel::saveMoveFromCanvasToList( const Bliss::Todo &group,
+  const Bliss::Todo &todo,
+  const Bliss::ViewList &toList, const QStringList &sortedIds )
+{
+  doSaveViewList( group, toList );
+  doSaveViewSequence( group, sortedIds );
+  writeData( i18n("Moved '%1' from canvas to '%2'")
+    .arg( todo.summary().value() )
+    .arg( toList.name() ) );
+}
+
+void MainModel::saveMoveFromListToCanvas( const Bliss::Todo &group,
+  const Bliss::Todo &todo,
+  const Bliss::ViewList &fromList, const QStringList &sortedIds )
+{
+  doSaveViewList( group, fromList );
+  doSaveViewSequence( group, sortedIds );
+  writeData( i18n("Moved '%1' to from '%2' to canvas")
+    .arg( todo.summary().value() )
+    .arg( fromList.name() ) );
 }
 
 void MainModel::saveViewList( const Bliss::Todo &group,
@@ -605,6 +627,15 @@ Bliss::GroupView MainModel::groupView( const QString &groupId )
 void MainModel::saveViewSequence( const Bliss::Todo &group,
                                   const QStringList &ids )
 {
+  doSaveViewSequence( group, ids );
+
+  writeData( i18n("Updated sequence in group %1").
+    arg( group.summary().value() ) );
+}
+
+void MainModel::doSaveViewSequence( const Bliss::Todo &group,
+                                    const QStringList &ids )
+{
   Bliss::GroupView v = m_bliss.findGroupView( group.id(),
                                               Bliss::Bliss::AutoCreate );
                                               
@@ -618,7 +649,4 @@ void MainModel::saveViewSequence( const Bliss::Todo &group,
   v.setTodoSequence( sequence );
 
   m_bliss.insert( v );
-
-  writeData( i18n("Updated sequence in group %1").
-    arg( group.summary().value() ) );
 }
