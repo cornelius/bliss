@@ -310,6 +310,13 @@ void ListItem::newTodo()
   return;
 }
 
+void ListItem::repositionSortedItems()
+{
+  m_itemPlacer->prepare();
+  preparePositions();
+  m_itemPlacer->start();
+}
+
 void ListItem::repositionItems()
 {
   m_itemPlacer->prepare();

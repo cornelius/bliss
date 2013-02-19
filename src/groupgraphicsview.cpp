@@ -50,7 +50,7 @@ GroupGraphicsView::GroupGraphicsView( MainModel *model, QWidget *parent )
 
   m_scene = new QGraphicsScene;
   m_scene->setBackgroundBrush( QColor( 231,228,211 ) );
-  m_scene->setSceneRect( -1000, -2000, 2000, 4000 );
+  m_scene->setSceneRect( -2000, -2000, 4000, 4000 );
 
   m_itemPlacer = new ItemPlacer( this );
   connect( m_itemPlacer, SIGNAL( finished() ), SLOT( finishPlaceItems() ) );
@@ -138,7 +138,7 @@ void GroupGraphicsView::slotTodoAdded( const Bliss::Todo &todo )
       if ( listItem->list().id() == list.id() ) {
         listItem->addTodo( todo );
         listItem->setList( list );
-        listItem->repositionItems();
+        listItem->repositionSortedItems();
         break;
       }
     }

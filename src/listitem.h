@@ -64,7 +64,16 @@ class ListItem : public QObject, public RoundedRectItem
 
     int textCenterX();
 
+    /**
+      Reposition items according to the visual order of the items in the view.
+      Adjusts internal list representation as well.
+    */
     void repositionItems();
+    /**
+      Reposition items according to the order of item objects in the internal
+      list.
+    */
+    void repositionSortedItems();
 
     bool hasItem( TodoItem * ) const;
 
