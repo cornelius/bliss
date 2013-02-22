@@ -1,5 +1,3 @@
-* Implement StorageFile::write for file-based todo lists.
-
 * Get rid of completion in createtodo dialog.
 
 * Move global menu handling to MenuHandler, to save sending signals around
@@ -7,6 +5,6 @@
 * Initial data with "get started" list (hover bullet, create list, etc.)
 
 * Make todos on canvas positional todos without list, but an individual
-  position
+  position.
 
 * Make kxml_compiler generate const writeFile function.

@@ -124,7 +124,21 @@ void StorageFile::writeData( const Bliss::Bliss &b, const QString &msg )
   // FIXME: Make Bliss::writeFile const, so copy is not needed
   Bliss::Bliss bliss = b;
 
-  qDebug() << "TODO: write data to file";
+  QFile file( m_fileName );
+  if ( !file.open( QIODevice::WriteOnly ) ) {
+    qDebug() << "ERROR WRITING FILE" << m_fileName;
+  } else {
+    QTextStream ts( &file );
+    Bliss::Todo::List todos = b.todoList();
+    foreach( Bliss::Todo todo, todos ) {
+      if ( todo.type() != "group" ) {
+        QString summary = todo.summary().value();
+        if ( summary.isEmpty() ) ts << "\n\n";
+        else ts << "* " << summary;
+      }
+    }
+    ts << "\n";
+  }
 
   emit dataWritten();  
 }
