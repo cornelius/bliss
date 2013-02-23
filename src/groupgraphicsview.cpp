@@ -101,11 +101,12 @@ void GroupGraphicsView::writeConfig()
 void GroupGraphicsView::slotTodoChanged( const Bliss::Todo &todo )
 {
   TodoItem *i = item( todo );
-    
-  if ( todo.groups().findGroup( group().id() ).isValid() && i ) {
-    i->updateItem( todo );
-  } else {
-    slotTodoRemoved( todo);
+  if ( i ) {
+    if ( todo.groups().findGroup( group().id() ).isValid() ) {
+      i->updateItem( todo );
+    } else {
+      slotTodoRemoved( todo);
+    }
   }
 
   foreach ( ListItem *listItem, m_listItems ) {

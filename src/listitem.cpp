@@ -166,6 +166,8 @@ void ListItem::updateTodoItem( const Bliss::Todo &todo )
       item->updateItem( todo );
     }
   }
+  
+  setListBox();
 }
 
 void ListItem::preparePositions()

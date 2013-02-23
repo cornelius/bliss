@@ -111,9 +111,6 @@ void TodoItem::updateItem( const Bliss::Todo &todo )
       connect( menuItem, SIGNAL( clicked() ), SLOT( emitDone() ) );
     }
 
-    menuItem = m_fanMenu->addItem( i18n("Edit") );
-    connect( menuItem, SIGNAL( clicked() ), SLOT( editTodo() ) );
-
     m_fanMenu->setupItems();
 
     hidePopups();
@@ -210,7 +207,11 @@ void TodoItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
   if ( parentItem() ) parentItem()->setZValue( 0 );
   else setZValue( 0 );
 
-  if ( pos() != m_movePos ) {
+  if ( pos() == m_movePos ) {
+    if ( m_nameItem->contains( m_nameItem->mapFromItem( this, event->pos() ) ) ) {
+      QTimer::singleShot( 0, this, SLOT( editTodo() ) );
+    }
+  } else {
     emit itemMoved( this, pos() );
   }
 }
