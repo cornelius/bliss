@@ -28,7 +28,7 @@
 #include <KRandom>
 
 NewTodoDialog::NewTodoDialog( MainModel *model, QWidget *parent )
-  : KDialog( parent ), m_model( model ), m_proxyModel( 0 ), m_matchList( 0 )
+  : KDialog( parent ), m_model( model )
 {
   setCaption( "New Todo" );
   setButtons( KDialog::Ok | KDialog::Cancel );
@@ -46,16 +46,7 @@ NewTodoDialog::NewTodoDialog( MainModel *model, QWidget *parent )
   connect( m_nameInput, SIGNAL( textChanged( const QString & ) ),
     SLOT( checkOkButton() ) );
 
-  m_matchList = new MatchList( m_model );
-  topLayout->addWidget( m_matchList );
-  
-  connect( m_matchList, SIGNAL( activated() ), SLOT( accept() ) );
-  connect( m_nameInput, SIGNAL( textChanged( const QString & ) ),
-    m_matchList, SLOT( filter( const QString & ) ) );
-
   setMainWidget( topWidget );
-
-  restoreDialogSize( KGlobal::config()->group("newtododialog") );
 
   m_nameInput->setFocus();
 
@@ -64,22 +55,16 @@ NewTodoDialog::NewTodoDialog( MainModel *model, QWidget *parent )
 
 NewTodoDialog::~NewTodoDialog()
 {
-  KConfigGroup cg( KGlobal::config(), "newtododialog" );
-  saveDialogSize( cg );
 }
 
 Bliss::Todo NewTodoDialog::todo()
 {
-  if ( !m_matchList || !m_matchList->todo().isValid() ) {
-    Bliss::Todo todo;
-    todo.setId( KRandom::randomString( 10 ) );
-    Bliss::Summary name;
-    name.setValue( m_nameInput->text() );
-    todo.setSummary( name );
-    return todo;
-  } else {
-    return m_matchList->todo();
-  }
+  Bliss::Todo todo;
+  todo.setId( KRandom::randomString( 10 ) );
+  Bliss::Summary name;
+  name.setValue( m_nameInput->text() );
+  todo.setSummary( name );
+  return todo;
 }
 
 void NewTodoDialog::checkOkButton()

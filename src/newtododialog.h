@@ -25,8 +25,6 @@
 
 #include <QtGui>
 
-class MatchList;
-
 class NewTodoDialog : public KDialog
 {
     Q_OBJECT
@@ -41,10 +39,8 @@ class NewTodoDialog : public KDialog
 
   private:
     MainModel *m_model;
-    QSortFilterProxyModel *m_proxyModel;
   
     QLineEdit *m_nameInput;
-    MatchList *m_matchList;
 };
 
 #endif

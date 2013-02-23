@@ -40,10 +40,8 @@ class NewGroupDialog : public KDialog
 
   private:
     MainModel *m_model;
-    QSortFilterProxyModel *m_proxyModel;
   
     QLineEdit *m_nameInput;
-    QListView *m_matchList;
 };
 
 #endif

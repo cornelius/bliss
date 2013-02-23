@@ -1,5 +1,3 @@
-* Get rid of completion in createtodo dialog.
-
 * Move global menu handling to MenuHandler, to save sending signals around
 
 * Initial data with "get started" list (hover bullet, create list, etc.)
