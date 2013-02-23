@@ -33,6 +33,9 @@ class HistoryView : public QWidget
 
     void loadHistory();
 
+  signals:
+    void showGroupView();
+    
   protected slots:
     void historyLoaded( const QStringList & );
 

@@ -21,17 +21,25 @@
 
 #include <QtGui>
 
+class MainModel;
+class SearchEdit;
+class SearchResultView;
+
 class Overview : public QWidget
 {
     Q_OBJECT
   public:
-    Overview();
+    Overview( MainModel * );
 
   signals:
     void showGroupView();
-    void showListView();
     void showHistory();
 
+  private:
+    MainModel *m_model;
+    
+    SearchEdit *m_searchEdit;
+    SearchResultView *m_searchResultView;
 };
 
 #endif

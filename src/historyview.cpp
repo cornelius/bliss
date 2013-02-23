@@ -22,11 +22,24 @@
 #include "mainmodel.h"
 #include "gitdir.h"
 
+#include <KLocale>
+
 HistoryView::HistoryView( MainModel *model )
   : m_model( model )
 {
   QBoxLayout *topLayout = new QVBoxLayout( this );
 
+  QBoxLayout *titleLayout = new QHBoxLayout;
+  topLayout->addLayout( titleLayout );
+  
+  titleLayout->addWidget( new QLabel( i18n("<b>History</b>") ) );
+  
+  titleLayout->addStretch( 1 );
+
+  QPushButton *button = new QPushButton( i18n("Go to group view") );
+  connect( button, SIGNAL( clicked() ), SIGNAL( showGroupView() ) );  
+  titleLayout->addWidget( button );
+  
   m_list = new QListWidget;
   topLayout->addWidget( m_list );
 

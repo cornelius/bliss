@@ -59,6 +59,8 @@ MainMenuItem::MainMenuItem()
   connect( menuItem, SIGNAL( clicked() ), SIGNAL( addList() ) );
   menuItem = m_fanMenu->addItem( i18n("Add\ntodo") );
   connect( menuItem, SIGNAL( clicked() ), SIGNAL( addTodo() ) );
+  menuItem = m_fanMenu->addItem( i18n("More...") );
+  connect( menuItem, SIGNAL( clicked() ), SIGNAL( showMore() ) );
 
   m_fanMenu->setupItems( 90 );
 

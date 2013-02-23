@@ -46,35 +46,6 @@ MainView::MainView(QWidget *parent)
   
   QBoxLayout *topLayout = new QVBoxLayout( this );
 
-  
-  QBoxLayout *buttonLayout = new QHBoxLayout;
-  topLayout->addLayout( buttonLayout );
-
-  // FIXME: Use proper icon
-  m_backButton = new QPushButton( "<" );
-  buttonLayout->addWidget( m_backButton );
-  connect( m_backButton, SIGNAL( clicked() ), SLOT( goBack() ) );
-  m_backButton->setEnabled( false );
-
-  buttonLayout->addStretch( 1 );
-
-  m_groupNameLabel = new QLabel;
-  buttonLayout->addWidget( m_groupNameLabel );
-
-  buttonLayout->addStretch( 1 );
-
-  m_searchEdit = new SearchEdit;
-  buttonLayout->addWidget( m_searchEdit );
-  connect( m_searchEdit, SIGNAL( search( const QString & ) ),
-    SLOT( showSearch( const QString & ) ) );
-  connect( m_searchEdit, SIGNAL( stopSearch() ), SLOT( stopSearch() ) );
-
-  QPushButton *button = new QPushButton( i18n("...") );
-  buttonLayout->addWidget( button );
-  connect( button, SIGNAL( clicked() ), SLOT( showOverview() ) );
-
-  button->setFocus();
-
   QBoxLayout *viewLayout = new QHBoxLayout;
   topLayout->addLayout( viewLayout );
 
@@ -83,10 +54,9 @@ MainView::MainView(QWidget *parent)
   
   m_listLayout = new QStackedLayout( m_groupWidget );
 
-  m_overview = new Overview;
+  m_overview = new Overview( m_model );
   m_listLayout->addWidget( m_overview );
   connect( m_overview, SIGNAL( showGroupView() ), SLOT( showGroupView() ) );
-  connect( m_overview, SIGNAL( showListView() ), SLOT( showListView() ) );
   connect( m_overview, SIGNAL( showHistory() ), SLOT( showHistory() ) );
 
   m_groupView = new GroupView( m_model );
@@ -99,13 +69,11 @@ MainView::MainView(QWidget *parent)
 
   m_historyView = new HistoryView( m_model );
   m_listLayout->addWidget( m_historyView );
-
-  m_searchResultView = new SearchResultView( m_model );
-  m_listLayout->addWidget( m_searchResultView );
+  connect( m_historyView, SIGNAL( showGroupView() ), SLOT( showGroupView() ) );
 
   m_settingsWidget = new SettingsWidget( m_model );
   topLayout->addWidget( m_settingsWidget );
-  connect( m_settingsWidget, SIGNAL( showView() ), SLOT( showView() ) );
+  connect( m_settingsWidget, SIGNAL( showView() ), SLOT( showGroupView() ) );
 
   m_settingsWidget->hide();
 
@@ -124,6 +92,7 @@ void MainView::connectGroupView( GroupView *groupView )
            SLOT( showGroup( const Bliss::Todo & ) ) );
   connect( groupView, SIGNAL( showSettings() ),
     SLOT( showSettings() ) );
+  connect( groupView, SIGNAL( showOverview() ), SLOT( showOverview() ) );
 }
 
 void MainView::readConfig()
@@ -237,16 +206,13 @@ void MainView::continueShowGroup()
     m_history.append( m_group.id() );
   }
 
-  m_backButton->setEnabled( m_history.size() > 1 );
   m_groupView->setBackButtonEnabled( m_history.size() > 1 );
   
-  m_groupNameLabel->setText( "<b>" + m_group.summary().value() + "</b>" );
-
   m_groupView->showGroup( m_group );
   m_listLayout->setCurrentWidget( m_groupView );
 }
 
-void MainView::showView()
+void MainView::showGroupView()
 {
   if ( m_group.id().isEmpty() ) {
     showRoot();
@@ -266,12 +232,6 @@ void MainView::showSettings()
 
 void MainView::goBack()
 {
-  if ( m_searchResultView->isVisible() ) {
-    m_searchEdit->setEmpty();
-    showGroupView();
-    return;
-  }
-
   m_history.takeLast();
   while ( !m_history.isEmpty() ) {
     QString id = m_history.last();
@@ -287,42 +247,12 @@ void MainView::goBack()
 
 void MainView::showOverview()
 {
-  m_backButton->hide();
-  m_groupNameLabel->setText( QString() );
   m_listLayout->setCurrentWidget( m_overview );
-}
-
-void MainView::showGroupView()
-{
-  m_backButton->show();
-  showView();
-}
-
-void MainView::showListView()
-{
-  m_backButton->show();
-  showView();
 }
 
 void MainView::showHistory()
 {
-  m_backButton->hide();
-  m_groupNameLabel->setText( i18n("<b>History</b>") );
   m_listLayout->setCurrentWidget( m_historyView );
 
   m_historyView->loadHistory();
-}
-
-void MainView::showSearch( const QString &text )
-{
-  m_groupNameLabel->setText( i18n("<b>Search Results</b>") );
-  m_backButton->setEnabled( true );
-
-  m_listLayout->setCurrentWidget( m_searchResultView );
-  m_searchResultView->search( text );
-}
-
-void MainView::stopSearch()
-{
-  showGroupView();
 }

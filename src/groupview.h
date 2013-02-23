@@ -63,6 +63,8 @@ class GroupView : public QWidget
 
   signals:
     void goBack();
+    void showOverview();
+    
     void newTodo();
     void showTodo( const Bliss::Todo & );
     void requestShowGroup( const Bliss::Todo & );
@@ -148,6 +150,8 @@ class GroupView : public QWidget
 
     TodoItemGroup m_newItems;
 
+    QGraphicsTextItem *m_titleItem;
+    
     ButtonItem *m_backButton;
     MainMenuItem *m_mainMenu;
     MagicMenuItem *m_magicMenu;

@@ -1,4 +1,5 @@
-* Integrate heading line into graphics view, maybe get rid of groupview.
+* Fix animation, when transitioning between groups.
+* Remember view position
 
 * More balanced view of lists (right margin, spacing between list bullet and
   text, bold title, ...)

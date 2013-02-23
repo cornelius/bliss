@@ -211,6 +211,8 @@ void GroupView::showGroup( const Bliss::Todo &group )
 
   if ( m_group.isValid() ) {
     m_previousItem = item( m_group );
+    
+    m_titleItem->setPlainText( m_group.summary().value() );
   }
 
   if ( m_previousItem ) {
@@ -514,6 +516,13 @@ void GroupView::createLabelItems()
 
 void GroupView::createMenuItems()
 {
+  m_titleItem = new QGraphicsTextItem();
+  m_scene->addItem( m_titleItem );
+  QFont font = m_titleItem->font();
+  font.setBold( true );
+  font.setPointSizeF( font.pointSizeF() * 1.5 );
+  m_titleItem->setFont( font );
+  
   m_backButton = new ButtonItem;
   m_scene->addItem( m_backButton );
   m_backButton->setItemSize( 50 );
@@ -534,6 +543,7 @@ void GroupView::createMenuItems()
   connect( m_mainMenu, SIGNAL( addGroup() ), SIGNAL( newGroup() ) );
   connect( m_mainMenu, SIGNAL( addList() ), SLOT( addList() ) );
   connect( m_mainMenu, SIGNAL( addTodo() ), SIGNAL( newTodo() ) );
+  connect( m_mainMenu, SIGNAL( showMore() ), SIGNAL( showOverview() ) );
 
   m_groupAdderItem = new GroupAdderItem( m_model );
   m_scene->addItem( m_groupAdderItem );
@@ -551,6 +561,12 @@ void GroupView::positionMenuItems()
   QPointF lowerLeftScene = m_view->mapToScene( lowerLeft );
 
   QPointF upperLeftScene = m_view->mapToScene( 0, 0 );
+
+  if ( m_titleItem ) {
+    m_titleItem->setPos( ( upperRightScene.x() + upperLeftScene.x() ) / 2 -
+      m_titleItem->boundingRect().width() / 2,
+      upperLeftScene.y() - m_titleItem->boundingRect().height() / 2 + 50 );
+  }
   
   if ( m_backButton ) {
     m_backButton->setPos( upperLeftScene.x() + 50, upperLeftScene.y() + 50 );

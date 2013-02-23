@@ -19,34 +19,50 @@
 
 #include "overview.h"
 
+#include "searchedit.h"
+#include "searchresultview.h"
+
 #include <KLocale>
 #include <KStandardDirs>
 
-Overview::Overview()
+Overview::Overview( MainModel *model )
+  : m_model( model )
 {
   QBoxLayout *topLayout = new QHBoxLayout( this );
 
-  topLayout->addStretch( 1 );
+  
+  QBoxLayout *searchLayout = new QVBoxLayout;
+  topLayout->addLayout( searchLayout, 1 );
+  
+  m_searchEdit = new SearchEdit;
+  searchLayout->addWidget( m_searchEdit );
 
+  m_searchResultView = new SearchResultView( m_model );
+  searchLayout->addWidget( m_searchResultView );
+
+  connect( m_searchEdit, SIGNAL( search( const QString & ) ),
+    m_searchResultView, SLOT( search( const QString & ) ) );
+
+  
+  QBoxLayout *rightLayout = new QVBoxLayout;
+  topLayout->addLayout( rightLayout, 1 );
+
+  rightLayout->addStretch( 1 );
+  
   QBoxLayout *buttonLayout = new QVBoxLayout;
-  topLayout->addLayout( buttonLayout );
+  rightLayout->addLayout( buttonLayout );
 
+  buttonLayout->addStretch( 1 );
+  
   QPushButton *button = new QPushButton( i18n("Group view") );
   buttonLayout->addWidget( button );
   connect( button, SIGNAL( clicked() ), SIGNAL( showGroupView() ) );
-
-  button = new QPushButton( i18n("List view") );
-  buttonLayout->addWidget( button );
-  connect( button, SIGNAL( clicked() ), SIGNAL( showListView() ) );
 
   button = new QPushButton( i18n("History") );
   buttonLayout->addWidget( button );
   connect( button, SIGNAL( clicked() ), SIGNAL( showHistory() ) );
 
-  topLayout->addStretch( 1 );
-
-  QBoxLayout *rightLayout = new QVBoxLayout;
-  topLayout->addLayout( rightLayout );
+  rightLayout->addStretch( 1 );
 
   QString logoPath = KStandardDirs::locate( "appdata", "bliss-logo.png" );
   QPixmap logoPixmap = QPixmap( logoPath );
@@ -62,7 +78,7 @@ Overview::Overview()
   text += i18n("Bliss - the humane todo list");
   text += "<br/>";
   text += "<br/>";
-  text += "Copyright (c) 2011 Cornelius Schumacher";
+  text += "Copyright (c) 2013 Cornelius Schumacher";
   text += "<br/>";
   text += "This program is distributed under the terms of the ";
   text += "<a href=\"http://gpl.org\">GPL</a>";
@@ -70,5 +86,5 @@ Overview::Overview()
 
   about->setText( text );
 
-  topLayout->addStretch( 1 );
+  rightLayout->addStretch( 1 );
 }

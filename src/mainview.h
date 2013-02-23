@@ -58,15 +58,13 @@ class MainView : public QWidget
     void removeGroup( const Bliss::Todo &group );
 
     void showRoot();
-    void showView();
+    void showGroupView();
     void goBack();
     void showGroup( const Bliss::Todo & );
 
     void showSettings();
 
     void showOverview();
-    void showGroupView();
-    void showListView();
     void showHistory();
 
   signals:
@@ -78,9 +76,6 @@ class MainView : public QWidget
   protected slots:
     void continueShowGroup();
 
-    void showSearch( const QString & );
-    void stopSearch();
-
   private:
     MainModel *m_model;
 
@@ -88,16 +83,12 @@ class MainView : public QWidget
 
     History m_history;
 
-    QPushButton *m_backButton;
-    QLabel *m_groupNameLabel;
-    SearchEdit *m_searchEdit;
     SettingsWidget *m_settingsWidget;
     QWidget *m_groupWidget;
     QStackedLayout *m_listLayout;
     GroupView *m_groupView;
     Overview *m_overview;
     HistoryView *m_historyView;
-    SearchResultView *m_searchResultView;
 };
 
 #endif
