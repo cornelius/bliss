@@ -1,5 +1,8 @@
 * Integrate heading line into graphics view, maybe get rid of groupview.
 
+* More balanced view of lists (right margin, spacing between list bullet and
+  text, bold title, ...)
+
 * Initial data with "get started" list (hover bullet, create list, etc.)
 
 * Make todos on canvas positional todos without list, but an individual
