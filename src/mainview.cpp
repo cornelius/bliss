@@ -22,7 +22,6 @@
 #include "mainview.h"
 
 #include "mainmodel.h"
-#include "grouplistview.h"
 #include "groupgraphicsview.h"
 #include "newtododialog.h"
 #include "newgroupdialog.h"
@@ -90,10 +89,6 @@ MainView::MainView(QWidget *parent)
   connect( m_overview, SIGNAL( showListView() ), SLOT( showListView() ) );
   connect( m_overview, SIGNAL( showHistory() ), SLOT( showHistory() ) );
 
-  m_groupListView = new GroupListView( m_model );
-  m_listLayout->addWidget( m_groupListView );
-  connectGroupView( m_groupListView );
-
   m_groupGraphicsView = new GroupGraphicsView( m_model );
   m_listLayout->addWidget( m_groupGraphicsView );
   connectGroupView( m_groupGraphicsView );
@@ -121,7 +116,7 @@ MainView::~MainView()
 {
 }
 
-void MainView::connectGroupView( GroupView *groupView )
+void MainView::connectGroupView( GroupGraphicsView *groupView )
 {
   connect( groupView, SIGNAL( goBack() ), SLOT( goBack() ) );
   connect( groupView, SIGNAL( newTodo() ), SLOT( newTodo() ) );
@@ -155,8 +150,6 @@ void MainView::readData( const QString &file )
     KMessageBox::error( this, i18n("Error reading data file") );
     return;
   }
-
-  m_groupListView->setItemModel( m_model->itemModel() );
 
   m_history.setLocationId( m_model->locationId() );
   m_history.set( Settings::history() );
@@ -249,13 +242,8 @@ void MainView::continueShowGroup()
   
   m_groupNameLabel->setText( "<b>" + m_group.summary().value() + "</b>" );
 
-  if ( m_settingsWidget->fancyMode() ) {
-    m_groupGraphicsView->showGroup( m_group );
-    m_listLayout->setCurrentWidget( m_groupGraphicsView );
-  } else {
-    m_groupListView->showGroup( m_group );
-    m_listLayout->setCurrentWidget( m_groupListView );
-  }
+  m_groupGraphicsView->showGroup( m_group );
+  m_listLayout->setCurrentWidget( m_groupGraphicsView );
 }
 
 void MainView::showView()

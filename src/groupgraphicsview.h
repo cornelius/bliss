@@ -19,8 +19,9 @@
 #ifndef GROUPGRAPHICSVIEW_H
 #define GROUPGRAPHICSVIEW_H
 
+#include "bliss/bliss.h"
+
 #include "fanmenu.h"
-#include "groupview.h"
 
 #include <QtGui>
 
@@ -45,7 +46,7 @@ struct TodoItemGroup {
   TodoItem *previousGroup;
 };
 
-class GroupGraphicsView : public GroupView
+class GroupGraphicsView : public QWidget
 {
     Q_OBJECT
   public:
@@ -57,8 +58,17 @@ class GroupGraphicsView : public GroupView
     void setAdderGroup( const Bliss::Todo &group );
 
     void setBackButtonEnabled( bool );
-    
+
+    void showGroup( const Bliss::Todo & );
+
   signals:
+    void goBack();
+    void newTodo();
+    void showTodo( const Bliss::Todo & );
+    void requestShowGroup( const Bliss::Todo & );
+    
+    void showSettings();
+
     void newGroup();
     void newList();
     void removeGroup( const Bliss::Todo &group );
@@ -66,8 +76,6 @@ class GroupGraphicsView : public GroupView
     void closeRequested();
 
   protected:
-    void doShowGroup();
-
     TodoItemGroup prepareTodoItems( ItemPlacer * );
     void createMenuItems();
     void createLabelItems();
@@ -127,6 +135,11 @@ class GroupGraphicsView : public GroupView
     void slotTodoRemoved( const Bliss::Todo & );
     
   private:
+    MainModel *m_model;
+
+    Bliss::Todo m_group;
+    Bliss::Todo m_previousGroup;
+
     QList<TodoItem *> m_items;
     QList<LabelItem *> m_labelItems;
     QList<ListItem *> m_listItems;

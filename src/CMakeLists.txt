@@ -21,7 +21,6 @@ set(bliss_bin_SRCS
   groupadderitem.cpp
   historyview.cpp
   overview.cpp
-  groupview.cpp
   roundedrectitem.cpp
   settingswidget.cpp
   magicmenuitem.cpp
@@ -34,7 +33,6 @@ set(bliss_bin_SRCS
   todoitem.cpp
   groupgraphicsview.cpp
   newtododialog.cpp
-  grouplistview.cpp
   mainwindow.cpp
   main.cpp
   mainview.cpp

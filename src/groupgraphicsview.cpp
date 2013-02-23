@@ -40,7 +40,7 @@
 #include <KRandom>
 
 GroupGraphicsView::GroupGraphicsView( MainModel *model, QWidget *parent )
-  : GroupView( model, parent ), m_backButton( 0 ), m_mainMenu( 0 ),
+  : QWidget( parent ), m_model( model ), m_backButton( 0 ), m_mainMenu( 0 ),
     m_magicMenu( 0 ),
     m_groupAdderItem( 0 ),
     m_morphToAnimation( 0 ), m_morphFromAnimation( 0 ),
@@ -113,7 +113,7 @@ void GroupGraphicsView::slotTodoChanged( const Bliss::Todo &todo )
 {
   TodoItem *i = item( todo );
   if ( i ) {
-    if ( todo.groups().findGroup( group().id() ).isValid() ) {
+    if ( todo.groups().findGroup( m_group.id() ).isValid() ) {
       i->updateItem( todo );
     } else {
       slotTodoRemoved( todo);
@@ -128,7 +128,7 @@ void GroupGraphicsView::slotTodoChanged( const Bliss::Todo &todo )
 Bliss::ViewList GroupGraphicsView::viewList( const Bliss::Todo &todo )
 {
   Bliss::ViewList list;
-  Bliss::ViewList::List lists = model()->lists( group() );
+  Bliss::ViewList::List lists = m_model->lists( m_group );
   foreach( Bliss::ViewList l, lists ) {
     foreach( Bliss::TodoId id, l.todoSequence().todoIdList() ) {
       if ( id.value() == todo.id() ) {
@@ -183,7 +183,7 @@ void GroupGraphicsView::slotTodoRemoved( const Bliss::Todo &todo )
       listItem->removeItem( todoItem );
       delete todoItem;
 
-      Bliss::ViewList list = model()->groupView( group() )
+      Bliss::ViewList list = m_model->groupView( m_group )
         .findViewList( listItem->list().id() );
       listItem->setList( list );
     }    
@@ -196,8 +196,11 @@ void GroupGraphicsView::recreateItems()
   placeItems();
 }
 
-void GroupGraphicsView::doShowGroup()
+void GroupGraphicsView::showGroup( const Bliss::Todo &group )
 {
+  m_previousGroup = m_group;
+  m_group = group;
+
   m_previousItem = 0;
 
   if ( m_removeItemsAnimation ) m_removeItemsAnimation->stop();
@@ -206,8 +209,8 @@ void GroupGraphicsView::doShowGroup()
   m_itemPlacer->stop();
   m_itemUnplacer->stop();
 
-  if ( group().isValid() ) {
-    m_previousItem = item( group() );
+  if ( m_group.isValid() ) {
+    m_previousItem = item( m_group );
   }
 
   if ( m_previousItem ) {
@@ -391,20 +394,20 @@ TodoItemGroup GroupGraphicsView::prepareTodoItems( ItemPlacer *placer )
 {
   TodoItemGroup result;
   
-  Bliss::Todo::List todos = model()->unlistedTodosOfGroup( group() );
+  Bliss::Todo::List todos = m_model->unlistedTodosOfGroup( m_group );
 
   foreach( Bliss::Todo todo, todos ) {
     TodoItem *item = createTodoItem( todo );
     result.items.append( item );
     
-    if ( previousGroup().isValid() &&
-         item->todo().id() == previousGroup().id() ) {
+    if ( m_previousGroup.isValid() &&
+         item->todo().id() == m_previousGroup.id() ) {
       result.previousGroup = item;
     }
   }
 
   // Create handle item for adding new todos
-  TodoItem *item = new TodoItem( model() );
+  TodoItem *item = new TodoItem( m_model );
   connect( item, SIGNAL( itemPressed() ), SIGNAL( newTodo() ) );
   result.items.append( item );
   
@@ -415,7 +418,7 @@ TodoItemGroup GroupGraphicsView::prepareTodoItems( ItemPlacer *placer )
 
 TodoItem *GroupGraphicsView::createTodoItem( const Bliss::Todo &todo )
 {
-  TodoItem *item = new TodoItem( model(), m_menuHandler, todo );
+  TodoItem *item = new TodoItem( m_model, m_menuHandler, todo );
 
   connect( item, SIGNAL( removeGroup( const Bliss::Todo & ) ),
     SIGNAL( removeGroup( const Bliss::Todo & ) ) );
@@ -447,7 +450,7 @@ QPointF GroupGraphicsView::preparePositions( const QList<TodoItem *> &todoItems,
 
   bool firstItem = true;
 
-  Bliss::GroupView view = model()->groupView( group() );
+  Bliss::GroupView view = m_model->groupView( m_group );
 
   foreach( TodoItem *item, todoItems ) {
     qreal posX = x;
@@ -493,7 +496,7 @@ void GroupGraphicsView::createListItems()
 {
   clearListItems();
   
-  Bliss::GroupView view = model()->groupView( group() );
+  Bliss::GroupView view = m_model->groupView( m_group );
 
   foreach( Bliss::ViewList list, view.viewListList() ) {
     createListItem( list );
@@ -502,7 +505,7 @@ void GroupGraphicsView::createListItems()
 
 void GroupGraphicsView::createLabelItems()
 {
-  Bliss::GroupView view = model()->groupView( group() );
+  Bliss::GroupView view = m_model->groupView( m_group );
 
   foreach( Bliss::ViewLabel label, view.viewLabelList() ) {
     createLabelItem( label );
@@ -532,7 +535,7 @@ void GroupGraphicsView::createMenuItems()
   connect( m_mainMenu, SIGNAL( addList() ), SLOT( addList() ) );
   connect( m_mainMenu, SIGNAL( addTodo() ), SIGNAL( newTodo() ) );
 
-  m_groupAdderItem = new GroupAdderItem( model() );
+  m_groupAdderItem = new GroupAdderItem( m_model );
   m_scene->addItem( m_groupAdderItem );
   m_groupAdderItem->setZValue( -100 );
 }
@@ -571,7 +574,7 @@ void GroupGraphicsView::positionAbsoluteItems()
 
 void GroupGraphicsView::slotDone( const Bliss::Todo &todo )
 {
-  model()->deleteTodo( todo, group() );
+  m_model->deleteTodo( todo, m_group );
 }
 
 void GroupGraphicsView::slotItemMoved( TodoItem *todoItem,
@@ -596,17 +599,17 @@ void GroupGraphicsView::slotItemMoved( TodoItem *todoItem,
     if ( listSource ) {
       listSource->removeItem( todoItem );
       delete todoItem;
-      model()->moveTodo( todoItem->todo(), group(), listSource->list(),
+      m_model->moveTodo( todoItem->todo(), m_group, listSource->list(),
                          groupTarget );
     } else {
-      model()->moveTodo( todoItem->todo(), group(), groupTarget );
+      m_model->moveTodo( todoItem->todo(), m_group, groupTarget );
     }
   } else {
     if ( listTarget ) {
       if ( listSource == listTarget ) {
         // Move on same list
         listTarget->repositionItems();
-        model()->saveViewList( group(), listTarget->list() );
+        m_model->saveViewList( m_group, listTarget->list() );
       } else {
         if ( listSource ) {
           // Move to other list
@@ -617,7 +620,7 @@ void GroupGraphicsView::slotItemMoved( TodoItem *todoItem,
           listSource->removeItem( todoItem );
           delete todoItem;
 
-          model()->saveMoveFromListToList( group(), newItem->todo(),
+          m_model->saveMoveFromListToList( m_group, newItem->todo(),
             listSource->list(), listTarget->list() );
         } else {
           // Move from canvas to list
@@ -633,7 +636,7 @@ void GroupGraphicsView::slotItemMoved( TodoItem *todoItem,
             sortedCanvasIds.append( i->todo().id() );
           }
           
-          model()->saveMoveFromCanvasToList( group(), newItem->todo(),
+          m_model->saveMoveFromCanvasToList( m_group, newItem->todo(),
             listTarget->list(), sortedCanvasIds );
 
           m_itemPlacer->prepare();
@@ -657,13 +660,13 @@ void GroupGraphicsView::slotItemMoved( TodoItem *todoItem,
           map.insert( i->pos().y(), i->todo().id() );
         }
 
-        model()->saveMoveFromListToCanvas( group(), newItem->todo(),
+        m_model->saveMoveFromListToCanvas( m_group, newItem->todo(),
           listSource->list(), map.values() );
 
         m_itemPlacer->prepare();
         QList<TodoItem *> sortedItems;
 
-        Bliss::Todo::List todos = model()->unlistedTodosOfGroup( group() );
+        Bliss::Todo::List todos = m_model->unlistedTodosOfGroup( m_group );
         foreach( Bliss::Todo todo, todos ) {
           sortedItems.append( item( todo ) );
         }
@@ -683,11 +686,11 @@ void GroupGraphicsView::slotItemMoved( TodoItem *todoItem,
         foreach( TodoItem *i, m_items ) {
           map.insert( i->pos().y(), i->todo().id() );
         }
-        model()->saveViewSequence( group(), map.values() );
+        m_model->saveViewSequence( m_group, map.values() );
 
         QList<TodoItem *> sortedItems;
 
-        Bliss::Todo::List todos = model()->unlistedTodosOfGroup( group() );
+        Bliss::Todo::List todos = m_model->unlistedTodosOfGroup( m_group );
         foreach( Bliss::Todo todo, todos ) {
           sortedItems.append( item( todo ) );
         }
@@ -706,7 +709,7 @@ void GroupGraphicsView::slotItemMoved( TodoItem *todoItem,
 
 void GroupGraphicsView::addList()
 {
-  NewListDialog *dialog = new NewListDialog( model(), this );
+  NewListDialog *dialog = new NewListDialog( m_model, this );
   if ( dialog->exec() == QDialog::Accepted ) {
     Bliss::ViewList list = dialog->list();
     
@@ -716,7 +719,7 @@ void GroupGraphicsView::addList()
     
     createListItem( list );
     
-    model()->saveViewList( group(), list );
+    m_model->saveViewList( m_group, list );
   }
   return;
 }
@@ -743,7 +746,7 @@ void GroupGraphicsView::addLabel( const QPointF &pos )
     
     createLabelItem( label );
     
-    model()->saveViewLabel( group(), label );
+    m_model->saveViewLabel( m_group, label );
   }
 }
 
@@ -752,7 +755,7 @@ void GroupGraphicsView::removeLabel( LabelItem *item )
   m_labelItems.removeAll( item );
 
   delete item;
-  model()->removeViewLabel( group(), item->label() );
+  m_model->removeViewLabel( m_group, item->label() );
 }
 
 void GroupGraphicsView::removeList( ListItem *item )
@@ -760,7 +763,7 @@ void GroupGraphicsView::removeList( ListItem *item )
   m_listItems.removeAll( item );
 
   delete item;
-  model()->removeViewList( group(), item->list() );
+  m_model->removeViewList( m_group, item->list() );
 }
 
 void GroupGraphicsView::renameLabel( LabelItem *item )
@@ -774,13 +777,13 @@ void GroupGraphicsView::renameLabel( LabelItem *item )
   if ( ok ) {
     label.setText( name );
     item->setLabel( label );
-    model()->saveViewLabel( group(), label );
+    m_model->saveViewLabel( m_group, label );
   }
 }
 
 LabelItem *GroupGraphicsView::createLabelItem( const Bliss::ViewLabel &label )
 {
-  LabelItem *item = new LabelItem( model(), group(), label );
+  LabelItem *item = new LabelItem( m_model, m_group, label );
 
   connect( item, SIGNAL( removeLabel( LabelItem * ) ),
     SLOT( removeLabel( LabelItem * ) ) );
@@ -799,7 +802,7 @@ LabelItem *GroupGraphicsView::createLabelItem( const Bliss::ViewLabel &label )
 
 ListItem *GroupGraphicsView::createListItem( const Bliss::ViewList &list )
 {
-  ListItem *item = new ListItem( model(), m_menuHandler, group(), list );
+  ListItem *item = new ListItem( m_model, m_menuHandler, m_group, list );
   
   connect( item, SIGNAL( removeList( ListItem * ) ),
     SLOT( removeList( ListItem * ) ) );
@@ -824,7 +827,7 @@ ListItem *GroupGraphicsView::createListItem( const Bliss::ViewList &list )
 
 void GroupGraphicsView::resetLayout()
 {
-  model()->clearViewPositions( group() );
+  m_model->clearViewPositions( m_group );
 
   foreach( TodoItem *item, m_items ) {
     if ( item->pos() != item->defaultPos() ) {
