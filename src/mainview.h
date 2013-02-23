@@ -31,7 +31,6 @@ class QPainter;
 class KUrl;
 class MainModel;
 class GroupView;
-class PersonView;
 class SettingsWidget;
 class Overview;
 class HistoryView;
@@ -96,7 +95,6 @@ class MainView : public QWidget
     QWidget *m_groupWidget;
     QStackedLayout *m_listLayout;
     GroupView *m_groupView;
-    PersonView *m_personView;
     Overview *m_overview;
     HistoryView *m_historyView;
     SearchResultView *m_searchResultView;
