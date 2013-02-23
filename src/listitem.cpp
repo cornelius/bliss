@@ -145,10 +145,14 @@ TodoItem *ListItem::createItem( const Bliss::Todo &todo )
 {
   TodoItem *item = new TodoItem( m_model, m_menuHandler, todo );
 
+  connect( item, SIGNAL( removeGroup( const Bliss::Todo & ) ),
+    SIGNAL( removeGroup( const Bliss::Todo & ) ) );
+  connect( item, SIGNAL( showGroup( const Bliss::Todo & ) ),
+    SIGNAL( showGroup( const Bliss::Todo & ) ) );
   connect( item, SIGNAL( done( const Bliss::Todo & ) ),
-            SIGNAL( done( const Bliss::Todo & ) ) );
+    SIGNAL( done( const Bliss::Todo & ) ) );
   connect( item, SIGNAL( itemMoved( TodoItem *, const QPointF & ) ),
-            SLOT( slotItemMoved( TodoItem *, const QPointF & ) ) );
+    SLOT( slotItemMoved( TodoItem *, const QPointF & ) ) );
 
   item->setParentItem( this );
   

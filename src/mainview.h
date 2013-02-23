@@ -58,7 +58,6 @@ class MainView : public QWidget
     void newList();
     void newSubGroup();
 
-    void cloneGroup( const Bliss::Todo &group );
     void removeGroup( const Bliss::Todo &group );
 
     void showRoot();

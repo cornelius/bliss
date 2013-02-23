@@ -88,6 +88,9 @@ class ListItem : public QObject, public RoundedRectItem
 
     void done( const Bliss::Todo & );
 
+    void showGroup( const Bliss::Todo & );
+    void removeGroup( const Bliss::Todo & );
+    
     void itemChecked( const Bliss::Todo &, bool );
 
     void itemPressed();

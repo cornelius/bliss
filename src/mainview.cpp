@@ -99,8 +99,6 @@ MainView::MainView(QWidget *parent)
   connectGroupView( m_groupGraphicsView );
   connect( m_groupGraphicsView, SIGNAL( newGroup() ), SLOT( newSubGroup() ) );
   connect( m_groupGraphicsView, SIGNAL( newList() ), SLOT( newList() ) );
-  connect( m_groupGraphicsView, SIGNAL( cloneGroup( const Bliss::Todo & ) ),
-    SLOT( cloneGroup( const Bliss::Todo & ) ) );
   connect( m_groupGraphicsView, SIGNAL( removeGroup( const Bliss::Todo & ) ),
     SLOT( removeGroup( const Bliss::Todo & ) ) );
 
@@ -209,38 +207,9 @@ void MainView::newList()
   return;
 }
 
-void MainView::cloneGroup( const Bliss::Todo &group )
-{
-  bool ok;
-  QString name = KInputDialog::getText( i18n("Clone Group"),
-    i18n("Enter name of new group"),
-    i18n("Clone of %1").arg( group.summary().value() ),
-    &ok );
-  if ( ok ) {
-    Bliss::Todo todo;
-    todo.setType( "group" );
-    Bliss::Summary n;
-    n.setValue( name );
-    todo.setSummary( n );
-    Bliss::Todo new_group = m_model->insert( todo,
-      i18n("Clone group '%1' to '%2'").arg( group.summary().value() )
-        .arg( name ) );
-
-    Bliss::Todo::List members = m_model->todosOfGroup( group );
-    foreach( Bliss::Todo member, members ) {
-      m_model->addTodo( member, new_group );
-    }
-
-    m_model->addTodo( new_group, m_group );
-    
-    showGroup( new_group );
-  }
-}
-
 void MainView::removeGroup( const Bliss::Todo &group )
 {
   m_model->removeGroup( group );
-  goBack();
 }
 
 void MainView::newTodo()

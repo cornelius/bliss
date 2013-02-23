@@ -53,11 +53,7 @@ MainMenuItem::MainMenuItem()
   m_fanMenu->setRadius( 220 );
   m_fanMenu->setSpacing( 5 );
 
-  FanMenuItem *menuItem = m_fanMenu->addItem( i18n("Clone\ngroup") );
-  connect( menuItem, SIGNAL( clicked() ), SIGNAL( cloneGroup() ) );
-  menuItem = m_fanMenu->addItem( i18n("Remove\ngroup") );
-  connect( menuItem, SIGNAL( clicked() ), SIGNAL( removeGroup() ) );
-  menuItem = m_fanMenu->addItem( i18n("Add\ngroup") );
+  FanMenuItem *menuItem = m_fanMenu->addItem( i18n("Add\ngroup") );
   connect( menuItem, SIGNAL( clicked() ), SIGNAL( addGroup() ) );
   menuItem = m_fanMenu->addItem( i18n("Add\nlist") );
   connect( menuItem, SIGNAL( clicked() ), SIGNAL( addList() ) );

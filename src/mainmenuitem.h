@@ -32,8 +32,6 @@ class MainMenuItem : public QObject, public QGraphicsEllipseItem
     void setItemSize( int size );
 
   signals:
-    void cloneGroup();
-    void removeGroup();
     void addTodo();
     void addGroup();
     void addList();

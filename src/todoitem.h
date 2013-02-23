@@ -68,6 +68,7 @@ class TodoItem : public QObject, public QGraphicsItemGroup
     
   signals:
     void showGroup( const Bliss::Todo & );
+    void removeGroup( const Bliss::Todo & );
   
     void done( const Bliss::Todo & );
 
@@ -91,6 +92,7 @@ class TodoItem : public QObject, public QGraphicsItemGroup
     void mouseReleaseEvent( QGraphicsSceneMouseEvent *event );
 
   protected slots:
+    void emitRemoveGroup();
     void emitShowGroup();
     void emitDone();
 

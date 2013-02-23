@@ -405,6 +405,8 @@ TodoItem *GroupGraphicsView::createTodoItem( const Bliss::Todo &todo )
 {
   TodoItem *item = new TodoItem( model(), m_menuHandler, todo );
 
+  connect( item, SIGNAL( removeGroup( const Bliss::Todo & ) ),
+    SIGNAL( removeGroup( const Bliss::Todo & ) ) );
   connect( item, SIGNAL( showGroup( const Bliss::Todo & ) ),
     SIGNAL( requestShowGroup( const Bliss::Todo & ) ) );
   connect( item, SIGNAL( done( const Bliss::Todo & ) ),
@@ -508,8 +510,6 @@ void GroupGraphicsView::createMenuItems()
   m_mainMenu = new MainMenuItem();
   m_scene->addItem( m_mainMenu );
 
-  connect( m_mainMenu, SIGNAL( cloneGroup() ), SLOT( emitCloneGroup() ) );
-  connect( m_mainMenu, SIGNAL( removeGroup() ), SLOT( emitRemoveGroup() ) );
   connect( m_mainMenu, SIGNAL( addGroup() ), SIGNAL( newGroup() ) );
   connect( m_mainMenu, SIGNAL( addList() ), SLOT( addList() ) );
   connect( m_mainMenu, SIGNAL( addTodo() ), SIGNAL( newTodo() ) );
@@ -784,7 +784,11 @@ ListItem *GroupGraphicsView::createListItem( const Bliss::ViewList &list )
     SLOT( slotDone( const Bliss::Todo & ) ) );
   connect( item, SIGNAL( itemMoved( TodoItem *, const QPointF & ) ),
     SLOT( slotItemMoved( TodoItem *, const QPointF & ) ) );
-
+  connect( item, SIGNAL( showGroup( const Bliss::Todo & ) ),
+    SIGNAL( requestShowGroup( const Bliss::Todo & ) ) );
+  connect( item, SIGNAL( removeGroup( const Bliss::Todo & ) ),
+    SIGNAL( removeGroup( const Bliss::Todo & ) ) );
+  
   m_scene->addItem( item );
 
   item->setPos( list.x(), list.y() );
@@ -810,16 +814,6 @@ void GroupGraphicsView::resetLayout()
       animation->start();
     }
   }
-}
-
-void GroupGraphicsView::emitCloneGroup()
-{
-  emit cloneGroup( group() );
-}
-
-void GroupGraphicsView::emitRemoveGroup()
-{
-  emit removeGroup( group() );
 }
 
 TodoItem *GroupGraphicsView::item( const Bliss::Todo &identity ) const

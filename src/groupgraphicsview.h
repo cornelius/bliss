@@ -58,7 +58,6 @@ class GroupGraphicsView : public GroupView
   signals:
     void newGroup();
     void newList();
-    void cloneGroup( const Bliss::Todo &group );
     void removeGroup( const Bliss::Todo &group );
     
     void closeRequested();
@@ -110,9 +109,6 @@ class GroupGraphicsView : public GroupView
 
     void slotItemMoved( TodoItem *item, const QPointF &pos );
  
-    void emitCloneGroup();
-    void emitRemoveGroup();
-
     void addLabelClicked();
 
     void hideGlobalMenu();
