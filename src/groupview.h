@@ -16,8 +16,8 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
     USA.
 */
-#ifndef GROUPGRAPHICSVIEW_H
-#define GROUPGRAPHICSVIEW_H
+#ifndef GROUPVIEW_H
+#define GROUPVIEW_H
 
 #include "bliss/bliss.h"
 
@@ -46,11 +46,11 @@ struct TodoItemGroup {
   TodoItem *previousGroup;
 };
 
-class GroupGraphicsView : public QWidget
+class GroupView : public QWidget
 {
     Q_OBJECT
   public:
-    GroupGraphicsView( MainModel *, QWidget *parent = 0 );
+    GroupView( MainModel *, QWidget *parent = 0 );
 
     void readConfig();
     void writeConfig();

@@ -17,7 +17,7 @@
     USA.
 */
 
-#include "groupgraphicsview.h"
+#include "groupview.h"
 
 #include "mainmodel.h"
 #include "blissitemmodel.h"
@@ -39,7 +39,7 @@
 #include <KInputDialog>
 #include <KRandom>
 
-GroupGraphicsView::GroupGraphicsView( MainModel *model, QWidget *parent )
+GroupView::GroupView( MainModel *model, QWidget *parent )
   : QWidget( parent ), m_model( model ), m_backButton( 0 ), m_mainMenu( 0 ),
     m_magicMenu( 0 ),
     m_groupAdderItem( 0 ),
@@ -85,7 +85,7 @@ GroupGraphicsView::GroupGraphicsView( MainModel *model, QWidget *parent )
   setMinimumWidth( 50 );
 }
 
-void GroupGraphicsView::readConfig()
+void GroupView::readConfig()
 {
   if ( Settings::groupAdderExpanded() ) m_groupAdderItem->expand();
   if ( Settings::groupAdderGroupsExpanded() ) {
@@ -93,14 +93,14 @@ void GroupGraphicsView::readConfig()
   }
 }
 
-void GroupGraphicsView::writeConfig()
+void GroupView::writeConfig()
 {
   Settings::setGroupAdderExpanded( m_groupAdderItem->isExpanded() );
   Settings::setGroupAdderGroupsExpanded( m_groupAdderItem->shownAsSidebar() );
   Settings::setAdderGroup( m_groupAdderItem->group().id() );
 }
 
-void GroupGraphicsView::setBackButtonEnabled( bool enabled )
+void GroupView::setBackButtonEnabled( bool enabled )
 {
   if ( enabled ) {
     m_backButton->show();
@@ -109,7 +109,7 @@ void GroupGraphicsView::setBackButtonEnabled( bool enabled )
   }
 }
 
-void GroupGraphicsView::slotTodoChanged( const Bliss::Todo &todo )
+void GroupView::slotTodoChanged( const Bliss::Todo &todo )
 {
   TodoItem *i = item( todo );
   if ( i ) {
@@ -125,7 +125,7 @@ void GroupGraphicsView::slotTodoChanged( const Bliss::Todo &todo )
   }
 }
 
-Bliss::ViewList GroupGraphicsView::viewList( const Bliss::Todo &todo )
+Bliss::ViewList GroupView::viewList( const Bliss::Todo &todo )
 {
   Bliss::ViewList list;
   Bliss::ViewList::List lists = m_model->lists( m_group );
@@ -141,7 +141,7 @@ Bliss::ViewList GroupGraphicsView::viewList( const Bliss::Todo &todo )
   return list;
 }
 
-void GroupGraphicsView::slotTodoAdded( const Bliss::Todo &todo )
+void GroupView::slotTodoAdded( const Bliss::Todo &todo )
 {
   Bliss::ViewList list = viewList( todo );
   
@@ -165,7 +165,7 @@ void GroupGraphicsView::slotTodoAdded( const Bliss::Todo &todo )
   }
 }
 
-void GroupGraphicsView::slotTodoRemoved( const Bliss::Todo &todo )
+void GroupView::slotTodoRemoved( const Bliss::Todo &todo )
 {
   TodoItem *todoItem = item( todo );
   if ( todoItem ) {
@@ -190,13 +190,13 @@ void GroupGraphicsView::slotTodoRemoved( const Bliss::Todo &todo )
   }
 }
 
-void GroupGraphicsView::recreateItems()
+void GroupView::recreateItems()
 {
   m_previousItem = 0;
   placeItems();
 }
 
-void GroupGraphicsView::showGroup( const Bliss::Todo &group )
+void GroupView::showGroup( const Bliss::Todo &group )
 {
   m_previousGroup = m_group;
   m_group = group;
@@ -224,7 +224,7 @@ void GroupGraphicsView::showGroup( const Bliss::Todo &group )
   }
 }
 
-void GroupGraphicsView::hideItems()
+void GroupView::hideItems()
 {
   if ( !m_removeItemsAnimation ) {
     m_removeItemsAnimation = new QParallelAnimationGroup( this );
@@ -246,7 +246,7 @@ void GroupGraphicsView::hideItems()
   m_removeItemsAnimation->start();  
 }
 
-void GroupGraphicsView::clearItems()
+void GroupView::clearItems()
 {
   foreach( TodoItem *item, m_items ) {
     delete item;
@@ -264,7 +264,7 @@ void GroupGraphicsView::clearItems()
   m_globalMenu = 0;
 }
 
-void GroupGraphicsView::clearListItems()
+void GroupView::clearListItems()
 {
   foreach( ListItem *item, m_listItems ) {
     delete item;
@@ -272,7 +272,7 @@ void GroupGraphicsView::clearListItems()
   m_listItems.clear();
 }
 
-void GroupGraphicsView::placeItems()
+void GroupView::placeItems()
 {
   bool doAnimation = false;
   QPoint previousItemPos;
@@ -310,13 +310,13 @@ void GroupGraphicsView::placeItems()
   }
 }
 
-void GroupGraphicsView::finishPlaceItems()
+void GroupView::finishPlaceItems()
 {
   createListItems();
   createLabelItems();
 }
 
-void GroupGraphicsView::unplaceItems()
+void GroupView::unplaceItems()
 {
   foreach( LabelItem *item, m_labelItems ) {
     delete item;
@@ -353,7 +353,7 @@ void GroupGraphicsView::unplaceItems()
   m_itemUnplacer->start();
 }
 
-void GroupGraphicsView::unhideItems()
+void GroupView::unhideItems()
 {
   clearItems();
 
@@ -390,7 +390,7 @@ void GroupGraphicsView::unhideItems()
   m_unhideItemsAnimation->start();
 }
 
-TodoItemGroup GroupGraphicsView::prepareTodoItems( ItemPlacer *placer )
+TodoItemGroup GroupView::prepareTodoItems( ItemPlacer *placer )
 {
   TodoItemGroup result;
   
@@ -416,7 +416,7 @@ TodoItemGroup GroupGraphicsView::prepareTodoItems( ItemPlacer *placer )
   return result;
 }
 
-TodoItem *GroupGraphicsView::createTodoItem( const Bliss::Todo &todo )
+TodoItem *GroupView::createTodoItem( const Bliss::Todo &todo )
 {
   TodoItem *item = new TodoItem( m_model, m_menuHandler, todo );
 
@@ -435,7 +435,7 @@ TodoItem *GroupGraphicsView::createTodoItem( const Bliss::Todo &todo )
   return item;
 }
 
-QPointF GroupGraphicsView::preparePositions( const QList<TodoItem *> &todoItems,
+QPointF GroupView::preparePositions( const QList<TodoItem *> &todoItems,
   ItemPlacer *placer )
 {
   int spacing = 50;
@@ -492,7 +492,7 @@ QPointF GroupGraphicsView::preparePositions( const QList<TodoItem *> &todoItems,
   return QPointF( centerX, centerY );
 }
 
-void GroupGraphicsView::createListItems()
+void GroupView::createListItems()
 {
   clearListItems();
   
@@ -503,7 +503,7 @@ void GroupGraphicsView::createListItems()
   }
 }
 
-void GroupGraphicsView::createLabelItems()
+void GroupView::createLabelItems()
 {
   Bliss::GroupView view = m_model->groupView( m_group );
 
@@ -512,7 +512,7 @@ void GroupGraphicsView::createLabelItems()
   }
 }
 
-void GroupGraphicsView::createMenuItems()
+void GroupView::createMenuItems()
 {
   m_backButton = new ButtonItem;
   m_scene->addItem( m_backButton );
@@ -540,7 +540,7 @@ void GroupGraphicsView::createMenuItems()
   m_groupAdderItem->setZValue( -100 );
 }
 
-void GroupGraphicsView::positionMenuItems()
+void GroupView::positionMenuItems()
 {
   QRect viewportRect = m_view->viewport()->rect();
 
@@ -567,17 +567,17 @@ void GroupGraphicsView::positionMenuItems()
   }
 }
 
-void GroupGraphicsView::positionAbsoluteItems()
+void GroupView::positionAbsoluteItems()
 {
   positionMenuItems();
 }
 
-void GroupGraphicsView::slotDone( const Bliss::Todo &todo )
+void GroupView::slotDone( const Bliss::Todo &todo )
 {
   m_model->deleteTodo( todo, m_group );
 }
 
-void GroupGraphicsView::slotItemMoved( TodoItem *todoItem,
+void GroupView::slotItemMoved( TodoItem *todoItem,
   const QPointF &pos )
 {
   ListItem *listSource = listItem( todoItem );
@@ -707,7 +707,7 @@ void GroupGraphicsView::slotItemMoved( TodoItem *todoItem,
   }
 }
 
-void GroupGraphicsView::addList()
+void GroupView::addList()
 {
   NewListDialog *dialog = new NewListDialog( m_model, this );
   if ( dialog->exec() == QDialog::Accepted ) {
@@ -725,12 +725,12 @@ void GroupGraphicsView::addList()
 }
 
 
-void GroupGraphicsView::addLabel()
+void GroupView::addLabel()
 {
   addLabel( m_view->mapToScene( QPoint( 10, 10 ) ) );
 }
 
-void GroupGraphicsView::addLabel( const QPointF &pos )
+void GroupView::addLabel( const QPointF &pos )
 {
   bool ok;
   QString name = KInputDialog::getText( i18n("Add Label"),
@@ -750,7 +750,7 @@ void GroupGraphicsView::addLabel( const QPointF &pos )
   }
 }
 
-void GroupGraphicsView::removeLabel( LabelItem *item )
+void GroupView::removeLabel( LabelItem *item )
 {
   m_labelItems.removeAll( item );
 
@@ -758,7 +758,7 @@ void GroupGraphicsView::removeLabel( LabelItem *item )
   m_model->removeViewLabel( m_group, item->label() );
 }
 
-void GroupGraphicsView::removeList( ListItem *item )
+void GroupView::removeList( ListItem *item )
 {
   m_listItems.removeAll( item );
 
@@ -766,7 +766,7 @@ void GroupGraphicsView::removeList( ListItem *item )
   m_model->removeViewList( m_group, item->list() );
 }
 
-void GroupGraphicsView::renameLabel( LabelItem *item )
+void GroupView::renameLabel( LabelItem *item )
 {
   Bliss::ViewLabel label = item->label();
 
@@ -781,7 +781,7 @@ void GroupGraphicsView::renameLabel( LabelItem *item )
   }
 }
 
-LabelItem *GroupGraphicsView::createLabelItem( const Bliss::ViewLabel &label )
+LabelItem *GroupView::createLabelItem( const Bliss::ViewLabel &label )
 {
   LabelItem *item = new LabelItem( m_model, m_group, label );
 
@@ -800,7 +800,7 @@ LabelItem *GroupGraphicsView::createLabelItem( const Bliss::ViewLabel &label )
   return item;
 }
 
-ListItem *GroupGraphicsView::createListItem( const Bliss::ViewList &list )
+ListItem *GroupView::createListItem( const Bliss::ViewList &list )
 {
   ListItem *item = new ListItem( m_model, m_menuHandler, m_group, list );
   
@@ -825,7 +825,7 @@ ListItem *GroupGraphicsView::createListItem( const Bliss::ViewList &list )
   return item;  
 }
 
-void GroupGraphicsView::resetLayout()
+void GroupView::resetLayout()
 {
   m_model->clearViewPositions( m_group );
 
@@ -843,7 +843,7 @@ void GroupGraphicsView::resetLayout()
   }
 }
 
-TodoItem *GroupGraphicsView::item( const Bliss::Todo &identity ) const
+TodoItem *GroupView::item( const Bliss::Todo &identity ) const
 {
   foreach( TodoItem *item, m_items ) {
     if ( item->todo().id() == identity.id() ) return item;
@@ -851,7 +851,7 @@ TodoItem *GroupGraphicsView::item( const Bliss::Todo &identity ) const
   return 0;
 }
 
-ListItem *GroupGraphicsView::listItem( TodoItem *item ) const
+ListItem *GroupView::listItem( TodoItem *item ) const
 {
   foreach( ListItem *list, m_listItems ) {
     if ( list->hasItem( item ) ) return list;
@@ -859,21 +859,21 @@ ListItem *GroupGraphicsView::listItem( TodoItem *item ) const
   return 0;
 }
 
-void GroupGraphicsView::addLabelClicked()
+void GroupView::addLabelClicked()
 {
   hideGlobalMenu();
 
   addLabel( m_globalMenu->pos() );
 }
 
-void GroupGraphicsView::hideGlobalMenu()
+void GroupView::hideGlobalMenu()
 {
   if ( m_globalMenu ) {
     m_globalMenu->hide();
   }
 }
 
-void GroupGraphicsView::slotMouseMoved( const QPoint &pos )
+void GroupView::slotMouseMoved( const QPoint &pos )
 {
   if ( !m_globalMenu || !m_globalMenu->isVisible() ) return;
 
@@ -882,7 +882,7 @@ void GroupGraphicsView::slotMouseMoved( const QPoint &pos )
   }
 }
 
-void GroupGraphicsView::setAdderGroup( const Bliss::Todo &group )
+void GroupView::setAdderGroup( const Bliss::Todo &group )
 {
   m_groupAdderItem->setGroup( group );
 }

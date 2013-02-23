@@ -30,7 +30,7 @@
 class QPainter;
 class KUrl;
 class MainModel;
-class GroupGraphicsView;
+class GroupView;
 class PersonView;
 class SettingsWidget;
 class Overview;
@@ -74,7 +74,7 @@ class MainView : public QWidget
     void dataWritten();
   
   protected:
-    void connectGroupView( GroupGraphicsView * );
+    void connectGroupView( GroupView * );
   
   protected slots:
     void continueShowGroup();
@@ -95,7 +95,7 @@ class MainView : public QWidget
     SettingsWidget *m_settingsWidget;
     QWidget *m_groupWidget;
     QStackedLayout *m_listLayout;
-    GroupGraphicsView *m_groupGraphicsView;
+    GroupView *m_groupView;
     PersonView *m_personView;
     Overview *m_overview;
     HistoryView *m_historyView;

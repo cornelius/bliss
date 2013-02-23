@@ -31,7 +31,7 @@ set(bliss_bin_SRCS
   fanmenu.cpp
   gitremote.cpp
   todoitem.cpp
-  groupgraphicsview.cpp
+  groupview.cpp
   newtododialog.cpp
   mainwindow.cpp
   main.cpp

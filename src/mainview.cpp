@@ -22,7 +22,7 @@
 #include "mainview.h"
 
 #include "mainmodel.h"
-#include "groupgraphicsview.h"
+#include "groupview.h"
 #include "newtododialog.h"
 #include "newgroupdialog.h"
 #include "newlistdialog.h"
@@ -89,12 +89,12 @@ MainView::MainView(QWidget *parent)
   connect( m_overview, SIGNAL( showListView() ), SLOT( showListView() ) );
   connect( m_overview, SIGNAL( showHistory() ), SLOT( showHistory() ) );
 
-  m_groupGraphicsView = new GroupGraphicsView( m_model );
-  m_listLayout->addWidget( m_groupGraphicsView );
-  connectGroupView( m_groupGraphicsView );
-  connect( m_groupGraphicsView, SIGNAL( newGroup() ), SLOT( newSubGroup() ) );
-  connect( m_groupGraphicsView, SIGNAL( newList() ), SLOT( newList() ) );
-  connect( m_groupGraphicsView, SIGNAL( removeGroup( const Bliss::Todo & ) ),
+  m_groupView = new GroupView( m_model );
+  m_listLayout->addWidget( m_groupView );
+  connectGroupView( m_groupView );
+  connect( m_groupView, SIGNAL( newGroup() ), SLOT( newSubGroup() ) );
+  connect( m_groupView, SIGNAL( newList() ), SLOT( newList() ) );
+  connect( m_groupView, SIGNAL( removeGroup( const Bliss::Todo & ) ),
     SLOT( removeGroup( const Bliss::Todo & ) ) );
 
   m_historyView = new HistoryView( m_model );
@@ -116,7 +116,7 @@ MainView::~MainView()
 {
 }
 
-void MainView::connectGroupView( GroupGraphicsView *groupView )
+void MainView::connectGroupView( GroupView *groupView )
 {
   connect( groupView, SIGNAL( goBack() ), SLOT( goBack() ) );
   connect( groupView, SIGNAL( newTodo() ), SLOT( newTodo() ) );
@@ -130,14 +130,14 @@ void MainView::readConfig()
 {
   Settings::self()->readConfig();
 
-  m_groupGraphicsView->readConfig();
+  m_groupView->readConfig();
   m_settingsWidget->readConfig();
 }
 
 void MainView::writeConfig()
 {
   m_settingsWidget->writeConfig();
-  m_groupGraphicsView->writeConfig();
+  m_groupView->writeConfig();
 
   Settings::setHistory( m_history.get() );
 
@@ -168,7 +168,7 @@ void MainView::readData( const QString &file )
   Bliss::Todo adderGroup = m_model->findTodo( Settings::adderGroup() );
   if ( !adderGroup.isValid() ) adderGroup = m_model->rootGroup();
 
-  m_groupGraphicsView->setAdderGroup( adderGroup );
+  m_groupView->setAdderGroup( adderGroup );
 }
 
 void MainView::writeData( const QString &msg )
@@ -238,12 +238,12 @@ void MainView::continueShowGroup()
   }
 
   m_backButton->setEnabled( m_history.size() > 1 );
-  m_groupGraphicsView->setBackButtonEnabled( m_history.size() > 1 );
+  m_groupView->setBackButtonEnabled( m_history.size() > 1 );
   
   m_groupNameLabel->setText( "<b>" + m_group.summary().value() + "</b>" );
 
-  m_groupGraphicsView->showGroup( m_group );
-  m_listLayout->setCurrentWidget( m_groupGraphicsView );
+  m_groupView->showGroup( m_group );
+  m_listLayout->setCurrentWidget( m_groupView );
 }
 
 void MainView::showView()
