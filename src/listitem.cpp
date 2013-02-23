@@ -44,7 +44,7 @@ void ListItem::init()
   m_handleItemSize = 40;
   m_spacing = 50;
   m_listBorder = 10;
-  m_textLeft = 16;
+  m_textLeft = 11;
   
   
   m_itemPlacer = new ItemPlacer( this );
@@ -97,6 +97,9 @@ void ListItem::updateItem( const Bliss::ViewList &list )
   
   m_nameItem = new QGraphicsTextItem( list.name(), this );
   m_nameItem->setAcceptHoverEvents( false );
+  QFont font = m_nameItem->font();
+  font.setBold( true );
+  m_nameItem->setFont( font );
 
   int textWidth = m_nameItem->boundingRect().width();
   int textHeight = m_nameItem->boundingRect().height();
@@ -136,7 +139,7 @@ void ListItem::setListBox()
 
   setRect( -m_handleItemSize/2 - m_listBorder,
            -m_handleItemSize/2 - m_listBorder,
-           listWidth + 2*m_listBorder,
+           listWidth + 2*m_listBorder + 10,
            m_handleItemSize*1.5 + m_itemSize + 2*m_listBorder +
            ( m_todoItems.size() -1 ) * m_spacing );
 }
