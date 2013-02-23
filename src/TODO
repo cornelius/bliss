@@ -1,5 +1,8 @@
 * Move global menu handling to MenuHandler, to save sending signals around
 
+* activate todo editing by clicking text, not menu
+* Integrate heading line into graphics view, maybe get rid of groupview.
+
 * Initial data with "get started" list (hover bullet, create list, etc.)
 
 * Make todos on canvas positional todos without list, but an individual
