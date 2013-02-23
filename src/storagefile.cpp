@@ -146,7 +146,19 @@ void StorageFile::writeData( const Bliss::Bliss &b, const QString &msg )
       if ( todo.type() != "group" ) {
         QString summary = todo.summary().value();
         if ( summary.isEmpty() ) ts << "\n\n";
-        else ts << "* " << summary;
+        else {
+          QString chunk = summary;
+          ts << "* ";
+          while ( chunk.length() > 78 ) {
+            int separatorPos = chunk.lastIndexOf( " ", 77 );
+            if ( separatorPos < 0 ) {
+              separatorPos = chunk.indexOf( " ", 77 );
+            }
+            ts << chunk.left( separatorPos ) << "\n ";
+            chunk = chunk.mid( separatorPos );
+          }
+          ts << chunk;
+        }
       }
     }
     ts << "\n";
