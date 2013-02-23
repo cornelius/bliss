@@ -51,25 +51,29 @@ Bliss::Bliss StorageFile::readData()
   if ( !file.open( QIODevice::ReadOnly ) ) {
     qDebug() << "ERROR READING FILE" << m_fileName;
   } else {
-    QStringList todoEntries;
-  
     QTextStream ts( &file );
     QString line;
     do {
       line = ts.readLine();
       
       if ( line.startsWith( "*" ) ) {
-        todoEntries << line.mid( 1 ).trimmed();
+        addTodo();
+        m_summary = line.mid( 1 ).trimmed();
       } else if ( line.trimmed().isEmpty() ) {
-        todoEntries << "";
-      }      
+        addTodo();
+        m_todoEntries << "";
+      } else {
+        m_summary += " " + line.trimmed();
+      }
     } while ( !line.isNull() );
 
-    while( !todoEntries.isEmpty() && todoEntries.first().isEmpty() ) {
-      todoEntries.removeFirst();
+    addTodo();
+    
+    while( !m_todoEntries.isEmpty() && m_todoEntries.first().isEmpty() ) {
+      m_todoEntries.removeFirst();
     }
-    while( !todoEntries.isEmpty() && todoEntries.last().isEmpty() ) {
-      todoEntries.removeLast();
+    while( !m_todoEntries.isEmpty() && m_todoEntries.last().isEmpty() ) {
+      m_todoEntries.removeLast();
     }
     
     Bliss::Todo rootGroup;
@@ -86,7 +90,7 @@ Bliss::Bliss StorageFile::readData()
     root.setGroup( group );
     bliss.setRoot( root );
 
-    foreach( QString todoEntry, todoEntries ) {
+    foreach( QString todoEntry, m_todoEntries ) {
       createTodo( bliss, rootGroup, todoEntry );
     }
   }
@@ -96,6 +100,14 @@ Bliss::Bliss StorageFile::readData()
   }
 
   return bliss;
+}
+
+void StorageFile::addTodo()
+{
+  if ( !m_summary.isEmpty() ) {
+    m_todoEntries.append( m_summary );
+    m_summary.clear();
+  }
 }
 
 void StorageFile::createTodo( Bliss::Bliss &bliss, const Bliss::Todo &group,

@@ -21,6 +21,8 @@
 
 #include "storage.h"
 
+#include <QStringList>
+
 class StorageFile : public Storage
 {
     Q_OBJECT
@@ -34,11 +36,16 @@ class StorageFile : public Storage
     void writeData( const Bliss::Bliss &, const QString &msg );
 
   protected:
+    void addTodo();
+    
     void createTodo( Bliss::Bliss &bliss, const Bliss::Todo &group,
                      const QString &title );
 
   private:
     QString m_fileName;
+    
+    QString m_summary;
+    QStringList m_todoEntries;
 };
 
 #endif
