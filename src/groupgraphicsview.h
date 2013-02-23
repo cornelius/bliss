@@ -34,6 +34,7 @@ class MagicMenuItem;
 class GroupAdderItem;
 class MenuHandler;
 class ItemPlacer;
+class ButtonItem;
 
 struct TodoItemGroup {
 
@@ -55,6 +56,8 @@ class GroupGraphicsView : public GroupView
     
     void setAdderGroup( const Bliss::Todo &group );
 
+    void setBackButtonEnabled( bool );
+    
   signals:
     void newGroup();
     void newList();
@@ -132,6 +135,7 @@ class GroupGraphicsView : public GroupView
 
     TodoItemGroup m_newItems;
 
+    ButtonItem *m_backButton;
     MainMenuItem *m_mainMenu;
     MagicMenuItem *m_magicMenu;
     GroupAdderItem *m_groupAdderItem;

@@ -28,6 +28,7 @@ class ButtonItem : public QObject, public QGraphicsEllipseItem
     Q_PROPERTY(QPointF pos READ pos WRITE setPos)
 
   public:
+    ButtonItem();
     ButtonItem( QGraphicsItem * );
 
     void setItemSize( int size );
@@ -38,12 +39,16 @@ class ButtonItem : public QObject, public QGraphicsEllipseItem
     void setNext();
     void setPrevious();
 
+    void setBack();
+    
     void setClickEnabled( bool enabled );
 
   signals:
     void clicked();
 
   protected:
+    void init();
+    
     void hoverEnterEvent( QGraphicsSceneHoverEvent *event );
     void hoverLeaveEvent( QGraphicsSceneHoverEvent *event );
 

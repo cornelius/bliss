@@ -245,6 +245,8 @@ void MainView::continueShowGroup()
   }
 
   m_backButton->setEnabled( m_history.size() > 1 );
+  m_groupGraphicsView->setBackButtonEnabled( m_history.size() > 1 );
+  
   m_groupNameLabel->setText( "<b>" + m_group.summary().value() + "</b>" );
 
   if ( m_settingsWidget->fancyMode() ) {

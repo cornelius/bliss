@@ -33,13 +33,15 @@
 #include "listitem.h"
 #include "newlistdialog.h"
 #include "itemplacer.h"
+#include "buttonitem.h"
 
 #include <KLocale>
 #include <KInputDialog>
 #include <KRandom>
 
 GroupGraphicsView::GroupGraphicsView( MainModel *model, QWidget *parent )
-  : GroupView( model, parent ), m_mainMenu( 0 ), m_magicMenu( 0 ),
+  : GroupView( model, parent ), m_backButton( 0 ), m_mainMenu( 0 ),
+    m_magicMenu( 0 ),
     m_groupAdderItem( 0 ),
     m_morphToAnimation( 0 ), m_morphFromAnimation( 0 ),
     m_removeItemsAnimation( 0 ),
@@ -96,6 +98,15 @@ void GroupGraphicsView::writeConfig()
   Settings::setGroupAdderExpanded( m_groupAdderItem->isExpanded() );
   Settings::setGroupAdderGroupsExpanded( m_groupAdderItem->shownAsSidebar() );
   Settings::setAdderGroup( m_groupAdderItem->group().id() );
+}
+
+void GroupGraphicsView::setBackButtonEnabled( bool enabled )
+{
+  if ( enabled ) {
+    m_backButton->show();
+  } else {
+    m_backButton->hide();
+  }
 }
 
 void GroupGraphicsView::slotTodoChanged( const Bliss::Todo &todo )
@@ -500,6 +511,12 @@ void GroupGraphicsView::createLabelItems()
 
 void GroupGraphicsView::createMenuItems()
 {
+  m_backButton = new ButtonItem;
+  m_scene->addItem( m_backButton );
+  m_backButton->setItemSize( 50 );
+  m_backButton->setBack();
+  connect( m_backButton, SIGNAL( clicked() ), SIGNAL( goBack() ) );
+  
   if ( Settings::enableMagic() ) {
     m_magicMenu = new MagicMenuItem();
     m_scene->addItem( m_magicMenu );
@@ -530,6 +547,12 @@ void GroupGraphicsView::positionMenuItems()
   QPoint lowerLeft( 0, viewportRect.height() );
   QPointF lowerLeftScene = m_view->mapToScene( lowerLeft );
 
+  QPointF upperLeftScene = m_view->mapToScene( 0, 0 );
+  
+  if ( m_backButton ) {
+    m_backButton->setPos( upperLeftScene.x() + 50, upperLeftScene.y() + 50 );
+  }
+  
   if ( m_mainMenu ) {
     m_mainMenu->setPos( upperRightScene.x() - 50, upperRightScene.y() + 50 );
   }

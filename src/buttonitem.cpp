@@ -19,9 +19,20 @@
 
 #include "buttonitem.h"
 
+ButtonItem::ButtonItem()
+  : m_defaultItemSize( 30 ), m_clickEnabled( true )
+{
+  init();
+}
+
 ButtonItem::ButtonItem( QGraphicsItem *parentItem )
   : QGraphicsEllipseItem( parentItem ), m_defaultItemSize( 30 ),
     m_clickEnabled( true )
+{
+  init();
+}
+
+void ButtonItem::init()
 {
   setItemSize( m_defaultItemSize );
  
@@ -102,6 +113,12 @@ void ButtonItem::setPrevious()
 {
   m_decoration->setPolygon( m_arrowPolygon );
   m_decoration->setRotation( -135 );
+}
+
+void ButtonItem::setBack()
+{
+  m_decoration->setPolygon( m_arrowPolygon );
+  m_decoration->setRotation( -180 );
 }
 
 void ButtonItem::setItemSize( int size )
