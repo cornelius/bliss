@@ -22,6 +22,7 @@
 #include "bliss/bliss.h"
 
 #include "fanmenu.h"
+#include "viewpositions.h"
 
 #include <QtGui>
 
@@ -36,6 +37,7 @@ class GroupAdderItem;
 class MenuHandler;
 class ItemPlacer;
 class ButtonItem;
+class TrackingGraphicsView;
 
 struct TodoItemGroup {
 
@@ -103,7 +105,9 @@ class GroupView : public QWidget
     
   protected slots:
     void resetLayout();
-  
+
+    void setViewPosition();
+    
     void hideItems();
     void placeItems();
     void unplaceItems();
@@ -135,6 +139,8 @@ class GroupView : public QWidget
     void slotTodoAdded( const Bliss::Todo & );
     void slotTodoChanged( const Bliss::Todo & );
     void slotTodoRemoved( const Bliss::Todo & );
+
+    void rememberPosition( const QPoint & );
     
   private:
     MainModel *m_model;
@@ -158,7 +164,7 @@ class GroupView : public QWidget
     GroupAdderItem *m_groupAdderItem;
 
     QGraphicsScene *m_scene;
-    QGraphicsView *m_view;
+    TrackingGraphicsView *m_view;
 
     QAnimationGroup *m_morphToAnimation;
     QAnimationGroup *m_morphFromAnimation;
@@ -174,6 +180,8 @@ class GroupView : public QWidget
     FanMenuItem *m_addLabelItem;
 
     MenuHandler *m_menuHandler;
+    
+    ViewPositions m_viewPositions;
 };
 
 #endif

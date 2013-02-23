@@ -37,6 +37,18 @@ TrackingGraphicsView::TrackingGraphicsView( QGraphicsScene *scene )
   setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
 }
 
+void TrackingGraphicsView::setPosition( const QPoint &pos )
+{
+  horizontalScrollBar()->setValue( pos.x() );
+  verticalScrollBar()->setValue( pos.y() );
+}
+
+QPoint TrackingGraphicsView::position() const
+{
+  QPoint pos( horizontalScrollBar()->value(), verticalScrollBar()->value() );  
+  return pos;
+}
+
 void TrackingGraphicsView::mouseMoveEvent( QMouseEvent *event )
 {
   if ( m_mousePressed ) {
@@ -48,7 +60,7 @@ void TrackingGraphicsView::mouseMoveEvent( QMouseEvent *event )
   }
   
   emit mouseMoved( event->pos() );
-
+  
   QGraphicsView::mouseMoveEvent( event );
 }
 
@@ -86,5 +98,7 @@ void TrackingGraphicsView::mouseReleaseEvent( QMouseEvent *event )
 
   setCursor( Qt::ArrowCursor );
 
+  emit movementStopped( position() );
+  
   QGraphicsView::mouseReleaseEvent( event );
 }

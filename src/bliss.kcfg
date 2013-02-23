@@ -14,6 +14,9 @@
     <entry name="History" type="StringList">
       <label>History of shown groups</label>
     </entry>
+    <entry name="ViewPositions" type="StringList">
+      <label>Positions of group views</label>
+    </entry>
     <entry name="FancyMode" type="Bool">
       <label>If fancy mode is enabled</label>
       <default>true</default>

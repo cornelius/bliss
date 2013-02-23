@@ -71,6 +71,8 @@ GroupView::GroupView( MainModel *model, QWidget *parent )
   connect( m_view, SIGNAL( mouseMoved( const QPoint & ) ),
     SLOT( slotMouseMoved( const QPoint & ) ) );
   connect( m_view, SIGNAL( viewportMoved() ), SLOT( positionAbsoluteItems() ) );
+  connect( m_view, SIGNAL( movementStopped( const QPoint & ) ),
+    SLOT( rememberPosition( const QPoint & ) ) );
 
   connect( model, SIGNAL( todoAdded( const Bliss::Todo & ) ),
     SLOT( slotTodoAdded( const Bliss::Todo & ) ) );
@@ -91,6 +93,7 @@ void GroupView::readConfig()
   if ( Settings::groupAdderGroupsExpanded() ) {
     m_groupAdderItem->expandGroupItems( false );
   }
+  m_viewPositions.set( Settings::viewPositions() );
 }
 
 void GroupView::writeConfig()
@@ -98,6 +101,7 @@ void GroupView::writeConfig()
   Settings::setGroupAdderExpanded( m_groupAdderItem->isExpanded() );
   Settings::setGroupAdderGroupsExpanded( m_groupAdderItem->shownAsSidebar() );
   Settings::setAdderGroup( m_groupAdderItem->group().id() );
+  Settings::setViewPositions( m_viewPositions.get() );
 }
 
 void GroupView::setBackButtonEnabled( bool enabled )
@@ -296,7 +300,11 @@ void GroupView::placeItems()
     m_scene->addItem( item );
   }
 
-  m_view->centerOn( items.center );
+  if ( m_viewPositions.hasPosition( m_group ) ) {
+    QTimer::singleShot( 0, this, SLOT( setViewPosition() ) );
+  } else {
+    m_view->centerOn( items.center );
+  }
 
   if ( doAnimation ) {
     m_itemPlacer->setStartValue( m_view->mapToScene( previousItemPos ) );
@@ -368,7 +376,11 @@ void GroupView::unhideItems()
   createListItems();
   createLabelItems();
 
-  m_view->centerOn( m_newItems.center );
+  if ( m_viewPositions.hasPosition( m_group ) ) {
+    QTimer::singleShot( 0, this, SLOT( setViewPosition() ) );
+  } else {
+    m_view->centerOn( m_newItems.center );
+  }
 
   if ( !m_unhideItemsAnimation ) {
     m_unhideItemsAnimation = new QParallelAnimationGroup( this );
@@ -901,4 +913,14 @@ void GroupView::slotMouseMoved( const QPoint &pos )
 void GroupView::setAdderGroup( const Bliss::Todo &group )
 {
   m_groupAdderItem->setGroup( group );
+}
+
+void GroupView::rememberPosition( const QPoint &pos )
+{
+  m_viewPositions.setPosition( m_group, pos );
+}
+
+void GroupView::setViewPosition()
+{
+  m_view->setPosition( m_viewPositions.position( m_group ) );
 }

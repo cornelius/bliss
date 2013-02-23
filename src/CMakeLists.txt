@@ -1,4 +1,5 @@
 set(bliss_bin_SRCS
+  viewpositions.cpp
   storage.cpp
   history.cpp
   itemplacer.cpp

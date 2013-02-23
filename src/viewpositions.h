@@ -16,37 +16,29 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
     USA.
 */
-#ifndef TRACKINGGRAPHICSVIEW_H
-#define TRACKINGGRAPHICSVIEW_H
+#ifndef VIEWPOSITIONS_H
+#define VIEWPOSITIONS_H
 
-#include <QGraphicsView>
+#include <bliss/bliss.h>
 
-class TrackingGraphicsView : public QGraphicsView
+#include <QStringList>
+#include <QPoint>
+#include <QMap>
+
+class ViewPositions
 {
-    Q_OBJECT
   public:
-    TrackingGraphicsView( QGraphicsScene * );
+    ViewPositions();
 
-    QPoint position() const;
-    void setPosition( const QPoint &pos );
+    void set( const QStringList & );
+    QStringList get() const;
     
-  signals:
-    void mouseMoved( const QPoint & );
-    void viewportMoved();
-    void movementStopped( const QPoint & );
-
-  protected:
-    void mouseMoveEvent( QMouseEvent *event );
-    void mousePressEvent( QMouseEvent *event );
-    void mouseReleaseEvent( QMouseEvent *event );
-    void scrollContentsBy( int dx, int dy );
-    void resizeEvent( QResizeEvent *event );
-
+    bool hasPosition( const Bliss::Todo &group );
+    QPoint position( const Bliss::Todo &group );
+    void setPosition( const Bliss::Todo &group, const QPoint &pos );
+    
   private:
-    bool m_mousePressed;
-    int m_pressedValueHorizontal;
-    int m_pressedValueVertical;
-    QPoint m_pressedPos;
+    QMap<QString,QPoint> m_positions;
 };
 
 #endif

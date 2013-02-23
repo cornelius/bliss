@@ -1,5 +1,5 @@
 * Fix animation, when transitioning between groups.
-* Remember view position
+* Fix jumping of label on first canvas move
 
 * Initial data with "get started" list (hover bullet, create list, etc.)
 
