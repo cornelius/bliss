@@ -41,11 +41,10 @@ class TrackingGraphicsView;
 
 struct TodoItemGroup {
 
-  TodoItemGroup() : previousGroup( 0 ) {}
+  TodoItemGroup() {}
 
   QList<TodoItem *> items;
   QPointF center;
-  TodoItem *previousGroup;
 };
 
 class GroupView : public QWidget
@@ -153,6 +152,7 @@ class GroupView : public QWidget
     QList<ListItem *> m_listItems;
 
     TodoItem *m_previousItem;
+    QPointF m_previousItemPos;
 
     TodoItemGroup m_newItems;
 

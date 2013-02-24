@@ -215,6 +215,18 @@ void GroupView::showGroup( const Bliss::Todo &group )
 
   if ( m_group.isValid() ) {
     m_previousItem = item( m_group );
+    if ( m_previousItem ) {
+      m_previousItemPos = m_previousItem->pos();
+    } else {
+      foreach( ListItem *list, m_listItems ) {
+        TodoItem *item = list->item( m_group );
+        if ( item ) {
+          m_previousItem = item;
+          m_previousItemPos = list->mapToScene( item->pos() );
+          break;
+        }
+      }
+    }
     
     m_titleItem->setPlainText( m_group.summary().value() );
     positionMenuItems();
@@ -282,12 +294,9 @@ void GroupView::clearListItems()
 void GroupView::placeItems()
 {
   bool doAnimation = false;
-  QPointF previousItemPos;
 
   if ( m_previousItem ) {
     doAnimation = true;
-
-    previousItemPos = m_previousItem->pos();
   }
 
   m_itemPlacer->prepare( doAnimation );
@@ -303,7 +312,7 @@ void GroupView::placeItems()
 
   if ( m_viewPositions.hasPosition( m_group ) ) {
     QTimer::singleShot( 0, this, SLOT( setViewPosition() ) );
-    previousItemPos += m_viewPositions.position( m_group ) -
+    m_previousItemPos += m_viewPositions.position( m_group ) -
                        m_view->position();
   } else {
     QRect viewportRect = m_view->viewport()->rect();
@@ -311,13 +320,13 @@ void GroupView::placeItems()
       viewportRect.height() / 2 );
     QPointF currentCenter = m_view->mapToScene( currentViewportCenter );
  
-    previousItemPos += items.center - currentCenter;
+    m_previousItemPos += items.center - currentCenter;
 
     m_view->centerOn( items.center );
   }
 
   if ( doAnimation ) {
-    m_itemPlacer->setStartValue( previousItemPos );
+    m_itemPlacer->setStartValue( m_previousItemPos );
     
     m_itemPlacer->start();
   } else {
@@ -351,12 +360,37 @@ void GroupView::unplaceItems()
 
   m_newItems = prepareTodoItems( m_itemUnplacer );
 
-  if ( !m_newItems.previousGroup ) {
+  m_previousItem = 0;
+  if ( m_previousGroup.isValid() ) {
+    foreach( TodoItem *item, m_newItems.items ) {
+      if ( item->todo().id() == m_previousGroup.id() ) {
+        m_previousItem = item;
+        m_previousItemPos = m_itemUnplacer->targetPosition( item );
+        break;
+      }
+    }
+  }
+  
+  if ( !m_previousItem ) {
+    // Temporary create list items to get positions. There certainly is a more
+    // efficient way to do this.
+    createListItems();
+    foreach( ListItem *list, m_listItems ) {
+      if ( list->item( m_previousGroup ) ) {
+        m_previousItem = list->item( m_previousGroup );
+        m_previousItemPos = list->mapToScene( m_previousItem->pos() );
+        break;
+      }
+    }
+    clearListItems();
+  }
+  
+  if ( !m_previousItem ) {
     recreateItems();
     return;
   }
 
-  QPointF target = m_itemUnplacer->targetPosition( m_newItems.previousGroup );
+  QPointF target = m_previousItemPos;
 
   if ( m_viewPositions.hasPosition( m_group ) ) {
     target += m_view->position() - m_viewPositions.position( m_group );
@@ -386,8 +420,8 @@ void GroupView::unhideItems()
     m_scene->addItem( item );
   }
 
-  createListItems();
   createLabelItems();
+  createListItems();
 
   if ( m_viewPositions.hasPosition( m_group ) ) {
     QTimer::singleShot( 0, this, SLOT( setViewPosition() ) );
@@ -401,7 +435,7 @@ void GroupView::unhideItems()
   m_unhideItemsAnimation->clear();
 
   foreach( TodoItem *item, m_items ) {
-    if ( item == m_newItems.previousGroup ) {
+    if ( item == m_previousItem ) {
       item->setOpacity( 1 );
     } else {
       QPropertyAnimation *animation = new QPropertyAnimation(item, "opacity", this);
@@ -426,11 +460,6 @@ TodoItemGroup GroupView::prepareTodoItems( ItemPlacer *placer )
   foreach( Bliss::Todo todo, todos ) {
     TodoItem *item = createTodoItem( todo );
     result.items.append( item );
-    
-    if ( m_previousGroup.isValid() &&
-         item->todo().id() == m_previousGroup.id() ) {
-      result.previousGroup = item;
-    }
   }
 
   // Create handle item for adding new todos
