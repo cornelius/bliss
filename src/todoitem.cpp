@@ -207,7 +207,7 @@ void TodoItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
   if ( parentItem() ) parentItem()->setZValue( 0 );
   else setZValue( 0 );
 
-  if ( pos() == m_movePos ) {
+  if ( pos() == m_movePos && m_nameItem ) {
     if ( m_nameItem->contains( m_nameItem->mapFromItem( this, event->pos() ) ) ) {
       QTimer::singleShot( 0, this, SLOT( editTodo() ) );
     }
