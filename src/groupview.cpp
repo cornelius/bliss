@@ -282,12 +282,12 @@ void GroupView::clearListItems()
 void GroupView::placeItems()
 {
   bool doAnimation = false;
-  QPoint previousItemPos;
+  QPointF previousItemPos;
 
   if ( m_previousItem ) {
     doAnimation = true;
 
-    previousItemPos = m_view->mapFromScene( m_previousItem->pos() );
+    previousItemPos = m_previousItem->pos();
   }
 
   m_itemPlacer->prepare( doAnimation );
@@ -303,12 +303,21 @@ void GroupView::placeItems()
 
   if ( m_viewPositions.hasPosition( m_group ) ) {
     QTimer::singleShot( 0, this, SLOT( setViewPosition() ) );
+    previousItemPos += m_viewPositions.position( m_group ) -
+                       m_view->position();
   } else {
+    QRect viewportRect = m_view->viewport()->rect();
+    QPoint currentViewportCenter( viewportRect.width() / 2,
+      viewportRect.height() / 2 );
+    QPointF currentCenter = m_view->mapToScene( currentViewportCenter );
+ 
+    previousItemPos += items.center - currentCenter;
+
     m_view->centerOn( items.center );
   }
 
   if ( doAnimation ) {
-    m_itemPlacer->setStartValue( m_view->mapToScene( previousItemPos ) );
+    m_itemPlacer->setStartValue( previousItemPos );
     
     m_itemPlacer->start();
   } else {
@@ -347,16 +356,19 @@ void GroupView::unplaceItems()
     return;
   }
 
-  QPointF target = m_newItems.previousGroup->pos();
+  QPointF target = m_itemUnplacer->targetPosition( m_newItems.previousGroup );
 
-  QRect viewportRect = m_view->viewport()->rect();
-  QPoint currentViewportCenter( viewportRect.width() / 2,
-    viewportRect.height() / 2 );
-  QPointF currentCenter = m_view->mapToScene( currentViewportCenter );
-  
-  target.setX( target.x() - m_newItems.center.x() + currentCenter.x() );
-  target.setY( target.y() - m_newItems.center.y() + currentCenter.y() );
-  
+  if ( m_viewPositions.hasPosition( m_group ) ) {
+    target += m_view->position() - m_viewPositions.position( m_group );
+  } else {
+    QRect viewportRect = m_view->viewport()->rect();
+    QPoint currentViewportCenter( viewportRect.width() / 2,
+      viewportRect.height() / 2 );
+    QPointF currentCenter = m_view->mapToScene( currentViewportCenter );
+
+    target += currentCenter - m_newItems.center;
+  }
+
   foreach( TodoItem *item, m_items ) {
     m_itemUnplacer->addItem( item, target );
   }
@@ -923,5 +935,6 @@ void GroupView::rememberPosition( const QPoint &pos )
 
 void GroupView::setViewPosition()
 {
-  m_view->setPosition( m_viewPositions.position( m_group ) );
+  QPoint pos = m_viewPositions.position( m_group );
+  m_view->setPosition( pos );
 }

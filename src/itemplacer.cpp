@@ -41,6 +41,7 @@ void ItemPlacer::prepare( bool animate )
   }
   m_placeItemsAnimation->clear();
   m_placeItemsAnimations.clear();
+  m_positions.clear();
 }
 
 void ItemPlacer::addItem( TodoItem *item, qreal itemX, qreal itemY )
@@ -50,6 +51,8 @@ void ItemPlacer::addItem( TodoItem *item, qreal itemX, qreal itemY )
 
 void ItemPlacer::addItem( TodoItem *item, const QPointF &target )
 {
+  m_positions.insert( item, target );
+
   if ( m_animate ) {
     QPropertyAnimation *animation = new QPropertyAnimation( item, "pos", this );
     m_placeItemsAnimation->insertAnimation( 0, animation );
@@ -78,4 +81,9 @@ void ItemPlacer::start()
 void ItemPlacer::stop()
 {
   if ( m_placeItemsAnimation ) m_placeItemsAnimation->stop();
+}
+
+QPointF ItemPlacer::targetPosition( TodoItem *item ) const
+{
+  return m_positions.value( item );
 }

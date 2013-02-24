@@ -1,5 +1,4 @@
-* Fix animation, when transitioning between groups.
-* Fix jumping of label on first canvas move
+* Do animation, when transitioning between groups in lists.
 
 * Initial data with "get started" list (hover bullet, create list, etc.)
 

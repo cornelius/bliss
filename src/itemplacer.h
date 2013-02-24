@@ -40,6 +40,8 @@ class ItemPlacer : public QObject
 
     void start();
     void stop();
+
+    QPointF targetPosition( TodoItem *item ) const;
     
   signals:
     void finished();
@@ -48,7 +50,9 @@ class ItemPlacer : public QObject
     QAnimationGroup *m_placeItemsAnimation;
     QList<QPropertyAnimation *> m_placeItemsAnimations;
 
-    bool m_animate;    
+    bool m_animate;
+    
+    QMap<TodoItem *,QPointF> m_positions;
 };
 
 #endif
