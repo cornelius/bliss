@@ -217,6 +217,7 @@ void GroupView::showGroup( const Bliss::Todo &group )
     m_previousItem = item( m_group );
     
     m_titleItem->setPlainText( m_group.summary().value() );
+    positionMenuItems();
   }
 
   if ( m_previousItem ) {
