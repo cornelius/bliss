@@ -1,5 +1,3 @@
-* Fix moving todos to other groups.
-
 * Initial data with "get started" list (hover bullet, create list, etc.)
 
 * Make todos on canvas positional todos without list, but an individual

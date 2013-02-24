@@ -669,11 +669,8 @@ void GroupView::slotItemMoved( TodoItem *todoItem,
     if ( listSource ) {
       listSource->removeItem( todoItem );
       delete todoItem;
-      m_model->moveTodo( todoItem->todo(), m_group, listSource->list(),
-                         groupTarget );
-    } else {
-      m_model->moveTodo( todoItem->todo(), m_group, groupTarget );
     }
+    m_model->moveTodo( todoItem->todo(), m_group, groupTarget );
   } else {
     if ( listTarget ) {
       if ( listSource == listTarget ) {
