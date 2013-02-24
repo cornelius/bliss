@@ -137,12 +137,15 @@ class MainModel : public QObject
   protected:
     void doAddTodo( Bliss::Todo &todo, const Bliss::Todo &group );
     void doDeleteTodo( const Bliss::Todo &todo, const Bliss::Todo &group );
+    void doRemoveFromView( const Bliss::Todo &todo, const Bliss::Todo &group );
 
     void doSaveViewList( const Bliss::Todo &group,
       const Bliss::ViewList &list );
 
     void doSaveViewSequence( const Bliss::Todo &group, const QStringList &ids );
 
+    void cleanupGroups();
+    
     void setupGroups();
 
     QPixmap defaultPixmap( const Bliss::Todo &identity ) const;

@@ -274,9 +274,30 @@ bool MainModel::readData( const QString &location )
     m_bliss.setRoot( root );
   }
 
+  cleanupGroups();
+
   setupGroups();
 
   return true;
+}
+
+void MainModel::cleanupGroups()
+{
+  foreach( Bliss::Todo todo, m_bliss.todoList() ) {
+    Bliss::Group::List groupList = todo.groups().groupList();
+    if ( groupList.size() > 1 ) {
+      Bliss::Group firstGroup = groupList.first();
+      groupList.clear();
+      groupList.append( firstGroup );
+
+      Bliss::Groups groups;
+      groups.setGroupList( groupList );
+
+      todo.setGroups( groups );
+
+      m_bliss.insert( todo );
+    }
+  }  
 }
 
 void MainModel::setupGroups()
@@ -357,9 +378,15 @@ void MainModel::moveTodo( const Bliss::Todo &t, const Bliss::Todo &fromGroup,
     return;
   }
 
-  doAddTodo( todo, toGroup );
-  doDeleteTodo( todo, fromGroup );
-
+  Bliss::Groups groups;
+  Bliss::Group g;
+  g.setId( toGroup.id() );
+  groups.addGroup( g );
+  todo.setGroups( groups );
+  m_bliss.insert( todo );
+  
+  doRemoveFromView( todo, fromGroup );
+  
   insert( todo, i18n("Moved %1 from group %2 to group %3")
     .arg( todo.summary().value() )
     .arg( fromGroup.summary().value() )
@@ -435,7 +462,15 @@ void MainModel::doDeleteTodo( const Bliss::Todo &todo,
                               const Bliss::Todo &group )
 {
   m_bliss.remove( todo );
+ 
+  doRemoveFromView( todo, group );
   
+  setupGroups();
+}
+
+void MainModel::doRemoveFromView( const Bliss::Todo &todo,
+                                  const Bliss::Todo &group )
+{
   Bliss::GroupView view = groupView( group );
   
   Bliss::TodoId::List newIdList;
@@ -460,9 +495,7 @@ void MainModel::doDeleteTodo( const Bliss::Todo &todo,
   }
   view.setViewListList( lists );
   
-  m_bliss.insert( view );
-  
-  setupGroups();
+  m_bliss.insert( view );  
 }
 
 void MainModel::removeGroup( const Bliss::Todo &group )
