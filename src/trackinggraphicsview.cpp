@@ -98,7 +98,9 @@ void TrackingGraphicsView::mouseReleaseEvent( QMouseEvent *event )
 
   setCursor( Qt::ArrowCursor );
 
-  emit movementStopped( position() );
+  if ( m_pressedPos != event->pos() ) {
+    emit movementStopped( position() );
+  }
   
   QGraphicsView::mouseReleaseEvent( event );
 }
