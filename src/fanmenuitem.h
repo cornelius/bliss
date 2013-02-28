@@ -27,11 +27,14 @@ class FanMenuItem : public QObject
 {
     Q_OBJECT
   public:
-    FanMenuItem( const QString &text );
+    FanMenuItem( const QString &text, int weight );
 
     void setText( const QString &text );        
     QString text() const;
         
+    void setWeight( int weight );
+    int weight() const;
+    
     void setElement( FanMenuElement * );
 
     void emitClicked();
@@ -41,6 +44,7 @@ class FanMenuItem : public QObject
         
   private:
     QString m_text;
+    int m_weight;
     FanMenuElement *m_element;
 };
 

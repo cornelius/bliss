@@ -104,7 +104,7 @@ void TodoItem::updateItem( const Bliss::Todo &todo )
       menuItem = m_fanMenu->addItem( i18n("Remove") );
       connect( menuItem, SIGNAL( clicked() ), SLOT( emitRemoveGroup() ) );
 
-      menuItem = m_fanMenu->addItem( i18n("Go to") );
+      menuItem = m_fanMenu->addItem( i18n("Go to"), 3 );
       connect( menuItem, SIGNAL( clicked() ), SLOT( emitShowGroup() ) );
     } else {
       menuItem = m_fanMenu->addItem( i18n("Done") );

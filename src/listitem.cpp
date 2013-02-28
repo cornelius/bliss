@@ -85,7 +85,7 @@ void ListItem::updateItem( const Bliss::ViewList &list )
   FanMenuItem *menuItem = m_fanMenu->addItem( i18n("Remove") );
   connect( menuItem, SIGNAL( clicked() ), SLOT( emitRemoveList() ) );
   
-  menuItem = m_fanMenu->addItem( i18n("Edit") );
+  menuItem = m_fanMenu->addItem( i18n("Edit"), 3 );
   connect( menuItem, SIGNAL( clicked() ), SLOT( editList() ) );
 
   m_fanMenu->setupItems();

@@ -36,7 +36,7 @@ class FanMenu : public QObject, public QGraphicsLineItem
     */
     void setupItems( int coverage = 80 );
 
-    FanMenuItem *addItem( const QString &text ); 
+    FanMenuItem *addItem( const QString &text, int weight = 1 ); 
 
     bool isCloseTo( const QPointF & );
 

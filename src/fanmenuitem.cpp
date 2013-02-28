@@ -21,8 +21,8 @@
 
 #include "fanmenuelement.h"
 
-FanMenuItem::FanMenuItem( const QString &text )
-  : m_text( text ), m_element( 0 )
+FanMenuItem::FanMenuItem( const QString &text, int weight )
+  : m_text( text ), m_weight( weight ), m_element( 0 )
 {
 }
 
@@ -37,6 +37,16 @@ void FanMenuItem::setText( const QString &text )
 QString FanMenuItem::text() const
 {
   return m_text;
+}
+
+void FanMenuItem::setWeight( int weight )
+{
+  m_weight = weight;
+}
+
+int FanMenuItem::weight() const
+{
+  return m_weight;
 }
 
 void FanMenuItem::setElement( FanMenuElement *element )

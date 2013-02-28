@@ -41,19 +41,23 @@ void FanMenu::setupItems( int coverage )
 {
   int count = m_items.count();
  
-  int width = ( ( m_endAngle - m_startAngle ) - ( count - 1 ) * m_spacing ) /
-    count;
-
-  for( int i = 0; i < count; ++i ) {
-    int angle = m_startAngle + i * width + i * m_spacing;
+  int availableAngle = m_endAngle - m_startAngle - ( count - 1 ) * m_spacing;
+  int totalWeight = 0;
+  foreach( FanMenuItem *item, m_items ) {
+    totalWeight += item->weight();
+  }
+  int angle = m_startAngle;
+  foreach( FanMenuItem *item, m_items ) {
     FanMenuElement *element = new FanMenuElement( this );
-    element->setup( m_items[i], angle, angle + width, coverage );
+    int width = availableAngle / totalWeight * item->weight();
+    element->setup( item, angle, angle + width, coverage );
+    angle += width + m_spacing;
   }
 }
 
-FanMenuItem *FanMenu::addItem( const QString &text )
+FanMenuItem *FanMenu::addItem( const QString &text, int weight )
 {
-  FanMenuItem *item = new FanMenuItem( text );
+  FanMenuItem *item = new FanMenuItem( text, weight );
   m_items.append( item );
   return item;
 }
