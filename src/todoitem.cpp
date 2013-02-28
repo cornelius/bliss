@@ -83,7 +83,8 @@ void TodoItem::updateItem( const Bliss::Todo &todo )
   
   int itemSize = m_handleItem->itemSize();
   
-  m_nameItem = new QGraphicsTextItem( todo.summary().value(), this );
+  m_nameItem = new QGraphicsTextItem( this );
+  m_nameItem->setHtml( m_todo.summary().value() );
   m_nameItem->setAcceptHoverEvents( false );
 
   int textWidth = m_nameItem->boundingRect().width();
