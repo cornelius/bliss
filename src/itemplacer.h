@@ -46,6 +46,9 @@ class ItemPlacer : public QObject
   signals:
     void finished();
 
+  protected slots:
+    void emitFinished();
+    
   private:
     QAnimationGroup *m_placeItemsAnimation;
     QList<QPropertyAnimation *> m_placeItemsAnimations;

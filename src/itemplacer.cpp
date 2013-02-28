@@ -75,7 +75,16 @@ void ItemPlacer::setStartValue( const QPointF &pos )
 
 void ItemPlacer::start()
 {
-  m_placeItemsAnimation->start();
+  if ( m_animate ) {
+    m_placeItemsAnimation->start();
+  } else {
+    QTimer::singleShot( 0, this, SLOT( emitFinished() ) );
+  }
+}
+
+void ItemPlacer::emitFinished()
+{
+  emit finished();
 }
 
 void ItemPlacer::stop()

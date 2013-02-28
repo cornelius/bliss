@@ -325,24 +325,23 @@ void GroupView::placeItems()
     m_view->centerOn( items.center );
   }
 
-  if ( doAnimation ) {
-    m_itemPlacer->setStartValue( m_previousItemPos );
-    
-    m_itemPlacer->start();
-  } else {
-    createListItems();
-    createLabelItems();
+  foreach( TodoItem *item, m_items ) {
+    item->enableMenus( false );
   }
 
-  foreach( TodoItem *item, m_items ) {
-    item->hidePopups();
-  }
+  m_itemPlacer->setStartValue( m_previousItemPos );
+    
+  m_itemPlacer->start();
 }
 
 void GroupView::finishPlaceItems()
 {
   createListItems();
   createLabelItems();
+
+  foreach( TodoItem *item, m_items ) {
+    item->enableMenus( true );
+  }
 }
 
 void GroupView::unplaceItems()

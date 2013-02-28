@@ -216,6 +216,15 @@ void TodoItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
   }
 }
 
+void TodoItem::mouseDoubleClickEvent( QGraphicsSceneMouseEvent* event )
+{
+  if ( m_todo.type() == "group" ) {
+    emitShowGroup();
+  }
+
+  QGraphicsItem::mouseDoubleClickEvent(event);
+}
+
 void TodoItem::emitShowGroup()
 {
   emit showGroup( m_todo );
