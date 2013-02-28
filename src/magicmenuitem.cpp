@@ -26,6 +26,8 @@
 
 MagicMenuItem::MagicMenuItem()
 {
+  setZValue( 200 );
+  
   int itemSize = 55;
 
   setRect( -itemSize/2, -itemSize/2, itemSize, itemSize );

@@ -30,6 +30,8 @@ MainMenuItem::MainMenuItem()
   m_timer.setSingleShot( true );
   connect( &m_timer, SIGNAL( timeout() ), SLOT( hideItems() ) );
 
+  setZValue( 200 );
+
   setItemSize( m_defaultItemSize );
  
   setBrush( QColor( 230,229,229 ) );
@@ -87,7 +89,7 @@ void MainMenuItem::hoverEnterEvent( QGraphicsSceneHoverEvent *event )
 void MainMenuItem::hoverLeaveEvent( QGraphicsSceneHoverEvent *event )
 {
   Q_UNUSED( event );
-
+  
   m_timer.start( 300 );
 }
 
