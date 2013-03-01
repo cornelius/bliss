@@ -132,6 +132,8 @@ class MainModel : public QObject
     void syncingStatusChanged( const QString & );
 
   protected:
+    void createWelcomeData();
+    
     void doAddTodo( Bliss::Todo &todo, const Bliss::Todo &group );
     void doDeleteTodo( const Bliss::Todo &todo, const Bliss::Todo &group );
     void doRemoveFromView( const Bliss::Todo &todo, const Bliss::Todo &group );

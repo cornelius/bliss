@@ -255,23 +255,9 @@ bool MainModel::readData( const QString &location )
     }
   }
 
-  Bliss::Group rootGroup = m_bliss.root().group();
-
-  m_rootGroup = m_bliss.findTodo( rootGroup.id() );
+  m_rootGroup = m_bliss.findTodo( m_bliss.root().group().id() );
   if ( !m_rootGroup.isValid() ) {
-    m_rootGroup.setId( KRandom::randomString( 10 ) );
-
-    m_rootGroup.setType( "group" );
-    Bliss::Summary n;
-    n.setValue( i18n("Your todos") );
-    m_rootGroup.setSummary( n );
-
-    m_bliss.insert( m_rootGroup );
-
-    Bliss::Root root;
-    rootGroup.setId( m_rootGroup.id() );
-    root.setGroup( rootGroup );
-    m_bliss.setRoot( root );
+    createWelcomeData();
   }
 
   cleanupGroups();
@@ -662,4 +648,22 @@ void MainModel::doSaveViewSequence( const Bliss::Todo &group,
   v.setTodoSequence( sequence );
 
   m_bliss.insert( v );
+}
+
+void MainModel::createWelcomeData()
+{
+  m_rootGroup.setId( KRandom::randomString( 10 ) );
+
+  m_rootGroup.setType( "group" );
+  Bliss::Summary n;
+  n.setValue( i18n("Stuff to do") );
+  m_rootGroup.setSummary( n );
+
+  m_bliss.insert( m_rootGroup );
+
+  Bliss::Root root;
+  Bliss::Group rootGroup;
+  rootGroup.setId( m_rootGroup.id() );
+  root.setGroup( rootGroup );
+  m_bliss.setRoot( root );
 }
