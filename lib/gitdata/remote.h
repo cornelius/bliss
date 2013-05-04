@@ -16,8 +16,8 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
     USA.
 */
-#ifndef GITREMOTE_H
-#define GITREMOTE_H
+#ifndef GITDATA_REMOTE_H
+#define GITDATA_REMOTE_H
 
 #include <gitdata/gitdata_export.h>
 

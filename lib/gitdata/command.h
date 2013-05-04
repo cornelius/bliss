@@ -16,8 +16,8 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
     USA.
 */
-#ifndef GITCOMMAND_H
-#define GITCOMMAND_H
+#ifndef GITDATA_COMMAND_H
+#define GITDATA_COMMAND_H
 
 #include <gitdata/gitdata_export.h>
 
