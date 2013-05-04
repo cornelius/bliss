@@ -19,8 +19,6 @@
 #ifndef HISTORYVIEW_H
 #define HISTORYVIEW_H
 
-#include "gitcommand.h"
-
 #include <QtGui>
 
 class MainModel;

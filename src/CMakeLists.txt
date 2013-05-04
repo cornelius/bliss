@@ -30,7 +30,6 @@ set(bliss_bin_SRCS
   labelitem.cpp
   fanmenuelement.cpp
   fanmenu.cpp
-  gitremote.cpp
   todoitem.cpp
   groupview.cpp
   newtododialog.cpp
@@ -38,8 +37,6 @@ set(bliss_bin_SRCS
   main.cpp
   mainview.cpp
   mainmodel.cpp
-  gitdir.cpp
-  gitcommand.cpp
   blissitemmodel.cpp
   blissallitemmodel.cpp
   blisstodoitemmodel.cpp
@@ -51,7 +48,7 @@ kde4_add_kcfg_files(bliss_bin_SRCS settings.kcfgc )
 kde4_add_executable(bliss_bin ${bliss_bin_SRCS})
 set_target_properties( bliss_bin PROPERTIES OUTPUT_NAME bliss )
 
-target_link_libraries(bliss_bin bliss ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${QT_QTWEBKIT_LIBRARY})
+target_link_libraries(bliss_bin bliss gitdata ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${QT_QTWEBKIT_LIBRARY})
 
 install(TARGETS bliss_bin ${INSTALL_TARGETS_DEFAULT_ARGS} )
 

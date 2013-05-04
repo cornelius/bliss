@@ -27,7 +27,6 @@
 #include "newgroupdialog.h"
 #include "newlistdialog.h"
 #include "settings.h"
-#include "gitremote.h"
 #include "settingswidget.h"
 #include "overview.h"
 #include "historyview.h"

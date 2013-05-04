@@ -19,11 +19,13 @@
 #ifndef GITCOMMAND_H
 #define GITCOMMAND_H
 
+#include <gitdata/gitdata_export.h>
+
 #include <QString>
 #include <QStringList>
 #include <QList>
 
-class GitCommand
+class GITDATA_EXPORT GitCommand
 {
   public:
     typedef QList<GitCommand> List;

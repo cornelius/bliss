@@ -20,7 +20,6 @@
 #include "historyview.h"
 
 #include "mainmodel.h"
-#include "gitdir.h"
 
 #include <KLocale>
 

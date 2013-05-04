@@ -19,8 +19,8 @@
 
 #include "storagegit.h"
 
-#include "gitdir.h"
-#include "gitremote.h"
+#include "gitdata/gitdir.h"
+#include "gitdata/gitremote.h"
 #include "settings.h"
 
 #include <KLocale>

@@ -19,13 +19,15 @@
 #ifndef GITREMOTE_H
 #define GITREMOTE_H
 
-#include "gitcommand.h"
+#include <gitdata/gitdata_export.h>
+
+#include <gitdata/gitcommand.h>
 
 #include <QtCore>
 
 class GitDir;
 
-class GitRemote : public QObject
+class GITDATA_EXPORT GitRemote : public QObject
 {
     Q_OBJECT
   public:

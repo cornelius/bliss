@@ -21,7 +21,6 @@
 
 #include "bliss/bliss.h"
 #include "blissitemmodel.h"
-#include "gitcommand.h"
 
 #include <QObject>
 #include <QPixmap>

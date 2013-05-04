@@ -21,7 +21,7 @@
 
 #include "storage.h"
 
-#include "gitcommand.h"
+#include "gitdata/gitcommand.h"
 
 class GitDir;
 class GitRemote;

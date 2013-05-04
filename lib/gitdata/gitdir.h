@@ -19,12 +19,14 @@
 #ifndef GITDIR_H
 #define GITDIR_H
 
-#include "gitcommand.h"
+#include <gitdata/gitdata_export.h>
+
+#include <gitdata/gitcommand.h>
 
 #include <QString>
 #include <QProcess>
 
-class GitDir : public QObject
+class GITDATA_EXPORT GitDir : public QObject
 {
     Q_OBJECT
   public:
