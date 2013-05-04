@@ -17,14 +17,14 @@
     USA.
 */
 
-#include "gitdir.h"
+#include "dir.h"
 
 #include "QDebug"
 #include "QDir"
 
 using namespace GitData;
 
-GitDir::GitDir( const QString &dirPath )
+Dir::Dir( const QString &dirPath )
   : m_dirPath( dirPath )
 {
   // FIXME: Store QDir instead of path
@@ -36,11 +36,11 @@ GitDir::GitDir( const QString &dirPath )
   init();
 }
 
-GitDir::~GitDir()
+Dir::~Dir()
 {
 }
 
-void GitDir::init()
+void Dir::init()
 {
   m_process->setWorkingDirectory( m_dirPath );
 
@@ -51,7 +51,7 @@ void GitDir::init()
   }
 }
 
-void GitDir::slotProcessFinished( int exitCode,
+void Dir::slotProcessFinished( int exitCode,
   QProcess::ExitStatus exitStatus )
 {
   Q_UNUSED( exitStatus );
@@ -62,7 +62,7 @@ void GitDir::slotProcessFinished( int exitCode,
 //  qDebug() << "STDOUT:" << output;
 //  qDebug() << "STDERR:" << m_process->readAllStandardError();
 
-  GitCommand cmd = m_queue.first();
+  Command cmd = m_queue.first();
   cmd.setResult( output.split( "\n" ) );
 
   emit commandExecuted( cmd );
@@ -73,9 +73,9 @@ void GitDir::slotProcessFinished( int exitCode,
 }
 
 // FIXME: Return a GitFile object, which can be used as handle.
-void GitDir::createPath( const QString &fileName )
+void Dir::createPath( const QString &fileName )
 {
-  QString filePath = GitDir::filePath( fileName );
+  QString filePath = Dir::filePath( fileName );
   if ( !QFile::exists( filePath ) ) {
     QFileInfo fi( filePath );
     QDir dir( fi.absoluteDir() );
@@ -86,9 +86,9 @@ void GitDir::createPath( const QString &fileName )
 }
 
 // FIXME: Return a GitFile object, which can be used as handle.
-void GitDir::addFile( const QString &fileName, const QString &msg )
+void Dir::addFile( const QString &fileName, const QString &msg )
 {
-  QString filePath = GitDir::filePath( fileName );
+  QString filePath = Dir::filePath( fileName );
   if ( !QFile::exists( filePath ) ) {
     qDebug() << "ERROR: file" << filePath << "doesn't exist";
   } else {
@@ -97,14 +97,14 @@ void GitDir::addFile( const QString &fileName, const QString &msg )
   }
 }
 
-int GitDir::commitData( const QString &msg )
+int Dir::commitData( const QString &msg )
 {
   return executeCommit( "-a", msg );
 }
 
-int GitDir::executeCommit( const QString &arg, const QString &msg )
+int Dir::executeCommit( const QString &arg, const QString &msg )
 {
-  GitCommand cmd = GitCommand( "commit" );
+  Command cmd = Command( "commit" );
   if ( !arg.isEmpty() ) {
     cmd.addArg( arg );
   }
@@ -113,41 +113,41 @@ int GitDir::executeCommit( const QString &arg, const QString &msg )
   return executeCommand( cmd ); 
 }
 
-QString GitDir::filePath( const QString &fileName )
+QString Dir::filePath( const QString &fileName )
 {
   return m_dirPath + "/" + fileName;
 }
 
-int GitDir::getLog()
+int Dir::getLog()
 {
-  GitCommand cmd = GitCommand( "log" );
+  Command cmd = Command( "log" );
   cmd.addLongOption( "pretty", "oneline" );
   return executeCommand( cmd );
 }
 
-int GitDir::executeCommand( const QString &command )
+int Dir::executeCommand( const QString &command )
 {
-  return executeCommand( GitCommand( command ) );
+  return executeCommand( Command( command ) );
 }
 
-int GitDir::executeCommand( const QString &command, const QString &arg )
+int Dir::executeCommand( const QString &command, const QString &arg )
 {
-  return executeCommand( GitCommand( command, arg ) );
+  return executeCommand( Command( command, arg ) );
 }
 
-int GitDir::executeCommand( const GitCommand &command )
+int Dir::executeCommand( const Command &command )
 {
   m_queue.append( command );
   processQueue();
   return command.id();
 }
 
-void GitDir::processQueue()
+void Dir::processQueue()
 {
   if ( m_queue.isEmpty() ) return;
   if ( m_process->state() != QProcess::NotRunning ) return;
 
-  GitCommand command = m_queue.first();
+  Command command = m_queue.first();
 
   qDebug() << "RUNNING GIT" << command.command() << command.args();
 

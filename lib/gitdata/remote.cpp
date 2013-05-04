@@ -17,47 +17,47 @@
     USA.
 */
 
-#include "gitremote.h"
+#include "remote.h"
 
-#include "gitdir.h"
+#include "dir.h"
 
 #include <KLocale>
 
 using namespace GitData;
 
-GitRemote::GitRemote( GitDir *dir )
+Remote::Remote( Dir *dir )
   : m_gitDir( dir ), m_pullCommand( -1 ), m_pushCommand( -1 ),
     m_sshAdded( false )
 {
-  connect( m_gitDir, SIGNAL( commandExecuted( const GitData::GitCommand & ) ),
-    SLOT( slotCommandExecuted( const GitData::GitCommand & ) ) );
+  connect( m_gitDir, SIGNAL( commandExecuted( const GitData::Command & ) ),
+    SLOT( slotCommandExecuted( const GitData::Command & ) ) );
 
   setStatus( i18n("Unsynced") );
 }
 
-void GitRemote::pull()
+void Remote::pull()
 {
   checkSshAdd();
 
-  GitCommand cmd = GitCommand( "pull" );
+  Command cmd = Command( "pull" );
   
   m_pullCommand = m_gitDir->executeCommand( cmd );
 
   setStatus( i18n("Pulling...") );
 }
 
-void GitRemote::push()
+void Remote::push()
 {
   checkSshAdd();
 
-  GitCommand cmd = GitCommand( "push" );
+  Command cmd = Command( "push" );
   
   m_pushCommand = m_gitDir->executeCommand( cmd );
 
   setStatus( i18n("Pushing...") );
 }
 
-void GitRemote::checkSshAdd()
+void Remote::checkSshAdd()
 {
   if ( !m_sshAdded ) {
     if ( system( "ssh-add -l" ) != 0 ) {
@@ -67,7 +67,7 @@ void GitRemote::checkSshAdd()
   m_sshAdded = true;
 }
 
-void GitRemote::slotCommandExecuted( const GitCommand &cmd )
+void Remote::slotCommandExecuted( const Command &cmd )
 {
   if ( cmd.id() == m_pullCommand ) {
     m_pullCommand = -1;
@@ -80,12 +80,12 @@ void GitRemote::slotCommandExecuted( const GitCommand &cmd )
   }
 }
 
-QString GitRemote::status() const
+QString Remote::status() const
 {
   return m_status;
 }
 
-void GitRemote::setStatus( const QString &status )
+void Remote::setStatus( const QString &status )
 {
   m_status = status;
   emit statusChanged( status );

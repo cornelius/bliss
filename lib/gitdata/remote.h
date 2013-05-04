@@ -21,19 +21,19 @@
 
 #include <gitdata/gitdata_export.h>
 
-#include <gitdata/gitcommand.h>
+#include <gitdata/command.h>
 
 #include <QtCore>
 
 namespace GitData {
 
-class GitDir;
+class Dir;
 
-class GITDATA_EXPORT GitRemote : public QObject
+class GITDATA_EXPORT Remote : public QObject
 {
     Q_OBJECT
   public:
-    GitRemote( GitDir * );
+    Remote( Dir * );
 
     void pull();
     void push();
@@ -52,10 +52,10 @@ class GITDATA_EXPORT GitRemote : public QObject
     void checkSshAdd();
 
   protected slots:
-    void slotCommandExecuted( const GitData::GitCommand & );
+    void slotCommandExecuted( const GitData::Command & );
 
   private:
-    GitDir *m_gitDir;
+    Dir *m_gitDir;
     int m_pullCommand;
     int m_pushCommand;
     QString m_status;

@@ -27,13 +27,13 @@
 
 namespace GitData {
 
-class GITDATA_EXPORT GitCommand
+class GITDATA_EXPORT Command
 {
   public:
-    typedef QList<GitCommand> List;
+    typedef QList<Command> List;
   
-    GitCommand( const QString &command );
-    GitCommand( const QString &command, const QString &arg );
+    Command( const QString &command );
+    Command( const QString &command, const QString &arg );
 
     int id() const;
 

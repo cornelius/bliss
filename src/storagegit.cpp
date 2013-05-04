@@ -19,8 +19,8 @@
 
 #include "storagegit.h"
 
-#include "gitdata/gitdir.h"
-#include "gitdata/gitremote.h"
+#include "gitdata/dir.h"
+#include "gitdata/remote.h"
 #include "settings.h"
 
 #include <KLocale>
@@ -46,16 +46,16 @@ void StorageGit::setLocation( const QString &location )
   delete m_gitDir;
   delete m_gitRemote;
   
-  m_gitDir = new GitData::GitDir( location );
+  m_gitDir = new GitData::Dir( location );
 
-  m_gitRemote = new GitData::GitRemote( m_gitDir );
+  m_gitRemote = new GitData::Remote( m_gitDir );
   connect( m_gitRemote, SIGNAL( pulled() ), SLOT( slotPulled() ) );
   connect( m_gitRemote, SIGNAL( pushed() ), SLOT( slotPushed() ) );
   connect( m_gitRemote, SIGNAL( statusChanged( const QString & ) ),
     SIGNAL( syncingStatusChanged( const QString & ) ) );
 
-  connect( m_gitDir, SIGNAL( commandExecuted( const GitData::GitCommand & ) ),
-    SLOT( slotCommandExecuted( const GitData::GitCommand & ) ) );  
+  connect( m_gitDir, SIGNAL( commandExecuted( const GitData::Command & ) ),
+    SLOT( slotCommandExecuted( const GitData::Command & ) ) );  
 }
 
 Bliss::Bliss StorageGit::readData()
@@ -104,7 +104,7 @@ void StorageGit::writeData( const Bliss::Bliss &b, const QString &msg )
   m_commitCommand = m_gitDir->commitData( i18n("Saving pending changes") );
 }
 
-void StorageGit::slotCommandExecuted( const GitData::GitCommand &cmd )
+void StorageGit::slotCommandExecuted( const GitData::Command &cmd )
 {
   if ( cmd.id() == m_commitCommand ) {
     m_commitCommand = 0;

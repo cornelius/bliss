@@ -17,81 +17,81 @@
     USA.
 */
 
-#include "gitcommand.h"
+#include "command.h"
 
 using namespace GitData;
 
-int GitCommand::m_nextId = 1;
+int Command::m_nextId = 1;
 
-GitCommand::GitCommand( const QString &command )
+Command::Command( const QString &command )
   : m_command( command )
 {
   setId();
 }
 
-GitCommand::GitCommand( const QString &command, const QString &arg )
+Command::Command( const QString &command, const QString &arg )
   : m_command( command )
 {
   addArg( arg );
   setId();
 }
 
-void GitCommand::setId()
+void Command::setId()
 {
   m_id = m_nextId++;
 }
 
-int GitCommand::id() const
+int Command::id() const
 {
   return m_id;
 }
 
-void GitCommand::setCommand( const QString &command )
+void Command::setCommand( const QString &command )
 {
   m_command = command;
 }
 
-void GitCommand::addArg( const QString &arg )
+void Command::addArg( const QString &arg )
 {
   m_args << arg;
 }
 
-void GitCommand::addOption( const QString &option )
+void Command::addOption( const QString &option )
 {
   addArg( "-" + option );
 }
 
-void GitCommand::addOption( const QString &option, const QString &value )
+void Command::addOption( const QString &option, const QString &value )
 {
   addArg( "-" + option + " " + value );
 }
 
-void GitCommand::addLongOption( const QString &option, const QString &value )
+void Command::addLongOption( const QString &option, const QString &value )
 {
   addArg( "--" + option + "=" + value );
 }
 
-void GitCommand::setArgs( const QStringList &args )
+void Command::setArgs( const QStringList &args )
 {
   m_args = args;
 }
 
-QString GitCommand::command() const
+QString Command::command() const
 {
   return m_command;
 }
 
-QStringList GitCommand::args() const
+QStringList Command::args() const
 {
   return m_args;
 }
 
-void GitCommand::setResult( const QStringList &t )
+void Command::setResult( const QStringList &t )
 {
   m_result = t;
 }
 
-QStringList GitCommand::result() const
+QStringList Command::result() const
 {
   return m_result;
 }

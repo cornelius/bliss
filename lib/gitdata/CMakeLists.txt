@@ -1,5 +1,5 @@
 set(gitdata_LIB_SRCS
-  gitcommand.cpp gitdir.cpp gitremote.cpp
+  command.cpp dir.cpp remote.cpp
 )
 
 kde4_add_library( gitdata SHARED ${gitdata_LIB_SRCS} )
@@ -10,7 +10,7 @@ set_target_properties( gitdata PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSI
 install( TARGETS gitdata ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
 install( FILES
-  gitcommand.h
+  command.h dir.h remote.h
   gitdata_export.h
   DESTINATION ${INCLUDE_INSTALL_DIR}/gitdata
 )

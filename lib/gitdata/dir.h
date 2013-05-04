@@ -21,19 +21,19 @@
 
 #include <gitdata/gitdata_export.h>
 
-#include <gitdata/gitcommand.h>
+#include <gitdata/command.h>
 
 #include <QString>
 #include <QProcess>
 
 namespace GitData {
 
-class GITDATA_EXPORT GitDir : public QObject
+class GITDATA_EXPORT Dir : public QObject
 {
     Q_OBJECT
   public:
-    GitDir( const QString &dirPath );
-    ~GitDir();
+    Dir( const QString &dirPath );
+    ~Dir();
 
     void init();
 
@@ -72,10 +72,10 @@ class GITDATA_EXPORT GitDir : public QObject
     /**
       Returns id of executed command.
     */
-    int executeCommand( const GitData::GitCommand & );
+    int executeCommand( const GitData::Command & );
 
   signals:
-    void commandExecuted( const GitData::GitCommand & );
+    void commandExecuted( const GitData::Command & );
 
   protected:
     void processQueue();
@@ -87,7 +87,7 @@ class GITDATA_EXPORT GitDir : public QObject
     QString m_dirPath;
     QProcess *m_process;
     
-    GitCommand::List m_queue;
+    Command::List m_queue;
 
     int m_commit;
 };
