@@ -23,8 +23,10 @@
 
 #include "gitdata/gitcommand.h"
 
+namespace GitData {
 class GitDir;
 class GitRemote;
+}
 
 class StorageGit : public Storage
 {
@@ -44,13 +46,13 @@ class StorageGit : public Storage
     void pullData();
 
   protected slots:
-    void slotCommandExecuted( const GitCommand & );
+    void slotCommandExecuted( const GitData::GitCommand & );
     void slotPushed();
     void slotPulled();
 
   private:
-    GitDir *m_gitDir;
-    GitRemote *m_gitRemote;
+    GitData::GitDir *m_gitDir;
+    GitData::GitRemote *m_gitRemote;
   
     bool m_dataIsValid;
     

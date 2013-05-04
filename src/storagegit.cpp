@@ -46,16 +46,16 @@ void StorageGit::setLocation( const QString &location )
   delete m_gitDir;
   delete m_gitRemote;
   
-  m_gitDir = new GitDir( location );
+  m_gitDir = new GitData::GitDir( location );
 
-  m_gitRemote = new GitRemote( m_gitDir );
+  m_gitRemote = new GitData::GitRemote( m_gitDir );
   connect( m_gitRemote, SIGNAL( pulled() ), SLOT( slotPulled() ) );
   connect( m_gitRemote, SIGNAL( pushed() ), SLOT( slotPushed() ) );
   connect( m_gitRemote, SIGNAL( statusChanged( const QString & ) ),
     SIGNAL( syncingStatusChanged( const QString & ) ) );
 
-  connect( m_gitDir, SIGNAL( commandExecuted( const GitCommand & ) ),
-    SLOT( slotCommandExecuted( const GitCommand & ) ) );  
+  connect( m_gitDir, SIGNAL( commandExecuted( const GitData::GitCommand & ) ),
+    SLOT( slotCommandExecuted( const GitData::GitCommand & ) ) );  
 }
 
 Bliss::Bliss StorageGit::readData()
@@ -104,7 +104,7 @@ void StorageGit::writeData( const Bliss::Bliss &b, const QString &msg )
   m_commitCommand = m_gitDir->commitData( i18n("Saving pending changes") );
 }
 
-void StorageGit::slotCommandExecuted( const GitCommand &cmd )
+void StorageGit::slotCommandExecuted( const GitData::GitCommand &cmd )
 {
   if ( cmd.id() == m_commitCommand ) {
     m_commitCommand = 0;

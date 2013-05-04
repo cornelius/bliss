@@ -22,6 +22,8 @@
 #include "QDebug"
 #include "QDir"
 
+using namespace GitData;
+
 GitDir::GitDir( const QString &dirPath )
   : m_dirPath( dirPath )
 {

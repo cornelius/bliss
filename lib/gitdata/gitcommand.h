@@ -25,6 +25,8 @@
 #include <QStringList>
 #include <QList>
 
+namespace GitData {
+
 class GITDATA_EXPORT GitCommand
 {
   public:
@@ -60,5 +62,7 @@ class GITDATA_EXPORT GitCommand
 
     static int m_nextId;
 };
+
+}
 
 #endif

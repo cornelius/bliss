@@ -19,6 +19,8 @@
 
 #include "gitcommand.h"
 
+using namespace GitData;
+
 int GitCommand::m_nextId = 1;
 
 GitCommand::GitCommand( const QString &command )

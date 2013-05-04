@@ -26,6 +26,8 @@
 #include <QString>
 #include <QProcess>
 
+namespace GitData {
+
 class GITDATA_EXPORT GitDir : public QObject
 {
     Q_OBJECT
@@ -70,10 +72,10 @@ class GITDATA_EXPORT GitDir : public QObject
     /**
       Returns id of executed command.
     */
-    int executeCommand( const GitCommand & );
+    int executeCommand( const GitData::GitCommand & );
 
   signals:
-    void commandExecuted( const GitCommand & );
+    void commandExecuted( const GitData::GitCommand & );
 
   protected:
     void processQueue();
@@ -89,5 +91,7 @@ class GITDATA_EXPORT GitDir : public QObject
 
     int m_commit;
 };
+
+}
 
 #endif

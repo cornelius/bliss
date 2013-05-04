@@ -25,6 +25,8 @@
 
 #include <QtCore>
 
+namespace GitData {
+
 class GitDir;
 
 class GITDATA_EXPORT GitRemote : public QObject
@@ -50,7 +52,7 @@ class GITDATA_EXPORT GitRemote : public QObject
     void checkSshAdd();
 
   protected slots:
-    void slotCommandExecuted( const GitCommand & );
+    void slotCommandExecuted( const GitData::GitCommand & );
 
   private:
     GitDir *m_gitDir;
@@ -59,5 +61,7 @@ class GITDATA_EXPORT GitRemote : public QObject
     QString m_status;
     bool m_sshAdded;
 };
+
+}
 
 #endif

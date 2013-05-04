@@ -23,12 +23,14 @@
 
 #include <KLocale>
 
+using namespace GitData;
+
 GitRemote::GitRemote( GitDir *dir )
   : m_gitDir( dir ), m_pullCommand( -1 ), m_pushCommand( -1 ),
     m_sshAdded( false )
 {
-  connect( m_gitDir, SIGNAL( commandExecuted( const GitCommand & ) ),
-    SLOT( slotCommandExecuted( const GitCommand & ) ) );
+  connect( m_gitDir, SIGNAL( commandExecuted( const GitData::GitCommand & ) ),
+    SLOT( slotCommandExecuted( const GitData::GitCommand & ) ) );
 
   setStatus( i18n("Unsynced") );
 }
