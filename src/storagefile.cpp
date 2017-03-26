@@ -132,6 +132,8 @@ void StorageFile::writeData( const Bliss::Bliss &b, const QString &msg )
 {
   Q_UNUSED( msg )
 
+  qDebug() << "WRITE TO FILE" << m_fileName;
+
   // FIXME: Make Bliss::writeFile const, so copy is not needed
   Bliss::Bliss bliss = b;
 
@@ -144,7 +146,7 @@ void StorageFile::writeData( const Bliss::Bliss &b, const QString &msg )
     foreach( Bliss::Todo todo, todos ) {
       if ( todo.type() != "group" ) {
         QString summary = todo.summary().value();
-        if ( summary.isEmpty() ) ts << "\n\n";
+        if ( summary.isEmpty() ) ts << "\n";
         else {
           QString chunk = summary;
           ts << "* ";
@@ -156,12 +158,11 @@ void StorageFile::writeData( const Bliss::Bliss &b, const QString &msg )
             ts << chunk.left( separatorPos ) << "\n ";
             chunk = chunk.mid( separatorPos );
           }
-          ts << chunk;
+          ts << chunk << "\n";
         }
       }
     }
-    ts << "\n";
   }
 
-  emit dataWritten();
+  QTimer::singleShot(0, this, SIGNAL(dataWritten()));
 }
