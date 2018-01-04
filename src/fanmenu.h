@@ -20,6 +20,7 @@
 #define FANMENU_H
 
 #include <QtGui>
+#include <QGraphicsLineItem>
 
 #include "fanmenuitem.h"
 

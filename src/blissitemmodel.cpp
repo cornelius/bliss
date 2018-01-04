@@ -85,7 +85,8 @@ QVariant BlissItemModel::headerData(int section, Qt::Orientation orientation,
 
 void BlissItemModel::updateData()
 {
-  reset();
+// TODO: port
+//  reset();
 }
 
 Bliss::Todo BlissItemModel::todo( const QModelIndex &index )

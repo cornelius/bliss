@@ -1,0 +1,9 @@
+#ifndef KDIALOG_H
+#define KDIALOG_H
+
+#include <QDialog>
+
+class KDialog : public QDialog {
+};
+
+#endif

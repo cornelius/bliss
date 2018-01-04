@@ -25,6 +25,8 @@
 #include "viewpositions.h"
 
 #include <QtGui>
+#include <QWidget>
+#include <QBoxLayout>
 
 class MainModel;
 class TodoItem;

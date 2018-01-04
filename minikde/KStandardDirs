@@ -1,0 +1,7 @@
+#ifndef KSTANDARDDIRS_H
+#define KSTANDARDDIRS_H
+
+class KStandardDirs {
+};
+
+#endif

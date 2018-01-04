@@ -25,6 +25,8 @@
 #include "roundedrectitem.h"
 
 #include <QtGui>
+#include <QGraphicsScene>
+#include <QGraphicsProxyWidget>
 
 class MainModel;
 class MenuHandler;

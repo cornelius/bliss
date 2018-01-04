@@ -21,16 +21,6 @@
 #ifndef BLISS_EXPORT_H
 #define BLISS_EXPORT_H
 
-#include <kdemacros.h>
-
-#ifndef BLISS_EXPORT
-# if defined(MAKE_BLISS_LIB)
-   /* We are building this library */ 
-#  define BLISS_EXPORT KDE_EXPORT
-# else
-   /* We are using this library */ 
-#  define BLISS_EXPORT KDE_IMPORT
-# endif
-#endif
+#define BLISS_EXPORT
 
 #endif

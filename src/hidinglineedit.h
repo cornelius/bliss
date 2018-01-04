@@ -20,6 +20,7 @@
 #define HIDINGLINEEDIT_H
 
 #include <QtGui>
+#include <QLineEdit>
 
 class HidingLineEdit : public QLineEdit
 {
