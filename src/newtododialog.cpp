@@ -21,11 +21,11 @@
 
 #include "matchlist.h"
 
-#include <KConfig>
 #include <KMessageBox>
-#include <KPushButton>
-#include <KGlobal>
 #include <KRandom>
+
+#include <QLabel>
+#include <QBoxLayout>
 
 NewTodoDialog::NewTodoDialog( MainModel *model, QWidget *parent )
   : KDialog( parent ), m_model( model )

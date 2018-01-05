@@ -3,7 +3,7 @@
 
 class KInputDialog {
   public:
-    static QString getText(const QString &, const QString &, const QString &, bool *);
+    static QString getText(const QString &, const QString &, const QString &, bool *) { return QString(); };
 };
 
 #endif

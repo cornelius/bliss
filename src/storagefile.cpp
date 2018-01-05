@@ -20,8 +20,8 @@
 #include "storagefile.h"
 
 #include "settings.h"
-#include "krandom.h"
 
+#include <KRandom>
 #include <KLocale>
 #include <KStandardDirs>
 

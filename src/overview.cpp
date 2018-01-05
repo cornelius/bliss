@@ -25,6 +25,10 @@
 #include <KLocale>
 #include <KStandardDirs>
 
+#include <QBoxLayout>
+#include <QPushButton>
+#include <QLabel>
+
 Overview::Overview( MainModel *model )
   : m_model( model )
 {

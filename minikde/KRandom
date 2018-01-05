@@ -5,7 +5,7 @@
 
 class KRandom {
   public:
-    static QString randomString(int);
+    static QString randomString(int) { return QString(); };
 };
 
 #endif

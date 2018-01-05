@@ -26,6 +26,10 @@
 #include "history.h"
 
 #include <QtGui>
+#include <QWidget>
+#include <QStackedLayout>
+#include <QLineEdit>
+#include <QCheckBox>
 
 class QPainter;
 class KUrl;

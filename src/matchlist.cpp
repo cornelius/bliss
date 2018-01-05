@@ -21,6 +21,8 @@
 
 #include <KMessageBox>
 
+#include <QBoxLayout>
+
 MatchList::MatchList( MainModel *model, QWidget *parent )
   : QWidget( parent ), m_model( model ), m_proxyModel( 0 ), m_matchList( 0 )
 {

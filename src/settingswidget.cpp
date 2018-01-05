@@ -26,6 +26,10 @@
 
 #include <KLocale>
 
+#include <QBoxLayout>
+#include <QLabel>
+#include <QPushButton>
+
 SettingsWidget::SettingsWidget( MainModel *model, QWidget *parent)
   : QWidget( parent ), m_model( model )
 {

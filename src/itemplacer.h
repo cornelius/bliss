@@ -22,6 +22,9 @@
 #include <QObject>
 #include <QAnimationGroup>
 #include <QPropertyAnimation>
+#include <QMap>
+#include <QList>
+#include <QPointF>
 
 class TodoItem;
 

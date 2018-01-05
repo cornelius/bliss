@@ -1,0 +1,13 @@
+#ifndef KMESSAGEBOX_H
+#define KMESSAGEBOX_H
+
+#include <QWidget>
+#include <QString>
+
+class KMessageBox {
+  public:
+    static void error(QWidget *, const QString &) {};
+    static void information(QWidget *, const QString &) {};
+};
+
+#endif

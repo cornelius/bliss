@@ -1,7 +1,11 @@
 #ifndef KSTANDARDDIRS_H
 #define KSTANDARDDIRS_H
 
+#include <QString>
+
 class KStandardDirs {
+  public:
+    static QString locate(const char *, const QString &) { return QString(); };
 };
 
 #endif

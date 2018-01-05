@@ -3,8 +3,13 @@
 
 class Settings {
   public:
-    bool remoteSyncingEnabled() { return false; };
-    void setRemoteSyncingEnabled(bool) {};
+    static Settings *self() { return new Settings; }
+
+    void readConfig() {};
+    void writeConfig() {};
+
+    static bool remoteSyncingEnabled() { return false; };
+    static void setRemoteSyncingEnabled(bool) {};
 
     static QStringList history() { return QStringList(); };
     static void setHistory(const QStringList &) {};

@@ -2,8 +2,21 @@
 #define KDIALOG_H
 
 #include <QDialog>
+#include <QPushButton>
 
 class KDialog : public QDialog {
+  public:
+    enum Button {Ok, Cancel};
+
+    KDialog(QWidget *) {};
+
+    void setMainWidget(QWidget *) {};
+    
+    QPushButton *button(Button) { return 0; };
+
+    void setCaption(const QString &) {};
+    void setButtons(int) {};
+    void setModal(bool) {};
 };
 
 #endif

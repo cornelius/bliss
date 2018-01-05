@@ -24,14 +24,16 @@
 #include "mainview.h"
 #include "settings.h"
 
+/*
 #include <kstatusbar.h>
 #include <kmenubar.h>
 
 #include <kaction.h>
 #include <kactioncollection.h>
 #include <kstandardaction.h>
+*/
 
-#include <KDE/KLocale>
+#include <KLocale>
 
 MainWindow::MainWindow()
   : KXmlGuiWindow(), m_closing( false )
@@ -40,11 +42,6 @@ MainWindow::MainWindow()
   setCentralWidget( m_view );
 
   setupActions();
-
-  setupGUI();
-
-  statusBar()->hide();
-  menuBar()->hide();
 
   connect( m_view, SIGNAL( dataWritten() ), SLOT( slotDataWritten() ) );
 }
@@ -55,7 +52,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::setupActions()
 {
-  KStandardAction::quit( qApp, SLOT( closeAllWindows() ), actionCollection() );
+  // TODO: port
+  // KStandardAction::quit( qApp, SLOT( closeAllWindows() ), actionCollection() );
 }
 
 void MainWindow::readData( const QString &file )

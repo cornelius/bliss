@@ -24,6 +24,7 @@
 #include <KDialog>
 
 #include <QtGui>
+#include <QLineEdit>
 
 class NewTodoDialog : public KDialog
 {

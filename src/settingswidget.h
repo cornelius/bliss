@@ -21,7 +21,8 @@
 #ifndef SETTINGSWIDGET_H
 #define SETTINGSWIDGET_H
 
-#include <QtGui>
+#include <QWidget>
+#include <QCheckBox>
 
 class MainModel;
 

@@ -19,7 +19,7 @@
 #ifndef SEARCHRESULTVIEW_H
 #define SEARCHRESULTVIEW_H
 
-#include <QtGui>
+#include <QWidget>
 
 class MatchList;
 class MainModel;

@@ -20,6 +20,7 @@
 #define OVERVIEW_H
 
 #include <QtGui>
+#include <QWidget>
 
 class MainModel;
 class SearchEdit;
