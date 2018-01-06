@@ -24,19 +24,12 @@
 #include "mainview.h"
 #include "settings.h"
 
-/*
-#include <kstatusbar.h>
-#include <kmenubar.h>
-
-#include <kaction.h>
-#include <kactioncollection.h>
-#include <kstandardaction.h>
-*/
+#include <QAction>
 
 #include <KLocale>
 
 MainWindow::MainWindow()
-  : KXmlGuiWindow(), m_closing( false )
+  : QMainWindow(), m_closing( false )
 {
   m_view = new MainView( this );
   setCentralWidget( m_view );
@@ -52,8 +45,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::setupActions()
 {
-  // TODO: port
-  // KStandardAction::quit( qApp, SLOT( closeAllWindows() ), actionCollection() );
+  QAction *quitAction = new QAction(i18n("Quit"), this);
+  quitAction->setShortcut(QKeySequence::Quit);
+  connect(quitAction, SIGNAL(triggered()), SLOT(close()));
+  addAction(quitAction);
 }
 
 void MainWindow::readData( const QString &file )

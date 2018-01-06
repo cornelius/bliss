@@ -3,6 +3,6 @@
 
 #include <QString>
 
-QString i18n(const QString &) { return QString(); };
+static QString i18n(const QString &) { return QString(); };
 
 #endif
