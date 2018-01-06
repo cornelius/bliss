@@ -32,15 +32,14 @@ NewTodoDialog::NewTodoDialog( MainModel *model, QWidget *parent )
 {
   setCaption( "New Todo" );
   setButtons( KDialog::Ok | KDialog::Cancel );
-  setModal( true );
 
   QWidget *topWidget = new QWidget;
-  
+
   QBoxLayout *topLayout = new QVBoxLayout( topWidget );
 
   QLabel *label = new QLabel( "Enter summary of todo" );
   topLayout->addWidget( label );
-  
+
   m_nameInput = new QLineEdit;
   topLayout->addWidget( m_nameInput );
   connect( m_nameInput, SIGNAL( textChanged( const QString & ) ),

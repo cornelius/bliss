@@ -3,20 +3,26 @@
 
 #include <QDialog>
 #include <QPushButton>
+#include <QDialogButtonBox>
 
 class KDialog : public QDialog {
   public:
     enum Button {Ok, Cancel};
 
-    KDialog(QWidget *) {};
+    KDialog(QWidget *);
 
-    void setMainWidget(QWidget *) {};
-    
-    QPushButton *button(Button) { return 0; };
+    void setMainWidget(QWidget *);
 
-    void setCaption(const QString &) {};
-    void setButtons(int) {};
-    void setModal(bool) {};
+    QPushButton *button(Button);
+
+    void setCaption(const QString &);
+    void setButtons(int);
+
+  private:
+    QDialogButtonBox *mButtonBox;
+
+    QPushButton *mOkButton;
+    QPushButton *mCancelButton;
 };
 
 #endif

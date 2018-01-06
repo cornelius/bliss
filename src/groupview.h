@@ -31,7 +31,6 @@
 class MainModel;
 class TodoItem;
 class ListItem;
-class LabelItem;
 class QAnimationGroup;
 class MainMenuItem;
 class MagicMenuItem;
@@ -57,7 +56,7 @@ class GroupView : public QWidget
 
     void readConfig();
     void writeConfig();
-    
+
     void setAdderGroup( const Bliss::Todo &group );
 
     void setBackButtonEnabled( bool );
@@ -67,29 +66,27 @@ class GroupView : public QWidget
   signals:
     void goBack();
     void showOverview();
-    
+
     void newTodo();
     void showTodo( const Bliss::Todo & );
     void requestShowGroup( const Bliss::Todo & );
-    
+
     void showSettings();
 
     void newGroup();
     void newList();
     void removeGroup( const Bliss::Todo &group );
-    
+
     void closeRequested();
 
   protected:
     TodoItemGroup prepareTodoItems( ItemPlacer * );
     void createMenuItems();
-    void createLabelItems();
     void createListItems();
 
     TodoItem *createTodoItem( const Bliss::Todo & );
-    
+
     ListItem *createListItem( const Bliss::ViewList &list );
-    LabelItem *createLabelItem( const Bliss::ViewLabel &label );
 
     TodoItem *item( const Bliss::Todo & ) const;
     ListItem *listItem( TodoItem * ) const;
@@ -103,12 +100,12 @@ class GroupView : public QWidget
 
     QPointF preparePositions( const QList<TodoItem *> &todoItems,
       ItemPlacer * );
-    
+
   protected slots:
     void resetLayout();
 
     void setViewPosition();
-    
+
     void hideItems();
     void placeItems();
     void unplaceItems();
@@ -119,15 +116,8 @@ class GroupView : public QWidget
 
     void addList();
     void removeList( ListItem * );
-    
-    void addLabel();
-    void addLabel( const QPointF & );
-    void removeLabel( LabelItem * );
-    void renameLabel( LabelItem * );
 
     void slotItemMoved( TodoItem *item, const QPointF &pos );
- 
-    void addLabelClicked();
 
     void hideGlobalMenu();
 
@@ -142,7 +132,7 @@ class GroupView : public QWidget
     void slotTodoRemoved( const Bliss::Todo & );
 
     void rememberPosition( const QPoint & );
-    
+
   private:
     MainModel *m_model;
 
@@ -150,7 +140,6 @@ class GroupView : public QWidget
     Bliss::Todo m_previousGroup;
 
     QList<TodoItem *> m_items;
-    QList<LabelItem *> m_labelItems;
     QList<ListItem *> m_listItems;
 
     TodoItem *m_previousItem;
@@ -159,7 +148,7 @@ class GroupView : public QWidget
     TodoItemGroup m_newItems;
 
     QGraphicsTextItem *m_titleItem;
-    
+
     ButtonItem *m_backButton;
     MainMenuItem *m_mainMenu;
     MagicMenuItem *m_magicMenu;
@@ -179,10 +168,9 @@ class GroupView : public QWidget
     ItemPlacer *m_removeItemPlacer;
 
     FanMenu *m_globalMenu;
-    FanMenuItem *m_addLabelItem;
 
     MenuHandler *m_menuHandler;
-    
+
     ViewPositions m_viewPositions;
 };
 

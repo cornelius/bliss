@@ -1,9 +1,0 @@
-#ifndef KINPUTDIALOG_H
-#define KINPUTDIALOG_H
-
-class KInputDialog {
-  public:
-    static QString getText(const QString &, const QString &, const QString &, bool *) { return QString(); };
-};
-
-#endif

@@ -20,7 +20,6 @@ HEADERS += src/blissallitemmodel.h \
            src/history.h \
            src/historyview.h \
            src/itemplacer.h \
-           src/labelitem.h \
            src/listitem.h \
            src/magicmenuitem.h \
            src/mainmenuitem.h \
@@ -67,7 +66,6 @@ SOURCES += src/blissallitemmodel.cpp \
            src/history.cpp \
            src/historyview.cpp \
            src/itemplacer.cpp \
-           src/labelitem.cpp \
            src/listitem.cpp \
            src/magicmenuitem.cpp \
            src/main.cpp \
@@ -96,4 +94,6 @@ SOURCES += src/blissallitemmodel.cpp \
            lib/bliss/bliss.cpp \
            lib/gitdata/command.cpp \
            lib/gitdata/dir.cpp \
-           lib/gitdata/remote.cpp
+           lib/gitdata/remote.cpp \
+           minikde/klocale.cpp \
+           minikde/kdialog.cpp
