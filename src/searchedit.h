@@ -19,11 +19,9 @@
 #ifndef SEARCHEDIT_H
 #define SEARCHEDIT_H
 
-#include <KLineEdit>
+#include <QLineEdit>
 
-#include <QtGui>
-
-class SearchEdit : public KLineEdit
+class SearchEdit : public QLineEdit
 {
     Q_OBJECT
   public:
