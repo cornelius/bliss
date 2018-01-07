@@ -33,7 +33,8 @@
 #include "searchedit.h"
 #include "searchresultview.h"
 
-#include <KMessageBox>
+#include <QMessageBox>
+
 #include <KLocale>
 
 MainView::MainView(QWidget *parent)
@@ -114,7 +115,7 @@ void MainView::writeConfig()
 void MainView::readData( const QString &file )
 {
   if ( !m_model->readData( file ) ) {
-    KMessageBox::error( this, i18n("Error reading data file") );
+    QMessageBox::critical( this, i18n("Error"), i18n("Error reading data file") );
     return;
   }
 

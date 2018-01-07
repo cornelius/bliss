@@ -21,7 +21,6 @@
 
 #include "matchlist.h"
 
-#include <KMessageBox>
 #include <KRandom>
 
 #include <QLabel>

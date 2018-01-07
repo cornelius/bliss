@@ -19,8 +19,7 @@
 
 #include "matchlist.h"
 
-#include <KMessageBox>
-
+#include <QMessageBox>
 #include <QBoxLayout>
 
 MatchList::MatchList( MainModel *model, QWidget *parent )
@@ -60,7 +59,7 @@ Bliss::Todo MatchList::todo()
     return identity;
   } else {
     if ( selectedIndexes.count() > 1 ) {
-      KMessageBox::information( 0, "More than one todo selected" );
+      QMessageBox::information( 0, "Warning", "More than one todo selected" );
     }
     return m_model->findTodo( m_proxyModel->data( selectedIndexes.first(),
       Qt::UserRole ).toString() );

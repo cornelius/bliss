@@ -96,4 +96,5 @@ SOURCES += src/blissallitemmodel.cpp \
            lib/gitdata/dir.cpp \
            lib/gitdata/remote.cpp \
            minikde/klocale.cpp \
-           minikde/kdialog.cpp
+           minikde/kdialog.cpp \
+           minikde/krandom.cpp

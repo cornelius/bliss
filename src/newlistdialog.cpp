@@ -20,7 +20,6 @@
 #include "newlistdialog.h"
 
 #include <KRandom>
-#include <KMessageBox>
 
 #include <QBoxLayout>
 #include <QLabel>
