@@ -23,7 +23,6 @@
 #include "searchresultview.h"
 
 #include <KLocale>
-#include <KStandardDirs>
 
 #include <QBoxLayout>
 #include <QPushButton>
@@ -34,10 +33,10 @@ Overview::Overview( MainModel *model )
 {
   QBoxLayout *topLayout = new QHBoxLayout( this );
 
-  
+
   QBoxLayout *searchLayout = new QVBoxLayout;
   topLayout->addLayout( searchLayout, 1 );
-  
+
   m_searchEdit = new SearchEdit;
   searchLayout->addWidget( m_searchEdit );
 
@@ -47,17 +46,17 @@ Overview::Overview( MainModel *model )
   connect( m_searchEdit, SIGNAL( search( const QString & ) ),
     m_searchResultView, SLOT( search( const QString & ) ) );
 
-  
+
   QBoxLayout *rightLayout = new QVBoxLayout;
   topLayout->addLayout( rightLayout, 1 );
 
   rightLayout->addStretch( 1 );
-  
+
   QBoxLayout *buttonLayout = new QVBoxLayout;
   rightLayout->addLayout( buttonLayout );
 
   buttonLayout->addStretch( 1 );
-  
+
   QPushButton *button = new QPushButton( i18n("Group view") );
   buttonLayout->addWidget( button );
   connect( button, SIGNAL( clicked() ), SIGNAL( showGroupView() ) );
@@ -68,21 +67,14 @@ Overview::Overview( MainModel *model )
 
   rightLayout->addStretch( 1 );
 
-  QString logoPath = KStandardDirs::locate( "appdata", "bliss-logo.png" );
-  QPixmap logoPixmap = QPixmap( logoPath );
-
-  QLabel *logo = new QLabel;
-  logo->setPixmap( logoPixmap );
-  rightLayout->addWidget( logo );
-
   QLabel *about = new QLabel;
   rightLayout->addWidget( about );
-  
+
   QString text = "<qt>";
   text += i18n("Bliss - the humane todo list");
   text += "<br/>";
   text += "<br/>";
-  text += "Copyright (c) 2013 Cornelius Schumacher";
+  text += "Copyright (c) 2013-2018 Cornelius Schumacher <schumacher@kde.org>";
   text += "<br/>";
   text += "This program is distributed under the terms of the ";
   text += "<a href=\"http://gpl.org\">GPL</a>";

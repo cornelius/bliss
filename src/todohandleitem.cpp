@@ -46,7 +46,7 @@ TodoHandleItem::TodoHandleItem( QGraphicsItem *item, MainModel *model )
   : QObject( model ), QGraphicsEllipseItem( item ), m_model( model )
 {
   init();
-  
+
   ButtonItem *button = new ButtonItem( this );
   button->setPlus();
   button->setClickEnabled( false );
@@ -75,7 +75,7 @@ void TodoHandleItem::setItemSize( int size )
   m_itemSize = size;
 
   setRect( -m_itemSize/2, -m_itemSize/2, m_itemSize, m_itemSize );
-  
+
   updateItem( m_todo );
 }
 
@@ -87,11 +87,11 @@ int TodoHandleItem::itemSize() const
 void TodoHandleItem::updateItem( const Bliss::Todo &todo )
 {
   m_todo = todo;
-  
+
   foreach( QGraphicsItem *child, childItems() ) {
     delete child;
   }
-  
+
   if ( todo.type() == "group" ) {
     int circleSize = m_itemSize + 14;
     QGraphicsEllipseItem *groupCircle = new QGraphicsEllipseItem( this );
@@ -102,11 +102,6 @@ void TodoHandleItem::updateItem( const Bliss::Todo &todo )
     pen.setWidth( 4 );
     groupCircle->setPen( pen );
   }
-  
-  QPixmap pixmap = m_model->pixmap( todo );
-
-  QGraphicsItem *item = new QGraphicsPixmapItem( pixmap, this );  
-  item->setPos( -pixmap.width() / 2, -pixmap.height() / 2 );
 }
 
 Bliss::Todo TodoHandleItem::todo() const

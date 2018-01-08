@@ -23,7 +23,6 @@
 
 #include <KRandom>
 #include <KLocale>
-#include <KStandardDirs>
 
 #include <QtCore>
 
@@ -55,7 +54,7 @@ Bliss::Bliss StorageFile::readData()
     QString line;
     do {
       line = ts.readLine();
-      
+
       if ( line.startsWith( "*" ) ) {
         addTodo();
         m_summary = line.mid( 1 ).trimmed();
@@ -68,14 +67,14 @@ Bliss::Bliss StorageFile::readData()
     } while ( !line.isNull() );
 
     addTodo();
-    
+
     while( !m_todoEntries.isEmpty() && m_todoEntries.first().isEmpty() ) {
       m_todoEntries.removeFirst();
     }
     while( !m_todoEntries.isEmpty() && m_todoEntries.last().isEmpty() ) {
       m_todoEntries.removeLast();
     }
-    
+
     Bliss::Todo rootGroup;
     rootGroup.setType( "group" );
     rootGroup.setId( "root" );
@@ -115,7 +114,7 @@ void StorageFile::createTodo( Bliss::Bliss &bliss, const Bliss::Todo &group,
 {
   Bliss::Todo todo;
   todo.setId( KRandom::randomString( 10 ) );
-  
+
   Bliss::Summary summary;
   summary.setValue( title );
   todo.setSummary( summary );
@@ -125,7 +124,7 @@ void StorageFile::createTodo( Bliss::Bliss &bliss, const Bliss::Todo &group,
   Bliss::Groups groups;
   groups.addGroup( g );
   todo.setGroups( groups );
-  
+
   bliss.addTodo( todo );
 }
 
@@ -164,5 +163,5 @@ void StorageFile::writeData( const Bliss::Bliss &b, const QString &msg )
     ts << "\n";
   }
 
-  emit dataWritten();  
+  emit dataWritten();
 }

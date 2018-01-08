@@ -23,7 +23,6 @@
 #include "blissitemmodel.h"
 
 #include <QObject>
-#include <QPixmap>
 
 class Storage;
 
@@ -37,14 +36,14 @@ class MainModel : public QObject
     void writeData( const QString &msg );
 
     QString locationId() const;
-    
+
     // FIXME: create create,read,update,delete identity functions
     Bliss::Todo findTodo( const QString &id );
     Bliss::Todo insert( Bliss::Todo, const QString &msg ); // create/update
 
     Bliss::ViewList insert( const Bliss::ViewList &, const Bliss::Todo &,
                             const QString &msg );
-    
+
     Bliss::Todo rootGroup();
 
     Bliss::Todo::List groups();
@@ -66,14 +65,14 @@ class MainModel : public QObject
     void moveTodo( const Bliss::Todo &todo, const Bliss::Todo &fromGroup,
                    const Bliss::Todo &toGroup );
     void deleteTodo( const Bliss::Todo &todo, const Bliss::Todo &group );
-      
+
     void removeGroup( const Bliss::Todo &group );
 
     Bliss::ViewList::List lists( const Bliss::Todo &group );
 
     void addList( const Bliss::ViewList &list,
       const Bliss::Todo &group );
-    
+
     BlissItemModel *allItemModel();
     BlissItemModel *todoItemModel();
     BlissItemModel *groupItemModel();
@@ -109,8 +108,6 @@ class MainModel : public QObject
     Bliss::GroupView groupView( const Bliss::Todo &group );
     Bliss::GroupView groupView( const QString &groupId );
 
-    QPixmap pixmap( const Bliss::Todo & ) const;
-
     void retrieveLog();
 
     void pullData();
@@ -132,7 +129,7 @@ class MainModel : public QObject
 
   protected:
     void createWelcomeData();
-    
+
     void doAddTodo( Bliss::Todo &todo, const Bliss::Todo &group );
     void doDeleteTodo( const Bliss::Todo &todo, const Bliss::Todo &group );
     void doRemoveFromView( const Bliss::Todo &todo, const Bliss::Todo &group );
@@ -143,16 +140,14 @@ class MainModel : public QObject
     void doSaveViewSequence( const Bliss::Todo &group, const QStringList &ids );
 
     void cleanupGroups();
-    
+
     void setupGroups();
 
-    QPixmap defaultPixmap( const Bliss::Todo &identity ) const;
-    
   private:
     Storage *m_storage;
-  
+
     QString m_locationId;
-    
+
     Bliss::Bliss m_bliss;
 
     Bliss::Todo m_rootGroup;
@@ -163,12 +158,6 @@ class MainModel : public QObject
     BlissItemModel *m_personsItemModel;
     BlissItemModel *m_groupItemModel;
     QMap<QString,BlissItemModel *> m_itemModels;
-    
-    QPixmap m_defaultGroupPixmap;
-    QPixmap m_defaultPersonPixmap;
-
-    QString m_defaultGroupPixmapPath;
-    QString m_defaultPersonPixmapPath;
 };
 
 #endif

@@ -28,21 +28,15 @@
 
 #include <KRandom>
 #include <KLocale>
-#include <KStandardDirs>
 
 #include <QDir>
 #include <QDebug>
+#include <QPointF>
 
 MainModel::MainModel( QObject *parent )
   : QObject( parent ), m_storage( 0 ), m_allItemModel( 0 ),
     m_personsItemModel( 0 ), m_groupItemModel( 0 )
 {
-  m_defaultGroupPixmapPath = KStandardDirs::locate( "appdata",
-    "bliss_group.png" );
-  m_defaultGroupPixmap = QPixmap( m_defaultGroupPixmapPath );
-  m_defaultPersonPixmapPath = KStandardDirs::locate( "appdata",
-    "bliss_todo.png" );
-  m_defaultPersonPixmap = QPixmap( m_defaultPersonPixmapPath );
 }
 
 MainModel::~MainModel()
@@ -108,10 +102,10 @@ Bliss::Todo::List MainModel::todos()
 Bliss::Todo::List MainModel::unlistedTodosOfGroup( const Bliss::Todo &group )
 {
   Bliss::Todo::List unlistedTodos;
-  
+
   Bliss::Todo::List todos = todosOfGroup( group );
   Bliss::GroupView view = groupView( group.id() );
-  
+
   foreach( Bliss::Todo todo, todos ) {
     bool found = false;
     foreach( Bliss::ViewList list, view.viewListList() ) {
@@ -127,7 +121,7 @@ Bliss::Todo::List MainModel::unlistedTodosOfGroup( const Bliss::Todo &group )
       unlistedTodos.append( todo );
     }
   }
-  
+
   return unlistedTodos;
 }
 
@@ -170,7 +164,7 @@ Bliss::Todo::List MainModel::todosOfGroup( const QString &id )
   } else {
     sortedTodos = todos;
   }
-  
+
   return sortedTodos;
 }
 
@@ -283,7 +277,7 @@ void MainModel::cleanupGroups()
 
       m_bliss.insert( todo );
     }
-  }  
+  }
 }
 
 void MainModel::setupGroups()
@@ -297,11 +291,11 @@ void MainModel::setupGroups()
       todo.setType( "group" );
       m_bliss.insert( todo );
     }
-      
+
     if ( todo.type() == "group" ) {
       m_groups.append( todo );
     }
-    
+
     foreach( Bliss::Group group, todo.groups().groupList() ) {
       if ( m_groupMap.contains( group.id() ) ) {
         m_groupMap[ group.id() ].append( todo );
@@ -370,9 +364,9 @@ void MainModel::moveTodo( const Bliss::Todo &t, const Bliss::Todo &fromGroup,
   groups.addGroup( g );
   todo.setGroups( groups );
   m_bliss.insert( todo );
-  
+
   doRemoveFromView( todo, fromGroup );
-  
+
   insert( todo, i18n("Moved %1 from group %2 to group %3")
     .arg( todo.summary().value() )
     .arg( fromGroup.summary().value() )
@@ -383,7 +377,7 @@ Bliss::Todo MainModel::addTodo( const Bliss::Todo &t,
   const Bliss::Todo &group, const Bliss::ViewList &list )
 {
   Bliss::Todo todo = t;
-  
+
   doSaveViewList( group, list );
   doAddTodo( todo, group );
   return insert( todo, i18n("Created todo %1 in list %2")
@@ -397,7 +391,7 @@ Bliss::Todo MainModel::addTodo( const Bliss::Todo &t,
   Bliss::Todo todo = t;
 
   if ( todo.groups().findGroup( group.id() ).isValid() ) return Bliss::Todo();
-  
+
   doAddTodo( todo, group );
 
   return insert( todo, i18n("Add %1 to group %2").arg( todo.summary().value() )
@@ -420,7 +414,7 @@ void MainModel::deleteTodo( const Bliss::Todo &todo, const Bliss::Todo &group )
 
   writeData( i18n("Deleted %1 from group %2").arg( todo.summary().value() )
     .arg( group.summary().value() ) );
-  
+
   (new DelayedSignal( this, todo ))->emitTodoRemoved();
 }
 
@@ -428,9 +422,9 @@ void MainModel::doDeleteTodo( const Bliss::Todo &todo,
                               const Bliss::Todo &group )
 {
   m_bliss.remove( todo );
- 
+
   doRemoveFromView( todo, group );
-  
+
   setupGroups();
 }
 
@@ -438,30 +432,30 @@ void MainModel::doRemoveFromView( const Bliss::Todo &todo,
                                   const Bliss::Todo &group )
 {
   Bliss::GroupView view = groupView( group );
-  
+
   Bliss::TodoId::List newIdList;
   foreach( Bliss::TodoId id, view.todoSequence().todoIdList() ) {
-    if ( id.value() != todo.id() ) newIdList.append( id ); 
+    if ( id.value() != todo.id() ) newIdList.append( id );
   }
   Bliss::TodoSequence sequence = view.todoSequence();
   sequence.setTodoIdList( newIdList );
   view.setTodoSequence( sequence );
-  
+
   Bliss::ViewList::List lists;
   foreach( Bliss::ViewList list, view.viewListList() ) {
     Bliss::TodoId::List newIdList;
     foreach( Bliss::TodoId id, list.todoSequence().todoIdList() ) {
-      if ( id.value() != todo.id() ) newIdList.append( id ); 
+      if ( id.value() != todo.id() ) newIdList.append( id );
     }
     Bliss::TodoSequence sequence = list.todoSequence();
     sequence.setTodoIdList( newIdList );
     list.setTodoSequence( sequence );
-    
+
     lists.append( list );
   }
   view.setViewListList( lists );
-  
-  m_bliss.insert( view );  
+
+  m_bliss.insert( view );
 }
 
 void MainModel::removeGroup( const Bliss::Todo &group )
@@ -476,14 +470,14 @@ void MainModel::removeGroup( const Bliss::Todo &group )
   setupGroups();
 
   writeData( i18n("Deleted group %1").arg( group.summary().value() ) );
-  
+
   (new DelayedSignal( this, group ))->emitTodoRemoved();
 }
 
 Bliss::ViewList::List MainModel::lists( const Bliss::Todo &group )
 {
   Bliss::GroupView v = m_bliss.findGroupView( group.id() );
-  return v.viewListList();  
+  return v.viewListList();
 }
 
 void MainModel::addList( const Bliss::ViewList &list,
@@ -496,17 +490,6 @@ void MainModel::addList( const Bliss::ViewList &list,
   m_bliss.insert( v );
   writeData( i18n("Inserted list %1 into group %2").arg( list.name() )
     .arg( group.summary().value() ) );
-}
-
-QPixmap MainModel::pixmap( const Bliss::Todo &todo ) const
-{
-  return defaultPixmap( todo );
-}
-
-QPixmap MainModel::defaultPixmap( const Bliss::Todo &todo ) const
-{
-  if ( todo.type() == "group" ) return m_defaultGroupPixmap;
-  else return m_defaultPersonPixmap;
 }
 
 void MainModel::saveMoveFromListToList( const Bliss::Todo &group,
@@ -637,14 +620,14 @@ void MainModel::doSaveViewSequence( const Bliss::Todo &group,
 {
   Bliss::GroupView v = m_bliss.findGroupView( group.id(),
                                               Bliss::Bliss::AutoCreate );
-                                              
+
   Bliss::TodoSequence sequence;
   foreach( QString id, ids ) {
     Bliss::TodoId todoId;
     todoId.setValue( id );
     sequence.addTodoId( todoId );
   }
-  
+
   v.setTodoSequence( sequence );
 
   m_bliss.insert( v );

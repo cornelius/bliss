@@ -59,8 +59,6 @@ QVariant BlissItemModel::data(const QModelIndex &index, int role) const
     else return todo.summary().value();
   } else if ( role == Qt::UserRole ) {
     return todo.id();
-  } else if ( role == Qt::DecorationRole ) {
-    return m_model->pixmap( todo );
   } else {
     return QVariant();
   }
