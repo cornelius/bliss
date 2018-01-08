@@ -1,36 +1,42 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
+#include <QStringList>
+#include <QString>
+
 class Settings {
   public:
-    static Settings *self() { return new Settings; }
+    static Settings *self();
 
-    void readConfig() {};
-    void writeConfig() {};
+    void readConfig();
+    void writeConfig();
 
-    static bool remoteSyncingEnabled() { return false; };
-    static void setRemoteSyncingEnabled(bool) {};
+    static bool remoteSyncingEnabled();
+    static void setRemoteSyncingEnabled(bool);
 
-    static QStringList history() { return QStringList(); };
-    static void setHistory(const QStringList &) {};
+    static QStringList history();
+    static void setHistory(const QStringList &);
 
-    static QStringList viewPositions() { return QStringList(); };
-    static void setViewPositions(const QStringList &) {};
-    
-    static bool fancyMode() { return true; };
-    static void setFancyMode(bool) {};
+    static QStringList viewPositions();
+    static void setViewPositions(const QStringList &);
 
-    static bool groupAdderExpanded() { return false; };
-    static void setGroupAdderExpanded(bool) {};
+    static bool fancyMode();
+    static void setFancyMode(bool);
 
-    static bool groupAdderGroupsExpanded() { return false; };
-    static void setGroupAdderGroupsExpanded(bool) {};
+    static bool groupAdderExpanded();
+    static void setGroupAdderExpanded(bool);
 
-    static QString adderGroup() { return QString(); };
-    static void setAdderGroup(const QString &) {};
+    static bool groupAdderGroupsExpanded();
+    static void setGroupAdderGroupsExpanded(bool);
 
-    static bool enableMagic() { return false; };
-    static void setEnableMagic(bool) {};
+    static QString adderGroup();
+    static void setAdderGroup(const QString &);
+
+    static bool enableMagic();
+    static void setEnableMagic(bool);
+
+  private:
+    Settings();
 };
 
 #endif

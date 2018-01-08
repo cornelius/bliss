@@ -83,6 +83,7 @@ SOURCES += src/blissallitemmodel.cpp \
            src/roundedrectitem.cpp \
            src/searchedit.cpp \
            src/searchresultview.cpp \
+           src/settings.cpp \
            src/settingswidget.cpp \
            src/storage.cpp \
            src/storagefile.cpp \
