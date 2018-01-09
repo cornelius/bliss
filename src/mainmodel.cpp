@@ -333,14 +333,6 @@ Bliss::Todo MainModel::insert( Bliss::Todo todo,
 
   setupGroups();
 
-  if ( todo.type() == "group" ) {
-    groupItemModel()->updateData();
-  }
-
-  foreach( Bliss::Group group, todo.groups().groupList() ) {
-    itemModel( group.id() )->updateData();
-  }
-
   writeData( msg );
 
   if ( added ) (new DelayedSignal( this, todo ))->emitTodoAdded();

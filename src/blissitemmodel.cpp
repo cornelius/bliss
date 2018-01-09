@@ -81,12 +81,6 @@ QVariant BlissItemModel::headerData(int section, Qt::Orientation orientation,
     return QString("Row %1").arg(section);
 }
 
-void BlissItemModel::updateData()
-{
-// TODO: port
-//  reset();
-}
-
 Bliss::Todo BlissItemModel::todo( const QModelIndex &index )
 {
   return m_model->todosOfGroup( m_groupId ).at( index.row() );
