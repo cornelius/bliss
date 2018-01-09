@@ -17,9 +17,6 @@ class Settings {
     static QStringList history();
     static void setHistory(const QStringList &);
 
-    static QStringList viewPositions();
-    static void setViewPositions(const QStringList &);
-
     static bool groupAdderExpanded();
     static void setGroupAdderExpanded(bool);
 

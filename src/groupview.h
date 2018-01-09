@@ -104,8 +104,6 @@ class GroupView : public QWidget
   protected slots:
     void resetLayout();
 
-    void setViewPosition();
-
     void hideItems();
     void placeItems();
     void unplaceItems();
@@ -130,8 +128,6 @@ class GroupView : public QWidget
     void slotTodoAdded( const Bliss::Todo & );
     void slotTodoChanged( const Bliss::Todo & );
     void slotTodoRemoved( const Bliss::Todo & );
-
-    void rememberPosition( const QPoint & );
 
   private:
     MainModel *m_model;
@@ -170,8 +166,6 @@ class GroupView : public QWidget
     FanMenu *m_globalMenu;
 
     MenuHandler *m_menuHandler;
-
-    ViewPositions m_viewPositions;
 };
 
 #endif

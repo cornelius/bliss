@@ -91,7 +91,6 @@ void GroupView::readConfig()
   if ( Settings::groupAdderGroupsExpanded() ) {
     m_groupAdderItem->expandGroupItems( false );
   }
-  m_viewPositions.set( Settings::viewPositions() );
 }
 
 void GroupView::writeConfig()
@@ -99,7 +98,6 @@ void GroupView::writeConfig()
   Settings::setGroupAdderExpanded( m_groupAdderItem->isExpanded() );
   Settings::setGroupAdderGroupsExpanded( m_groupAdderItem->shownAsSidebar() );
   Settings::setAdderGroup( m_groupAdderItem->group().id() );
-  Settings::setViewPositions( m_viewPositions.get() );
 }
 
 void GroupView::setBackButtonEnabled( bool enabled )
@@ -303,20 +301,14 @@ void GroupView::placeItems()
     m_scene->addItem( item );
   }
 
-  if ( m_viewPositions.hasPosition( m_group ) ) {
-    QTimer::singleShot( 0, this, SLOT( setViewPosition() ) );
-    m_previousItemPos += m_viewPositions.position( m_group ) -
-                       m_view->position();
-  } else {
-    QRect viewportRect = m_view->viewport()->rect();
-    QPoint currentViewportCenter( viewportRect.width() / 2,
-      viewportRect.height() / 2 );
-    QPointF currentCenter = m_view->mapToScene( currentViewportCenter );
+  QRect viewportRect = m_view->viewport()->rect();
+  QPoint currentViewportCenter( viewportRect.width() / 2,
+    viewportRect.height() / 2 );
+  QPointF currentCenter = m_view->mapToScene( currentViewportCenter );
 
-    m_previousItemPos += items.center - currentCenter;
+  m_previousItemPos += items.center - currentCenter;
 
-    m_view->centerOn( items.center );
-  }
+  m_view->centerOn( items.center );
 
   foreach( TodoItem *item, m_items ) {
     item->enableMenus( false );
@@ -379,16 +371,12 @@ void GroupView::unplaceItems()
 
   QPointF target = m_previousItemPos;
 
-  if ( m_viewPositions.hasPosition( m_group ) ) {
-    target += m_view->position() - m_viewPositions.position( m_group );
-  } else {
-    QRect viewportRect = m_view->viewport()->rect();
-    QPoint currentViewportCenter( viewportRect.width() / 2,
-      viewportRect.height() / 2 );
-    QPointF currentCenter = m_view->mapToScene( currentViewportCenter );
+  QRect viewportRect = m_view->viewport()->rect();
+  QPoint currentViewportCenter( viewportRect.width() / 2,
+    viewportRect.height() / 2 );
+  QPointF currentCenter = m_view->mapToScene( currentViewportCenter );
 
-    target += currentCenter - m_newItems.center;
-  }
+  target += currentCenter - m_newItems.center;
 
   foreach( TodoItem *item, m_items ) {
     m_itemUnplacer->addItem( item, target );
@@ -409,11 +397,7 @@ void GroupView::unhideItems()
 
   createListItems();
 
-  if ( m_viewPositions.hasPosition( m_group ) ) {
-    QTimer::singleShot( 0, this, SLOT( setViewPosition() ) );
-  } else {
-    m_view->centerOn( m_newItems.center );
-  }
+  m_view->centerOn( m_newItems.center );
 
   if ( !m_unhideItemsAnimation ) {
     m_unhideItemsAnimation = new QParallelAnimationGroup( this );
@@ -855,15 +839,4 @@ void GroupView::slotMouseMoved( const QPoint &pos )
 void GroupView::setAdderGroup( const Bliss::Todo &group )
 {
   m_groupAdderItem->setGroup( group );
-}
-
-void GroupView::rememberPosition( const QPoint &pos )
-{
-  m_viewPositions.setPosition( m_group, pos );
-}
-
-void GroupView::setViewPosition()
-{
-  QPoint pos = m_viewPositions.position( m_group );
-  m_view->setPosition( pos );
 }

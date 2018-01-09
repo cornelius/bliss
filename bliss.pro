@@ -43,7 +43,6 @@ HEADERS += src/blissallitemmodel.h \
            src/todohandleitem.h \
            src/todoitem.h \
            src/trackinggraphicsview.h \
-           src/viewpositions.h \
            lib/bliss/bliss.h \
            lib/bliss/bliss_export.h \
            lib/gitdata/command.h \
@@ -91,7 +90,6 @@ SOURCES += src/blissallitemmodel.cpp \
            src/todohandleitem.cpp \
            src/todoitem.cpp \
            src/trackinggraphicsview.cpp \
-           src/viewpositions.cpp \
            lib/bliss/bliss.cpp \
            lib/gitdata/command.cpp \
            lib/gitdata/dir.cpp \

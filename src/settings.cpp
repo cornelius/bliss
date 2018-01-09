@@ -39,16 +39,6 @@ void Settings::setHistory(const QStringList &)
 
 }
 
-QStringList Settings::viewPositions()
-{
-  return QStringList();
-}
-
-void Settings::setViewPositions(const QStringList &)
-{
-
-}
-
 bool Settings::groupAdderExpanded()
 {
   return false;
