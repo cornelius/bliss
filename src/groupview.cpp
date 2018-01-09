@@ -69,8 +69,6 @@ GroupView::GroupView( MainModel *model, QWidget *parent )
   connect( m_view, SIGNAL( mouseMoved( const QPoint & ) ),
     SLOT( slotMouseMoved( const QPoint & ) ) );
   connect( m_view, SIGNAL( viewportMoved() ), SLOT( positionAbsoluteItems() ) );
-  connect( m_view, SIGNAL( movementStopped( const QPoint & ) ),
-    SLOT( rememberPosition( const QPoint & ) ) );
 
   connect( model, SIGNAL( todoAdded( const Bliss::Todo & ) ),
     SLOT( slotTodoAdded( const Bliss::Todo & ) ) );

@@ -34,10 +34,8 @@ class MainWindow : public QMainWindow
 
     void readData( const QString &file = QString() );
 
-  protected:
-    bool queryClose();
-
   protected slots:
+    void closeEvent(QCloseEvent *event);
     void slotDataWritten();
 
   protected:

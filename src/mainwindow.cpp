@@ -56,17 +56,23 @@ void MainWindow::readData( const QString &file )
   m_view->readData( file );
 }
 
-bool MainWindow::queryClose()
+void MainWindow::closeEvent(QCloseEvent *event)
 {
   qDebug() << "queryClose";
-  m_closing = true;
-  m_view->writeData( i18n("Closing") );
-  return false;
+  if (m_closing) {
+    event->accept();
+  } else {
+    m_closing = true;
+    m_view->writeData( i18n("Closing") );
+    event->ignore();
+  }
 }
 
 void MainWindow::slotDataWritten()
 {
   qDebug() << "DATA WRITTEN";
-  if ( m_closing ) deleteLater();
-  m_view->writeConfig();
+  if (m_closing) {
+    m_view->writeConfig();
+    close();
+  }
 }

@@ -22,7 +22,6 @@
 #include "bliss/bliss.h"
 
 #include "fanmenu.h"
-#include "viewpositions.h"
 
 #include <QtGui>
 #include <QWidget>

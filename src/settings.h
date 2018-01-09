@@ -7,6 +7,7 @@
 class Settings {
   public:
     static Settings *self();
+    static Settings *m_self;
 
     void readConfig();
     void writeConfig();
@@ -31,6 +32,13 @@ class Settings {
 
   private:
     Settings();
+
+    bool m_remoteSyncingEnabled;
+    QStringList m_history;
+    bool m_groupAdderExpanded;
+    bool m_groupAdderGroupsExpanded;
+    QString m_adderGroup;
+    bool m_magic;
 };
 
 #endif
