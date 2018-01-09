@@ -38,11 +38,6 @@ SettingsWidget::SettingsWidget( MainModel *model, QWidget *parent)
   QBoxLayout *controlLayout = new QHBoxLayout;
   topLayout->addLayout( controlLayout );
 
-  m_graphicsModeCheck = new QCheckBox( i18n("Use fancy view") );
-  controlLayout->addWidget( m_graphicsModeCheck );
-  connect( m_graphicsModeCheck, SIGNAL( stateChanged( int ) ),
-    SIGNAL( showView() ) );
-
   m_syncingCheck = new QCheckBox( i18n("Syncing enabled") );
   controlLayout->addWidget( m_syncingCheck );
   connect( m_syncingCheck, SIGNAL( stateChanged( int ) ),
@@ -69,20 +64,13 @@ SettingsWidget::~SettingsWidget()
 void SettingsWidget::readConfig()
 {
   m_syncingCheck->setChecked( Settings::remoteSyncingEnabled() );
-  m_graphicsModeCheck->setChecked( Settings::fancyMode() );
 }
 
 void SettingsWidget::writeConfig()
 {
-  Settings::setFancyMode( m_graphicsModeCheck->isChecked() );
 }
 
 void SettingsWidget::slotSyncingCheckChanged()
 {
   Settings::setRemoteSyncingEnabled( m_syncingCheck->isChecked() );
-}
-
-bool SettingsWidget::fancyMode()
-{
-  return m_graphicsModeCheck->isChecked();
 }

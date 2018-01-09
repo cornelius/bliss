@@ -20,9 +20,6 @@ class Settings {
     static QStringList viewPositions();
     static void setViewPositions(const QStringList &);
 
-    static bool fancyMode();
-    static void setFancyMode(bool);
-
     static bool groupAdderExpanded();
     static void setGroupAdderExpanded(bool);
 

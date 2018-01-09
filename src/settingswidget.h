@@ -36,8 +36,6 @@ class SettingsWidget : public QWidget
     void readConfig();
     void writeConfig();
 
-    bool fancyMode();
-
   signals:
     void showView();
 
@@ -47,7 +45,6 @@ class SettingsWidget : public QWidget
   private:
     MainModel *m_model;
 
-    QCheckBox *m_graphicsModeCheck;
     QCheckBox *m_syncingCheck;
 };
 

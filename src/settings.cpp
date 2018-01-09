@@ -49,16 +49,6 @@ void Settings::setViewPositions(const QStringList &)
 
 }
 
-bool Settings::fancyMode()
-{
-  return true;
-}
-
-void Settings::setFancyMode(bool)
-{
-
-}
-
 bool Settings::groupAdderExpanded()
 {
   return false;
