@@ -44,9 +44,6 @@ NewListDialog::NewListDialog( MainModel *model, QWidget *parent )
 
   setMainWidget( topWidget );
 
-  // TODO: port
-  // restoreDialogSize( KGlobal::config()->group("NewListDialog") );
-
   m_nameInput->setFocus();
 
   checkOkButton();
@@ -54,9 +51,6 @@ NewListDialog::NewListDialog( MainModel *model, QWidget *parent )
 
 NewListDialog::~NewListDialog()
 {
-  // TODO: port
-  // KConfigGroup cg( KGlobal::config(), "NewListDialog" );
-  // saveDialogSize( cg );
 }
 
 Bliss::ViewList NewListDialog::list()
