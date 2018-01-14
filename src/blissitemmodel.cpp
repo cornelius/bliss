@@ -59,8 +59,6 @@ QVariant BlissItemModel::data(const QModelIndex &index, int role) const
     else return todo.summary().value();
   } else if ( role == Qt::UserRole ) {
     return todo.id();
-  } else if ( role == Qt::DecorationRole ) {
-    return m_model->pixmap( todo );
   } else {
     return QVariant();
   }
@@ -81,11 +79,6 @@ QVariant BlissItemModel::headerData(int section, Qt::Orientation orientation,
     return QString("Column %1").arg(section);
   else
     return QString("Row %1").arg(section);
-}
-
-void BlissItemModel::updateData()
-{
-  reset();
 }
 
 Bliss::Todo BlissItemModel::todo( const QModelIndex &index )

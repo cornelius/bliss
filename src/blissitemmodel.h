@@ -38,8 +38,6 @@ class BlissItemModel : public QAbstractListModel
     QVariant headerData(int section, Qt::Orientation orientation,
                          int role = Qt::DisplayRole) const;
 
-    void updateData();
-
     virtual Bliss::Todo todo( const QModelIndex &index );
 
   protected:

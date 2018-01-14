@@ -33,16 +33,16 @@
 #include "searchedit.h"
 #include "searchresultview.h"
 
-#include <KMessageBox>
+#include <QMessageBox>
+
 #include <KLocale>
-#include <KInputDialog>
 
 MainView::MainView(QWidget *parent)
   : QWidget( parent )
 {
   m_model = new MainModel( this );
   connect( m_model, SIGNAL( dataWritten() ), SIGNAL( dataWritten() ) );
-  
+
   QBoxLayout *topLayout = new QVBoxLayout( this );
 
   QBoxLayout *viewLayout = new QHBoxLayout;
@@ -50,7 +50,7 @@ MainView::MainView(QWidget *parent)
 
   m_groupWidget = new QWidget;
   viewLayout->addWidget( m_groupWidget );
-  
+
   m_listLayout = new QStackedLayout( m_groupWidget );
 
   m_overview = new Overview( m_model );
@@ -115,13 +115,13 @@ void MainView::writeConfig()
 void MainView::readData( const QString &file )
 {
   if ( !m_model->readData( file ) ) {
-    KMessageBox::error( this, i18n("Error reading data file") );
+    QMessageBox::critical( this, i18n("Error"), i18n("Error reading data file") );
     return;
   }
 
   m_history.setLocationId( m_model->locationId() );
   m_history.set( Settings::history() );
-  
+
   if ( m_history.isEmpty() ) {
     showRoot();
   } else {
@@ -206,7 +206,7 @@ void MainView::continueShowGroup()
   }
 
   m_groupView->setBackButtonEnabled( m_history.size() > 1 );
-  
+
   m_groupView->showGroup( m_group );
   m_listLayout->setCurrentWidget( m_groupView );
 }

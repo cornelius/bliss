@@ -23,6 +23,8 @@
 
 #include <KLocale>
 
+#include <QBoxLayout>
+
 SearchResultView::SearchResultView( MainModel *model )
   : m_model( model )
 {

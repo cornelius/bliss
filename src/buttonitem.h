@@ -20,6 +20,7 @@
 #define BUTTONITEM_H
 
 #include <QtGui>
+#include <QGraphicsEllipseItem>
 
 class ButtonItem : public QObject, public QGraphicsEllipseItem
 {

@@ -21,7 +21,8 @@
 #ifndef SETTINGSWIDGET_H
 #define SETTINGSWIDGET_H
 
-#include <QtGui>
+#include <QWidget>
+#include <QCheckBox>
 
 class MainModel;
 
@@ -35,8 +36,6 @@ class SettingsWidget : public QWidget
     void readConfig();
     void writeConfig();
 
-    bool fancyMode();
-
   signals:
     void showView();
 
@@ -46,7 +45,6 @@ class SettingsWidget : public QWidget
   private:
     MainModel *m_model;
 
-    QCheckBox *m_graphicsModeCheck;
     QCheckBox *m_syncingCheck;
 };
 

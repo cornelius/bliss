@@ -1,0 +1,11 @@
+#ifndef KRANDOM_H
+#define KRANDOM_H
+
+#include <QString>
+
+class KRandom {
+  public:
+    static QString randomString(int);
+};
+
+#endif

@@ -19,25 +19,22 @@
 
 #include "newgroupdialog.h"
 
-#include <KConfig>
-#include <KMessageBox>
-#include <KPushButton>
-#include <KGlobal>
+#include <QLabel>
+#include <QBoxLayout>
 
 NewGroupDialog::NewGroupDialog( MainModel *model, QWidget *parent )
   : KDialog( parent ), m_model( model )
 {
   setCaption( "New Group" );
   setButtons( KDialog::Ok | KDialog::Cancel );
-  setModal( true );
 
   QWidget *topWidget = new QWidget;
-  
+
   QBoxLayout *topLayout = new QVBoxLayout( topWidget );
 
   QLabel *label = new QLabel( "Enter name of new group" );
   topLayout->addWidget( label );
-  
+
   m_nameInput = new QLineEdit;
   topLayout->addWidget( m_nameInput );
   connect( m_nameInput, SIGNAL( textChanged( const QString & ) ),

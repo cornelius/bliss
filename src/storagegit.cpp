@@ -24,7 +24,6 @@
 #include "settings.h"
 
 #include <KLocale>
-#include <KStandardDirs>
 
 #include <QDir>
 #include <QDebug>
@@ -45,7 +44,7 @@ void StorageGit::setLocation( const QString &location )
 {
   delete m_gitDir;
   delete m_gitRemote;
-  
+
   m_gitDir = new GitData::Dir( location );
 
   m_gitRemote = new GitData::Remote( m_gitDir );
@@ -55,7 +54,7 @@ void StorageGit::setLocation( const QString &location )
     SIGNAL( syncingStatusChanged( const QString & ) ) );
 
   connect( m_gitDir, SIGNAL( commandExecuted( const GitData::Command & ) ),
-    SLOT( slotCommandExecuted( const GitData::Command & ) ) );  
+    SLOT( slotCommandExecuted( const GitData::Command & ) ) );
 }
 
 Bliss::Bliss StorageGit::readData()
@@ -113,9 +112,9 @@ void StorageGit::slotCommandExecuted( const GitData::Command &cmd )
     }
   } else if ( cmd.id() == m_logCommand ) {
     m_logCommand = -1;
-    
+
     QStringList log;
-    
+
     foreach( QString line, cmd.result() ) {
       int pos = line.indexOf( " " );
       QString revision = line.left( pos );
@@ -123,7 +122,7 @@ void StorageGit::slotCommandExecuted( const GitData::Command &cmd )
       QString message = line.mid( pos + 2 );
       log.append( message );
     }
-    
+
     emit logRetrieved( log );
   }
 }

@@ -20,6 +20,11 @@
 #define HISTORYVIEW_H
 
 #include <QtGui>
+#include <QWidget>
+#include <QListWidget>
+#include <QBoxLayout>
+#include <QLabel>
+#include <QPushButton>
 
 class MainModel;
 

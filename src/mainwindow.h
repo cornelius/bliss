@@ -21,11 +21,11 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <kxmlguiwindow.h>
+#include <QMainWindow>
 
 class MainView;
 
-class MainWindow : public KXmlGuiWindow
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
   public:
@@ -34,10 +34,8 @@ class MainWindow : public KXmlGuiWindow
 
     void readData( const QString &file = QString() );
 
-  protected:
-    bool queryClose();
-
   protected slots:
+    void closeEvent(QCloseEvent *event);
     void slotDataWritten();
 
   protected:

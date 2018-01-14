@@ -18,35 +18,31 @@
 */
 
 #include "newlistdialog.h"
-#include "krandom.h"
 
-#include <KConfig>
-#include <KMessageBox>
-#include <KPushButton>
-#include <KGlobal>
+#include <KRandom>
+
+#include <QBoxLayout>
+#include <QLabel>
 
 NewListDialog::NewListDialog( MainModel *model, QWidget *parent )
   : KDialog( parent ), m_model( model )
 {
   setCaption( "New List" );
   setButtons( KDialog::Ok | KDialog::Cancel );
-  setModal( true );
 
   QWidget *topWidget = new QWidget;
-  
+
   QBoxLayout *topLayout = new QVBoxLayout( topWidget );
 
   QLabel *label = new QLabel( "Enter name of new list" );
   topLayout->addWidget( label );
-  
+
   m_nameInput = new QLineEdit;
   topLayout->addWidget( m_nameInput );
   connect( m_nameInput, SIGNAL( textChanged( const QString & ) ),
     SLOT( checkOkButton() ) );
 
   setMainWidget( topWidget );
-
-  restoreDialogSize( KGlobal::config()->group("NewListDialog") );
 
   m_nameInput->setFocus();
 
@@ -55,8 +51,6 @@ NewListDialog::NewListDialog( MainModel *model, QWidget *parent )
 
 NewListDialog::~NewListDialog()
 {
-  KConfigGroup cg( KGlobal::config(), "NewListDialog" );
-  saveDialogSize( cg );
 }
 
 Bliss::ViewList NewListDialog::list()

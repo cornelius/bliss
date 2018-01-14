@@ -22,6 +22,7 @@
 #include "bliss/bliss.h"
 
 #include <QtGui>
+#include <QGraphicsEllipseItem>
 
 class MainModel;
 

@@ -1,44 +1,50 @@
+/*
+    This file is part of KDE.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+    USA.
+*/
+
 #include "mainwindow.h"
 
-#include <kapplication.h>
-#include <kaboutdata.h>
-#include <kcmdlineargs.h>
-#include <KDE/KLocale>
+#include <QApplication>
+#include <QCommandLineParser>
 
-static const char description[] =
-  I18N_NOOP("Managing todos the happy way");
-
-static const char version[] = "0.1";
+static const char version[] = "0.2";
 
 int main(int argc, char **argv)
 {
-  KAboutData about("bliss", 0, ki18n("Bliss"), version, ki18n(description),
-                   KAboutData::License_GPL, ki18n("(C) 2011 Cornelius Schumacher"), KLocalizedString(), 0, "schumacher@kde.org");
-  about.addAuthor( ki18n("Cornelius Schumacher"), KLocalizedString(), "schumacher@kde.org" );
-  KCmdLineArgs::init(argc, argv, &about);
+  QApplication app(argc, argv);
+  QCoreApplication::setOrganizationName("KDE");
+  QCoreApplication::setOrganizationDomain("kde.org");
+  QCoreApplication::setApplicationName("Bliss");
+  QCoreApplication::setApplicationVersion(version);
 
-  KCmdLineOptions options;
-  options.add("+[URL]", ki18n( "Document or directory to open" ));
-  KCmdLineArgs::addCmdLineOptions(options);
-  KApplication app;
+  QCommandLineParser parser;
+  parser.setApplicationDescription(QCoreApplication::applicationName());
+  parser.addHelpOption();
+  parser.addVersionOption();
+  parser.addPositionalArgument("URL", "Document or directory to open");
+  parser.process(app);
 
-  if ( app.isSessionRestored() ) {
-    RESTORE(MainWindow);
+  MainWindow mainWin;
+  if (!parser.positionalArguments().isEmpty()) {
+    mainWin.readData(parser.positionalArguments().first());
   } else {
-    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-    if (args->count() == 0) {
-      MainWindow *widget = new MainWindow;
-      widget->show();
-      widget->readData();
-    } else {
-      for ( int i = 0; i < args->count(); i++ ) {
-        MainWindow *widget = new MainWindow;
-        widget->show();
-        widget->readData( args->arg( i ) );
-      }
-    }
-    args->clear();
+    mainWin.readData();
   }
-
+  mainWin.show();
   return app.exec();
 }

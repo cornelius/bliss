@@ -1,0 +1,28 @@
+#ifndef KDIALOG_H
+#define KDIALOG_H
+
+#include <QDialog>
+#include <QPushButton>
+#include <QDialogButtonBox>
+
+class KDialog : public QDialog {
+  public:
+    enum Button {Ok, Cancel};
+
+    KDialog(QWidget *);
+
+    void setMainWidget(QWidget *);
+
+    QPushButton *button(Button);
+
+    void setCaption(const QString &);
+    void setButtons(int);
+
+  private:
+    QDialogButtonBox *mButtonBox;
+
+    QPushButton *mOkButton;
+    QPushButton *mCancelButton;
+};
+
+#endif

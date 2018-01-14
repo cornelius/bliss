@@ -22,7 +22,6 @@
 #include "mainmodel.h"
 #include "blissitemmodel.h"
 #include "todoitem.h"
-#include "labelitem.h"
 #include "trackinggraphicsview.h"
 #include "mainmenuitem.h"
 #include "magicmenuitem.h"
@@ -36,7 +35,6 @@
 #include "buttonitem.h"
 
 #include <KLocale>
-#include <KInputDialog>
 #include <KRandom>
 
 GroupView::GroupView( MainModel *model, QWidget *parent )
@@ -61,7 +59,7 @@ GroupView::GroupView( MainModel *model, QWidget *parent )
   connect( m_itemUnplacer, SIGNAL( finished() ), SLOT( unhideItems() ) );
 
   m_removeItemPlacer = new ItemPlacer( this );
-  
+
   m_menuHandler = new MenuHandler( m_scene );
 
   m_view = new TrackingGraphicsView( m_scene );
@@ -71,8 +69,6 @@ GroupView::GroupView( MainModel *model, QWidget *parent )
   connect( m_view, SIGNAL( mouseMoved( const QPoint & ) ),
     SLOT( slotMouseMoved( const QPoint & ) ) );
   connect( m_view, SIGNAL( viewportMoved() ), SLOT( positionAbsoluteItems() ) );
-  connect( m_view, SIGNAL( movementStopped( const QPoint & ) ),
-    SLOT( rememberPosition( const QPoint & ) ) );
 
   connect( model, SIGNAL( todoAdded( const Bliss::Todo & ) ),
     SLOT( slotTodoAdded( const Bliss::Todo & ) ) );
@@ -93,7 +89,6 @@ void GroupView::readConfig()
   if ( Settings::groupAdderGroupsExpanded() ) {
     m_groupAdderItem->expandGroupItems( false );
   }
-  m_viewPositions.set( Settings::viewPositions() );
 }
 
 void GroupView::writeConfig()
@@ -101,7 +96,6 @@ void GroupView::writeConfig()
   Settings::setGroupAdderExpanded( m_groupAdderItem->isExpanded() );
   Settings::setGroupAdderGroupsExpanded( m_groupAdderItem->shownAsSidebar() );
   Settings::setAdderGroup( m_groupAdderItem->group().id() );
-  Settings::setViewPositions( m_viewPositions.get() );
 }
 
 void GroupView::setBackButtonEnabled( bool enabled )
@@ -148,7 +142,7 @@ Bliss::ViewList GroupView::viewList( const Bliss::Todo &todo )
 void GroupView::slotTodoAdded( const Bliss::Todo &todo )
 {
   Bliss::ViewList list = viewList( todo );
-  
+
   if ( list.isValid() ) {
     foreach( ListItem *listItem, m_listItems ) {
       if ( listItem->list().id() == list.id() ) {
@@ -162,7 +156,7 @@ void GroupView::slotTodoAdded( const Bliss::Todo &todo )
     TodoItem *item = createTodoItem( todo );
     m_items.insert( m_items.size() - 1, item );
     m_scene->addItem( item );
-    
+
     m_itemPlacer->prepare();
     preparePositions( m_items, m_itemPlacer );
     m_itemPlacer->start();
@@ -180,7 +174,7 @@ void GroupView::slotTodoRemoved( const Bliss::Todo &todo )
     preparePositions( m_items, m_removeItemPlacer );
     m_removeItemPlacer->start();
   }
-  
+
   foreach( ListItem *listItem, m_listItems ) {
     todoItem = listItem->item( todo );
     if ( todoItem ) {
@@ -190,7 +184,7 @@ void GroupView::slotTodoRemoved( const Bliss::Todo &todo )
       Bliss::ViewList list = m_model->groupView( m_group )
         .findViewList( listItem->list().id() );
       listItem->setList( list );
-    }    
+    }
   }
 }
 
@@ -227,7 +221,7 @@ void GroupView::showGroup( const Bliss::Todo &group )
         }
       }
     }
-    
+
     m_titleItem->setPlainText( m_group.summary().value() );
     positionMenuItems();
   }
@@ -262,7 +256,7 @@ void GroupView::hideItems()
     animation->setDuration( 200 );
   }
 
-  m_removeItemsAnimation->start();  
+  m_removeItemsAnimation->start();
 }
 
 void GroupView::clearItems()
@@ -272,13 +266,8 @@ void GroupView::clearItems()
   }
   m_items.clear();
 
-  foreach( LabelItem *item, m_labelItems ) {
-    delete item;
-  }
-  m_labelItems.clear();
-
   clearListItems();
-  
+
   if ( m_globalMenu ) delete m_globalMenu;
   m_globalMenu = 0;
 }
@@ -310,34 +299,27 @@ void GroupView::placeItems()
     m_scene->addItem( item );
   }
 
-  if ( m_viewPositions.hasPosition( m_group ) ) {
-    QTimer::singleShot( 0, this, SLOT( setViewPosition() ) );
-    m_previousItemPos += m_viewPositions.position( m_group ) -
-                       m_view->position();
-  } else {
-    QRect viewportRect = m_view->viewport()->rect();
-    QPoint currentViewportCenter( viewportRect.width() / 2,
-      viewportRect.height() / 2 );
-    QPointF currentCenter = m_view->mapToScene( currentViewportCenter );
- 
-    m_previousItemPos += items.center - currentCenter;
+  QRect viewportRect = m_view->viewport()->rect();
+  QPoint currentViewportCenter( viewportRect.width() / 2,
+    viewportRect.height() / 2 );
+  QPointF currentCenter = m_view->mapToScene( currentViewportCenter );
 
-    m_view->centerOn( items.center );
-  }
+  m_previousItemPos += items.center - currentCenter;
+
+  m_view->centerOn( items.center );
 
   foreach( TodoItem *item, m_items ) {
     item->enableMenus( false );
   }
 
   m_itemPlacer->setStartValue( m_previousItemPos );
-    
+
   m_itemPlacer->start();
 }
 
 void GroupView::finishPlaceItems()
 {
   createListItems();
-  createLabelItems();
 
   foreach( TodoItem *item, m_items ) {
     item->enableMenus( true );
@@ -346,10 +328,6 @@ void GroupView::finishPlaceItems()
 
 void GroupView::unplaceItems()
 {
-  foreach( LabelItem *item, m_labelItems ) {
-    delete item;
-  }
-  m_labelItems.clear();
   foreach( ListItem *item, m_listItems ) {
     delete item;
   }
@@ -369,7 +347,7 @@ void GroupView::unplaceItems()
       }
     }
   }
-  
+
   if ( !m_previousItem ) {
     // Temporary create list items to get positions. There certainly is a more
     // efficient way to do this.
@@ -383,7 +361,7 @@ void GroupView::unplaceItems()
     }
     clearListItems();
   }
-  
+
   if ( !m_previousItem ) {
     recreateItems();
     return;
@@ -391,16 +369,12 @@ void GroupView::unplaceItems()
 
   QPointF target = m_previousItemPos;
 
-  if ( m_viewPositions.hasPosition( m_group ) ) {
-    target += m_view->position() - m_viewPositions.position( m_group );
-  } else {
-    QRect viewportRect = m_view->viewport()->rect();
-    QPoint currentViewportCenter( viewportRect.width() / 2,
-      viewportRect.height() / 2 );
-    QPointF currentCenter = m_view->mapToScene( currentViewportCenter );
+  QRect viewportRect = m_view->viewport()->rect();
+  QPoint currentViewportCenter( viewportRect.width() / 2,
+    viewportRect.height() / 2 );
+  QPointF currentCenter = m_view->mapToScene( currentViewportCenter );
 
-    target += currentCenter - m_newItems.center;
-  }
+  target += currentCenter - m_newItems.center;
 
   foreach( TodoItem *item, m_items ) {
     m_itemUnplacer->addItem( item, target );
@@ -419,14 +393,9 @@ void GroupView::unhideItems()
     m_scene->addItem( item );
   }
 
-  createLabelItems();
   createListItems();
 
-  if ( m_viewPositions.hasPosition( m_group ) ) {
-    QTimer::singleShot( 0, this, SLOT( setViewPosition() ) );
-  } else {
-    m_view->centerOn( m_newItems.center );
-  }
+  m_view->centerOn( m_newItems.center );
 
   if ( !m_unhideItemsAnimation ) {
     m_unhideItemsAnimation = new QParallelAnimationGroup( this );
@@ -453,7 +422,7 @@ void GroupView::unhideItems()
 TodoItemGroup GroupView::prepareTodoItems( ItemPlacer *placer )
 {
   TodoItemGroup result;
-  
+
   Bliss::Todo::List todos = m_model->unlistedTodosOfGroup( m_group );
 
   foreach( Bliss::Todo todo, todos ) {
@@ -465,7 +434,7 @@ TodoItemGroup GroupView::prepareTodoItems( ItemPlacer *placer )
   TodoItem *item = new TodoItem( m_model );
   connect( item, SIGNAL( itemPressed() ), SIGNAL( newTodo() ) );
   result.items.append( item );
-  
+
   result.center = preparePositions( result.items, placer );
 
   return result;
@@ -481,7 +450,7 @@ TodoItem *GroupView::createTodoItem( const Bliss::Todo &todo )
     SIGNAL( requestShowGroup( const Bliss::Todo & ) ) );
   connect( item, SIGNAL( done( const Bliss::Todo & ) ),
     SLOT( slotDone( const Bliss::Todo & ) ) );
-    
+
   connect( item, SIGNAL( itemMoved( TodoItem *, const QPointF & ) ),
     SLOT( slotItemMoved( TodoItem *, const QPointF & ) ) );
 
@@ -529,7 +498,7 @@ QPointF GroupView::preparePositions( const QList<TodoItem *> &todoItems,
 
     if ( firstItem ) {
       firstItem = false;
-    
+
       centerX = item->textCenterX();
       minY = itemY;
       maxY = itemY;
@@ -550,20 +519,11 @@ QPointF GroupView::preparePositions( const QList<TodoItem *> &todoItems,
 void GroupView::createListItems()
 {
   clearListItems();
-  
+
   Bliss::GroupView view = m_model->groupView( m_group );
 
   foreach( Bliss::ViewList list, view.viewListList() ) {
     createListItem( list );
-  }
-}
-
-void GroupView::createLabelItems()
-{
-  Bliss::GroupView view = m_model->groupView( m_group );
-
-  foreach( Bliss::ViewLabel label, view.viewLabelList() ) {
-    createLabelItem( label );
   }
 }
 
@@ -575,17 +535,17 @@ void GroupView::createMenuItems()
   font.setBold( true );
   font.setPointSizeF( font.pointSizeF() * 1.5 );
   m_titleItem->setFont( font );
-  
+
   m_backButton = new ButtonItem;
   m_scene->addItem( m_backButton );
   m_backButton->setItemSize( 50 );
   m_backButton->setBack();
   connect( m_backButton, SIGNAL( clicked() ), SIGNAL( goBack() ) );
-  
+
   if ( Settings::enableMagic() ) {
     m_magicMenu = new MagicMenuItem();
     m_scene->addItem( m_magicMenu );
-  
+
     connect( m_magicMenu, SIGNAL( resetLayout() ), SLOT( resetLayout() ) );
     connect( m_magicMenu, SIGNAL( showSettings() ), SIGNAL( showSettings() ) );
   }
@@ -620,11 +580,11 @@ void GroupView::positionMenuItems()
       m_titleItem->boundingRect().width() / 2,
       upperLeftScene.y() - m_titleItem->boundingRect().height() / 2 + 50 );
   }
-  
+
   if ( m_backButton ) {
     m_backButton->setPos( upperLeftScene.x() + 50, upperLeftScene.y() + 50 );
   }
-  
+
   if ( m_mainMenu ) {
     m_mainMenu->setPos( upperRightScene.x() - 50, upperRightScene.y() + 50 );
   }
@@ -701,7 +661,7 @@ void GroupView::slotItemMoved( TodoItem *todoItem,
           foreach( TodoItem *i, m_items ) {
             sortedCanvasIds.append( i->todo().id() );
           }
-          
+
           m_model->saveMoveFromCanvasToList( m_group, newItem->todo(),
             listTarget->list(), sortedCanvasIds );
 
@@ -720,7 +680,7 @@ void GroupView::slotItemMoved( TodoItem *todoItem,
 
         listSource->removeItem( todoItem );
         delete todoItem;
-        
+
         QMap <qreal, QString> map;
         foreach( TodoItem *i, m_items ) {
           map.insert( i->pos().y(), i->todo().id() );
@@ -778,51 +738,18 @@ void GroupView::addList()
   NewListDialog *dialog = new NewListDialog( m_model, this );
   if ( dialog->exec() == QDialog::Accepted ) {
     Bliss::ViewList list = dialog->list();
-    
+
     QPointF pos = QPoint( 10, 10 );
     list.setX( pos.x() );
     list.setY( pos.y() );
-    
+
     createListItem( list );
-    
+
     m_model->saveViewList( m_group, list );
   }
   return;
 }
 
-
-void GroupView::addLabel()
-{
-  addLabel( m_view->mapToScene( QPoint( 10, 10 ) ) );
-}
-
-void GroupView::addLabel( const QPointF &pos )
-{
-  bool ok;
-  QString name = KInputDialog::getText( i18n("Add Label"),
-    i18n("Enter text of label"), QString(),
-    &ok );
-  if ( ok ) {
-    Bliss::ViewLabel label;
-    label.setId( KRandom::randomString( 10 ) );
-    label.setText( name );
-
-    label.setX( pos.x() );
-    label.setY( pos.y() );
-    
-    createLabelItem( label );
-    
-    m_model->saveViewLabel( m_group, label );
-  }
-}
-
-void GroupView::removeLabel( LabelItem *item )
-{
-  m_labelItems.removeAll( item );
-
-  delete item;
-  m_model->removeViewLabel( m_group, item->label() );
-}
 
 void GroupView::removeList( ListItem *item )
 {
@@ -832,44 +759,10 @@ void GroupView::removeList( ListItem *item )
   m_model->removeViewList( m_group, item->list() );
 }
 
-void GroupView::renameLabel( LabelItem *item )
-{
-  Bliss::ViewLabel label = item->label();
-
-  bool ok;
-  QString name = KInputDialog::getText( i18n("Rename Label"),
-    i18n("Enter new text of label"), label.text(),
-    &ok );
-  if ( ok ) {
-    label.setText( name );
-    item->setLabel( label );
-    m_model->saveViewLabel( m_group, label );
-  }
-}
-
-LabelItem *GroupView::createLabelItem( const Bliss::ViewLabel &label )
-{
-  LabelItem *item = new LabelItem( m_model, m_group, label );
-
-  connect( item, SIGNAL( removeLabel( LabelItem * ) ),
-    SLOT( removeLabel( LabelItem * ) ) );
-  connect( item, SIGNAL( renameLabel( LabelItem * ) ),
-    SLOT( renameLabel( LabelItem * ) ) );
-  connect( item, SIGNAL( menuShown() ), SLOT( hideGlobalMenu() ) );
-
-  m_scene->addItem( item );
-
-  item->setPos( label.x(), label.y() );
-
-  m_labelItems.append( item );
-
-  return item;
-}
-
 ListItem *GroupView::createListItem( const Bliss::ViewList &list )
 {
   ListItem *item = new ListItem( m_model, m_menuHandler, m_group, list );
-  
+
   connect( item, SIGNAL( removeList( ListItem * ) ),
     SLOT( removeList( ListItem * ) ) );
   connect( item, SIGNAL( menuShown() ), SLOT( hideGlobalMenu() ) );
@@ -881,14 +774,14 @@ ListItem *GroupView::createListItem( const Bliss::ViewList &list )
     SIGNAL( requestShowGroup( const Bliss::Todo & ) ) );
   connect( item, SIGNAL( removeGroup( const Bliss::Todo & ) ),
     SIGNAL( removeGroup( const Bliss::Todo & ) ) );
-  
+
   m_scene->addItem( item );
 
   item->setPos( list.x(), list.y() );
 
   m_listItems.append( item );
-  
-  return item;  
+
+  return item;
 }
 
 void GroupView::resetLayout()
@@ -925,13 +818,6 @@ ListItem *GroupView::listItem( TodoItem *item ) const
   return 0;
 }
 
-void GroupView::addLabelClicked()
-{
-  hideGlobalMenu();
-
-  addLabel( m_globalMenu->pos() );
-}
-
 void GroupView::hideGlobalMenu()
 {
   if ( m_globalMenu ) {
@@ -951,15 +837,4 @@ void GroupView::slotMouseMoved( const QPoint &pos )
 void GroupView::setAdderGroup( const Bliss::Todo &group )
 {
   m_groupAdderItem->setGroup( group );
-}
-
-void GroupView::rememberPosition( const QPoint &pos )
-{
-  m_viewPositions.setPosition( m_group, pos );
-}
-
-void GroupView::setViewPosition()
-{
-  QPoint pos = m_viewPositions.position( m_group );
-  m_view->setPosition( pos );
 }

@@ -24,27 +24,17 @@
 #include "mainview.h"
 #include "settings.h"
 
-#include <kstatusbar.h>
-#include <kmenubar.h>
+#include <QAction>
 
-#include <kaction.h>
-#include <kactioncollection.h>
-#include <kstandardaction.h>
-
-#include <KDE/KLocale>
+#include <KLocale>
 
 MainWindow::MainWindow()
-  : KXmlGuiWindow(), m_closing( false )
+  : QMainWindow(), m_closing( false )
 {
   m_view = new MainView( this );
   setCentralWidget( m_view );
 
   setupActions();
-
-  setupGUI();
-
-  statusBar()->hide();
-  menuBar()->hide();
 
   connect( m_view, SIGNAL( dataWritten() ), SLOT( slotDataWritten() ) );
 }
@@ -55,7 +45,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::setupActions()
 {
-  KStandardAction::quit( qApp, SLOT( closeAllWindows() ), actionCollection() );
+  QAction *quitAction = new QAction(i18n("Quit"), this);
+  quitAction->setShortcut(QKeySequence::Quit);
+  connect(quitAction, SIGNAL(triggered()), SLOT(close()));
+  addAction(quitAction);
 }
 
 void MainWindow::readData( const QString &file )
@@ -63,17 +56,23 @@ void MainWindow::readData( const QString &file )
   m_view->readData( file );
 }
 
-bool MainWindow::queryClose()
+void MainWindow::closeEvent(QCloseEvent *event)
 {
   qDebug() << "queryClose";
-  m_closing = true;
-  m_view->writeData( i18n("Closing") );
-  return false;
+  if (m_closing) {
+    event->accept();
+  } else {
+    m_closing = true;
+    m_view->writeData( i18n("Closing") );
+    event->ignore();
+  }
 }
 
 void MainWindow::slotDataWritten()
 {
   qDebug() << "DATA WRITTEN";
-  if ( m_closing ) deleteLater();
-  m_view->writeConfig();
+  if (m_closing) {
+    m_view->writeConfig();
+    close();
+  }
 }

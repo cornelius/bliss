@@ -24,6 +24,7 @@
 #include <KDialog>
 
 #include <QtGui>
+#include <QListView>
 
 class MatchList : public QWidget
 {

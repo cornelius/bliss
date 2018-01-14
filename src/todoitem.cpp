@@ -25,8 +25,10 @@
 #include "todohandleitem.h"
 #include "menuhandler.h"
 
-
 #include <KLocale>
+
+#include <QGraphicsSceneEvent>
+#include <QGraphicsProxyWidget>
 
 TodoItem::TodoItem( MainModel *model, MenuHandler *menuHandler,
   const Bliss::Todo &todo )

@@ -24,7 +24,7 @@
 #include <QDomElement>
 #include <QList>
 #include <QDateTime>
-#include <QtXml/QXmlStreamWriter>
+#include <QXmlStreamWriter>
 
 namespace Bliss {
 

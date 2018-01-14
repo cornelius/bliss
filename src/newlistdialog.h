@@ -25,6 +25,7 @@
 #include <KDialog>
 
 #include <QtGui>
+#include <QLineEdit>
 
 class NewListDialog : public KDialog
 {

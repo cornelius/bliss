@@ -20,6 +20,7 @@
 #define MENUHANDLER_H
 
 #include <QtGui>
+#include <QGraphicsScene>
 
 class FanMenu;
 
