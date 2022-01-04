@@ -1,0 +1,32 @@
+#!/usr/bin/env python3
+
+import xml.etree.ElementTree as ET
+from pathlib import Path
+import sys
+
+if len(sys.argv) == 2:
+    list_name = sys.argv[1]
+else:
+    list_name = None
+
+homedir = Path().home()
+filename = homedir / ".bliss" / "std.bliss"
+tree = ET.parse(filename)
+root = tree.getroot()
+
+todos = {}
+
+for child in root:
+    if child.tag == "todo":
+        todos[child.find("id").text] = child.find("summary").text
+
+lists = root.findall("./group_view/view_list")
+
+if list_name:
+    for list in lists:
+        if list.find("name").text == list_name:
+            for todo in list.findall("./todo_sequence/todo_id"):
+                print("*", todos[todo.text])
+else:
+    for list in lists:
+        print(list.find("name").text)
