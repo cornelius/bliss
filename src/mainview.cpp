@@ -44,6 +44,7 @@ MainView::MainView(QWidget *parent)
   connect( m_model, SIGNAL( dataWritten() ), SIGNAL( dataWritten() ) );
 
   QBoxLayout *topLayout = new QVBoxLayout( this );
+  topLayout->setContentsMargins(0,0,0,0);
 
   QBoxLayout *viewLayout = new QHBoxLayout;
   topLayout->addLayout( viewLayout );

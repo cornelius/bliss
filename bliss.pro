@@ -1,5 +1,9 @@
 TEMPLATE = app
 TARGET = bliss
+
+target.path = /usr/bin
+INSTALLS += target
+
 INCLUDEPATH += . minikde lib
 QT += xml gui widgets
 
