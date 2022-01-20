@@ -34,10 +34,10 @@ void KDialog::setCaption(const QString &title)
 
 void KDialog::setButtons(int buttons)
 {
-  if (buttons | Ok) {
+  if (buttons & Ok) {
     mOkButton = mButtonBox->addButton(QDialogButtonBox::Ok);
   }
-  if (buttons | Cancel) {
+  if (buttons & Cancel) {
     mCancelButton = mButtonBox->addButton(QDialogButtonBox::Cancel);
   }
 }

@@ -7,7 +7,7 @@
 
 class KDialog : public QDialog {
   public:
-    enum Button {Ok, Cancel};
+    enum Button {Ok=1, Cancel=2};
 
     KDialog(QWidget *);
 

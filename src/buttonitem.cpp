@@ -88,8 +88,8 @@ void ButtonItem::setClickEnabled( bool enabled )
     setAcceptedMouseButtons( Qt::LeftButton );
     m_decoration->setAcceptedMouseButtons( Qt::LeftButton );
   } else {
-    setAcceptedMouseButtons( 0 );
-    m_decoration->setAcceptedMouseButtons( 0 );
+    setAcceptedMouseButtons( Qt::NoButton );
+    m_decoration->setAcceptedMouseButtons( Qt::NoButton );
   }
 }
 
