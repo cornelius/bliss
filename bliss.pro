@@ -1,7 +1,11 @@
 TEMPLATE = app
 TARGET = bliss
 
-target.path = /usr/bin
+macx {
+    target.path = /Applications
+} else {
+    target.path = /usr/bin
+}
 INSTALLS += target
 
 INCLUDEPATH += . minikde lib
